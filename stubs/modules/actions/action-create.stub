@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Actions;
+
+use Illuminate\Support\Facades\DB;
+use {{modelClass}};
+use App\Modules\{{module}}\{{entity}}\DTOs\Create{{entity}}DTO;
+
+class Create{{entity}}Action
+{
+    public function __invoke(
+        Create{{entity}}DTO $dto
+    ): {{modelBaseName}} {
+
+        return DB::transaction(
+            function () use ($dto) {
+
+                $model = {{modelBaseName}}::create(
+                    $dto->toArray()
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Future hooks
+                |--------------------------------------------------------------------------
+                */
+
+                // app({{entity}}Service::class)
+                //     ->afterCreate($model);
+
+                return $model;
+            }
+        );
+    }
+}

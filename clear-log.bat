@@ -1,0 +1,1 @@
+type nul > storage\logs\laravel.log

@@ -1,0 +1,272 @@
+/* =========================
+   LIBS
+========================= */
+
+/* Bootstrap Icons LOCAL */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* =========================
+   BASE
+========================= */
+
+[x-cloak] {
+    display: none;
+}
+
+
+/* =========================
+   PLACEHOLDERLAYOUT
+========================= */
+input::placeholder,
+textarea::placeholder {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* ============================================================
+TOOLTIPS
+============================================================ */
+
+.ui-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+}
+
+.ui-tooltip-content {
+    position: absolute;
+    left: 50%;
+    z-index: 9999;
+
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+
+    border-radius: 0.5rem;
+    background-color: rgb(30 41 59);
+    padding: 0.375rem 0.75rem;
+
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+
+    color: white;
+
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    pointer-events: none;
+
+}
+
+/* Tooltip hacia arriba */
+.ui-tooltip-top .ui-tooltip-content {
+    bottom: calc(100% + 0.5rem);
+}
+
+/* Tooltip hacia abajo */
+.ui-tooltip-bottom .ui-tooltip-content {
+    top: calc(100% + 0.5rem);
+}
+
+.ui-tooltip-top .ui-tooltip-content::after,
+.ui-tooltip-bottom .ui-tooltip-content::after {
+    content: "";
+
+    position: absolute;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    border-width: 4px;
+    border-style: solid;
+
+}
+
+.ui-tooltip-top .ui-tooltip-content::after {
+    top: 100%;
+    border-color: rgb(30 41 59) transparent transparent transparent;
+}
+
+.ui-tooltip-bottom .ui-tooltip-content::after {
+    bottom: 100%;
+    border-color: transparent transparent rgb(30 41 59) transparent;
+}
+
+
+/* =========================
+   LAYOUT
+========================= */
+
+.panel-layout {
+    @apply grid grid-cols-1 lg:grid-cols-10 gap-6;
+}
+
+.panel {
+    @apply bg-white shadow-md rounded-xl border border-gray-200;
+}
+
+.panel-header {
+    @apply px-4 py-3 border-b border-gray-200 flex items-center justify-between;
+}
+
+.panel-title {
+    @apply text-lg font-semibold text-gray-800;
+}
+
+.panel-body {
+    @apply p-4;
+}
+
+.panel-footer {
+    @apply px-4 py-3 border-t border-gray-200 flex justify-end;
+}
+
+
+/* =========================
+   FORMS
+========================= */
+
+.panel-form {
+    @apply space-y-4;
+}
+
+.panel-form-group {
+    @apply flex flex-col gap-1;
+}
+
+.panel-form-label {
+    @apply text-sm font-medium text-gray-700;
+}
+
+.panel-form-input {
+    @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.panel-form-error {
+    @apply text-xs text-red-500;
+}
+
+.panel-form-actions {
+    @apply flex justify-end gap-2 pt-3;
+}
+
+
+/* =========================
+   GRID FORMS
+========================= */
+
+.panel-form-grid-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.panel-form-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-3 gap-4;
+}
+
+.panel-form-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn {
+    @apply inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition;
+}
+
+.btn-primary {
+    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-secondary {
+    @apply btn bg-gray-200 text-gray-800 hover:bg-gray-300;
+}
+
+.btn-danger {
+    @apply btn bg-red-500 text-white hover:bg-red-600;
+}
+
+.btn-ghost {
+    @apply btn bg-transparent hover:bg-gray-100 text-gray-700;
+}
+
+.btn-sm {
+    @apply px-2 py-1 text-xs;
+}
+
+
+/* =========================
+   TABLES
+========================= */
+
+.table-base {
+    @apply w-full text-sm;
+}
+
+.table-head {
+    @apply bg-gray-50 text-gray-600 text-left font-medium;
+}
+
+.table-row {
+    @apply border-b hover:bg-gray-50 transition;
+}
+
+.table-cell {
+    @apply px-4 py-3;
+}
+
+
+/* =========================
+   BADGES
+========================= */
+
+.badge {
+    @apply inline-flex items-center px-2 py-1 text-xs rounded-full font-medium;
+}
+
+.badge-success {
+    @apply badge bg-green-100 text-green-700;
+}
+
+.badge-danger {
+    @apply badge bg-red-100 text-red-700;
+}
+
+.badge-warning {
+    @apply badge bg-yellow-100 text-yellow-700;
+}
+
+
+/* =========================
+   ICONS
+========================= */
+
+.icon {
+    @apply inline-flex items-center justify-center;
+}
+
+.icon-sm {
+    @apply text-sm;
+}
+
+.icon-md {
+    @apply text-base;
+}
+
+.icon-lg {
+    @apply text-lg;
+}

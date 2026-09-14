@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Livewire;
+
+use App\Core\Tables\TableComponent;
+//use App\Modules\{{module}}\{{entity}}\Tables\{{entity}}TableDefinition;
+
+class {{entity}}Table extends TableComponent
+{
+    protected function tableClass(): string
+    {
+        return \App\Modules\{{moduleLower}}\{{entity}}\Tables\{{entity}}TableDefinition::class;
+    }
+}

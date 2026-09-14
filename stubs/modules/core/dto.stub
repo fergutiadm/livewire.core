@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\DTOs;
+
+class Create{{entity}}DTO
+{
+    public function __construct(
+        public readonly array $data
+    ) {}
+
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+}

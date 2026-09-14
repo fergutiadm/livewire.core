@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Services;
+
+class {{entity}}Service
+{
+    // Lógica de dominio reutilizable
+}

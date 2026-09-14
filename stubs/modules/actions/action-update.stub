@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Actions;
+
+use Illuminate\Support\Facades\DB;
+use {{modelClass}};
+use App\Modules\{{module}}\{{entity}}\DTOs\Update{{entity}}DTO;
+
+class Update{{entity}}Action
+{
+    public function __invoke(Update{{entity}}DTO $dto): {{modelBaseName}} {
+
+        return DB::transaction(
+            function () use ($dto) {
+
+                $model = {{modelBaseName}}::findOrFail($dto->id);
+
+                $model->update(
+                    $dto->attributes()
+                );
+
+                $model->refresh();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Future hooks
+                |--------------------------------------------------------------------------
+                */
+
+                // app({{entity}}Service::class)
+                //     ->afterUpdate($model);
+
+                return $model;
+            }
+        );
+    }
+}

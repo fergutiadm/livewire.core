@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Queries;
+
+class {{entity}}Query
+{
+    public function get()
+    {
+        //
+    }
+}

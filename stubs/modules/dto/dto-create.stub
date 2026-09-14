@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\DTOs;
+
+class Create{{entity}}DTO
+{
+    public function __construct(
+{{dtoPropertiesCreate}}
+    ) {}
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+{{dtoFromArrayCreate}}
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+{{dtoAttributesCreate}}
+        ];
+    }
+}

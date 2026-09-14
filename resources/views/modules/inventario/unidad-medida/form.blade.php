@@ -1,0 +1,3 @@
+<div>
+    {{ entity }} Form
+</div>

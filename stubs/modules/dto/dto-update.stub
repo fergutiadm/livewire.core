@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\DTOs;
+
+class Update{{entity}}DTO
+{
+    public function __construct(
+        public readonly int $id,
+{{dtoPropertiesUpdate}}
+    ) {}
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            id: (int) $data['id'],
+{{dtoFromArrayUpdate}}
+        );
+    }
+
+    public function attributes(): array
+    {
+        return [
+{{dtoAttributesUpdate}}
+        ];
+    }
+}

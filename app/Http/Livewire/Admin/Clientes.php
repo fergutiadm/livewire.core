@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Http\Livewire\Admin;
+
+use App\Models\Cliente;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Throwable;
+
+class Clientes extends Component
+{
+    use WithPagination;
+
+    // Propiedades del modelo
+    public $nombre, $email, $telefono, $ci, $clienteId;
+
+    // Control de UI
+    public $perPage = 10;
+    public $formularioVisible = true;
+    public ?int $clienteIdToDelete = null;
+    public bool $confirmingClienteDeletion = false;
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function save()
+    {
+        $rules = [
+            'nombre' => 'required|string|max:255',
+            'email'  => 'required|email|unique:clientes,email,' . $this->clienteId,
+            'telefono'  => 'required',
+            'ci'     => 'required',
+        ];
+
+        $this->validate($rules);
+
+        try {
+            if ($this->clienteId) {
+                $cliente          = Cliente::findOrFail($this->clienteId);
+                $cliente->nombre  = $this->nombre;
+                $cliente->email   = $this->email;
+                $cliente->ci      = $this->ci;
+
+                $cliente->save();
+            } else {
+                $cliente = Cliente::create([
+                    'nombre'  => $this->nombre,
+                    'email'   => $this->email,
+                    'ci'      => $this->ci,
+                ]);
+            }
+
+            $this->dispatch('livewire:confirm', [
+                'message'  => $this->clienteId ? 'Cliente actualizado con éxito.' : 'Cliente creado con éxito',
+                'type'     => 'success',
+            ]);
+
+            $this->resetForm();
+            $this->dispatch('clientesActualizados'); // Para refrescar la tabla lazy
+
+        } catch (Throwable $e) {
+            Log::error('Error en save clientes', ['exception' => $e]);
+            $this->dispatch('livewire:alert', ['message' => 'Error al procesar cliente.', 'type' => 'error']);
+        }
+        $this->dispatch('clientesActualizados');
+    }
+
+    protected function messages()
+    {
+        return [
+            'nombre.required'     => 'El nombre es obligatorio.',
+            'nombre.max'          => 'El nombre es demasiado largo (máximo 255 caracteres).',
+            'email.required'      => 'El correo electrónico es obligatorio.',
+            'email.email'         => 'Ingrese un formato de correo electrónico válido.',
+            'email.unique'        => 'Este correo electrónico ya está registrado en el sistema.',
+            'telefono.required'      => 'El móvil es obligatorio.',
+            'ci.required'         => 'El CI es obligatorio.',
+        ];
+    }
+
+    #[On('edit')]
+    public function edit($id)
+    {
+        try {
+            $cliente = Cliente::findOrFail($id);
+            $this->clienteId  = $cliente->id;
+            $this->nombre     = $cliente->nombre;
+            $this->email      = $cliente->email;
+            $this->telefono      = $cliente->telefono;
+            $this->ci         = $cliente->ci;
+            $this->formularioVisible = true;
+        } catch (Throwable $e) {
+            $this->dispatch('livewire:alert', ['message' => 'Cliente no encontrado.', 'type' => 'error']);
+        }
+    }
+
+    #[On('confirmDelete')]
+    public function confirmDelete(int $id)
+    {
+        $this->clienteIdToDelete = $id;
+        $this->confirmingClienteDeletion = true;
+    }
+
+    public function delete()
+    {
+        if (!$this->clienteIdToDelete) return;
+
+        try {
+            $cliente = Cliente::findOrFail($this->clienteIdToDelete);
+            $cliente->delete();
+
+            $this->confirmingClienteDeletion = false;
+            $this->dispatch('clientesActualizados');
+            $this->dispatch('livewire:confirm', ['message' => 'Cliente eliminado.', 'type' => 'success']);
+        } catch (Throwable $e) {
+            Log::error('Error delete cliente', ['id' => $this->clienteIdToDelete, 'exception' => $e]);
+        }
+
+        $this->clienteIdToDelete = null;
+    }
+
+    public function cancelDelete()
+    {
+        $this->clienteIdToDelete = null;
+        $this->confirmingClienteDeletion = false;
+    }
+
+    public function cancel() {
+        $this->resetForm();
+    }
+
+    private function resetForm()
+    {
+        $this->reset(['clienteId', 'nombre', 'email', 'telefono', 'ci']);
+        $this->resetValidation();
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.clientes')->layout('layouts.app_admin');
+    }
+}

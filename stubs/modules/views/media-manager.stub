@@ -1,0 +1,3 @@
+<div>
+    {{ entity }} Media Manager
+</div>

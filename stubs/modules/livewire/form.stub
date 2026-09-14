@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Modules\{{module}}\{{entity}}\Livewire;
+
+use Livewire\Component;
+
+class {{entity}}Form extends Component
+{
+    public function render()
+    {
+        return view('modules.{{moduleLower}}.{{entityLower}}.form');
+    }
+}
