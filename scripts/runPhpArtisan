@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# PHP 8.1 específico de HostingDelCaribe
+PHP="/opt/cpanel/ea-php81/root/usr/bin/php"
+
+# Proyecto Laravel
+PROJECT="/home/fergumix/livewire.fergumix.com"
+
+# Validar PHP
+if [ ! -x "$PHP" ]; then
+    echo "ERROR: No se encontró PHP 8.1 en:"
+    echo "$PHP"
+    exit 1
+fi
+
+# Validar Laravel
+if [ ! -f "$PROJECT/artisan" ]; then
+    echo "ERROR: No se encontró el archivo artisan en:"
+    echo "$PROJECT"
+    exit 1
+fi
+
+# Validar que se haya indicado un comando
+if [ "$#" -eq 0 ]; then
+    echo "Uso:"
+    echo "  runPhpArtisan <comando-artisan>"
+    echo
+    echo "Ejemplo:"
+    echo "  runPhpArtisan optimize:clear"
+    exit 1
+fi
+
+# Entrar al proyecto
+cd "$PROJECT" || exit 1
+
+# Ejecutar Artisan con PHP 8.1
+"$PHP" artisan "$@"
