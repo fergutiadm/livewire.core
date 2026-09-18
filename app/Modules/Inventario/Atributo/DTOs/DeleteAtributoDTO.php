@@ -5,13 +5,21 @@ namespace App\Modules\Inventario\Atributo\DTOs;
 class DeleteAtributoDTO
 {
     public function __construct(
-        public readonly int $id
-    ) {}
+        public int $id,
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
             id: (int) $data['id'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+        ];
     }
 }

@@ -4,7 +4,8 @@ namespace App\Modules\Inventario\Atributo\Livewire;
 
 use App\Core\CQRS\HasCommands;
 use App\Models\Atributo;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -14,66 +15,344 @@ class AtributoForm extends Component
 
     public ?int $atributoId = null;
 
+    public string $codigo = '';
+
     public string $nombre = '';
 
     public string $descripcion = '';
 
     public int $orden_visual = 1;
 
-    public array $palette = [
-        ['bg' => 'bg-white',      'text' => 'text-black'],
-        ['bg' => 'bg-blue-500',   'text' => 'text-white'],
-        ['bg' => 'bg-green-500',  'text' => 'text-white'],
-        ['bg' => 'bg-yellow-500', 'text' => 'text-black'],
-        ['bg' => 'bg-purple-500', 'text' => 'text-white'],
-        ['bg' => 'bg-pink-500',   'text' => 'text-white'],
-        ['bg' => 'bg-indigo-500', 'text' => 'text-white'],
-        ['bg' => 'bg-teal-500',   'text' => 'text-white'],
-        ['bg' => 'bg-orange-500', 'text' => 'text-black'],
-        ['bg' => 'bg-cyan-500',   'text' => 'text-black'],
-        ['bg' => 'bg-black',      'text' => 'text-white'],
-    ];
+    public array $valores = [];
 
-    protected $rules = [
-        'nombre' => 'required|string|max:255',
+    public ?int $valorEditandoIndex = null;
 
-        'descripcion' => 'nullable|string|min:3|max:255',
-    ];
+    public string $valorCodigo = '';
+
+    public string $valorNombre = '';
+
+    protected function rules(): array
+    {
+        $codigoRule = Rule::unique(
+            'atributos',
+            'codigo'
+        );
+
+        if ($this->atributoId !== null) {
+            $codigoRule->ignore($this->atributoId);
+        }
+
+        return [
+            'codigo' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[A-Z0-9._-]+$/',
+                $codigoRule,
+            ],
+
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'descripcion' => [
+                'nullable',
+                'string',
+                'min:3',
+                'max:255',
+            ],
+
+            'valores.*.codigo' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[A-Z0-9._-]+$/',
+            ],
+
+            'valores.*.nombre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ];
+    }
 
     protected function messages(): array
     {
         return [
+            'codigo.required' =>
+                'El código es obligatorio.',
+
+            'codigo.max' =>
+                'El código no puede superar 100 caracteres.',
+
+            'codigo.regex' =>
+                'El código solo puede contener letras, números, punto, guion y guion bajo.',
+
+            'codigo.unique' =>
+                'Ya existe un atributo con este código.',
+
             'nombre.required' =>
-                'El Nombre es obligatorio',
+                'El Nombre es obligatorio.',
 
             'descripcion.min' =>
-                'La descripción debe tener al menos 3 caracteres',
+                'La descripción debe tener al menos 3 caracteres.',
 
             'descripcion.max' =>
-                'Descripción demasiado larga',
+                'Descripción demasiado larga.',
+
+            'valores.*.codigo.required' =>
+                'El código del valor es obligatorio.',
+
+            'valores.*.codigo.regex' =>
+                'El código del valor contiene caracteres no permitidos.',
+
+            'valores.*.nombre.required' =>
+                'El nombre del valor es obligatorio.',
         ];
+    }
+
+    #[On('atributo-nuevo')]
+    public function nuevo(): void
+    {
+        $this->resetForm();
     }
 
     #[On('atributo-cargar-edicion')]
     public function edit(int $id): void
     {
-        $atributo = Atributo::findOrFail($id);
+        $atributo = Atributo::query()
+            ->with([
+                'valores' => function ($query) {
+                    $query
+                        ->where('activo', true)
+                        ->orderBy('orden_visual');
+                },
+            ])
+            ->findOrFail($id);
 
         $this->atributoId = $atributo->id;
-
+        $this->codigo = $atributo->codigo;
         $this->nombre = $atributo->nombre;
-
         $this->descripcion = $atributo->descripcion ?? '';
+        $this->orden_visual = (int) (
+            $atributo->orden_visual ?? 1
+        );
 
-        $this->orden_visual = (int) $atributo->orden_visual;
+        $this->valores = $atributo->valores
+            ->map(function ($valor) {
+                return [
+                    'id' => $valor->id,
+                    'codigo' => $valor->codigo,
+                    'nombre' => $valor->nombre,
+                    'orden_visual' => (int) (
+                        $valor->orden_visual ?? 1
+                    ),
+                ];
+            })
+            ->values()
+            ->toArray();
 
-        // Avisar que terminó la edición
+        $this->normalizarValores();
+        $this->resetEditorValor();
+        $this->resetValidation();
+
         $this->dispatch(
             'atributo-edicion-cargado',
             atributoId: $atributo->id
         );
+    }
 
-        $this->resetValidation();
+    public function agregarValor(): void
+    {
+        $this->resetValidation([
+            'valorCodigo',
+            'valorNombre',
+        ]);
+
+        $this->validate([
+            'valorCodigo' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[A-Z0-9._-]+$/',
+            ],
+
+            'valorNombre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ], [
+            'valorCodigo.required' =>
+                'El código del valor es obligatorio.',
+
+            'valorCodigo.regex' =>
+                'El código del valor contiene caracteres no permitidos.',
+
+            'valorNombre.required' =>
+                'El nombre del valor es obligatorio.',
+        ]);
+
+        $codigo = mb_strtoupper(
+            trim($this->valorCodigo)
+        );
+
+        $nombre = trim(
+            $this->valorNombre
+        );
+
+        foreach ($this->valores as $index => $valor) {
+            if (
+                $this->valorEditandoIndex !== null
+                && $index === $this->valorEditandoIndex
+            ) {
+                continue;
+            }
+
+            $codigoExistente = mb_strtoupper(
+                trim((string) ($valor['codigo'] ?? ''))
+            );
+
+            if ($codigoExistente === $codigo) {
+                $this->addError(
+                    'valorCodigo',
+                    'Ya existe un valor con este código.'
+                );
+
+                return;
+            }
+        }
+
+        if ($this->valorEditandoIndex !== null) {
+            $index = $this->valorEditandoIndex;
+
+            if (isset($this->valores[$index])) {
+                $this->valores[$index]['codigo'] = $codigo;
+                $this->valores[$index]['nombre'] = $nombre;
+
+                $this->normalizarValores();
+                $this->resetEditorValor();
+
+                return;
+            }
+        }
+
+        $this->valores[] = [
+            'id' => null,
+            'codigo' => $codigo,
+            'nombre' => $nombre,
+            'orden_visual' => count($this->valores) + 1,
+        ];
+
+        $this->normalizarValores();
+        $this->resetEditorValor();
+    }
+
+    public function editarValor(int $index): void
+    {
+        if (!isset($this->valores[$index])) {
+            return;
+        }
+
+        $valor = $this->valores[$index];
+
+        $this->valorEditandoIndex = $index;
+
+        $this->valorCodigo = (string) (
+            $valor['codigo'] ?? ''
+        );
+
+        $this->valorNombre = (string) (
+            $valor['nombre'] ?? ''
+        );
+
+        $this->resetValidation([
+            'valorCodigo',
+            'valorNombre',
+        ]);
+    }
+
+    public function eliminarValor(int $index): void
+    {
+        if (!isset($this->valores[$index])) {
+            return;
+        }
+
+        unset($this->valores[$index]);
+
+        $this->valores = array_values(
+            $this->valores
+        );
+
+        $this->normalizarValores();
+        $this->resetEditorValor();
+    }
+
+    public function moverValorArriba(int $index): void
+    {
+        if (
+            $index <= 0
+            || !isset($this->valores[$index])
+        ) {
+            return;
+        }
+
+        $anterior = $index - 1;
+
+        [
+            $this->valores[$anterior],
+            $this->valores[$index],
+        ] = [
+            $this->valores[$index],
+            $this->valores[$anterior],
+        ];
+
+        $this->normalizarValores();
+
+        if ($this->valorEditandoIndex === $index) {
+            $this->valorEditandoIndex = $anterior;
+        } elseif ($this->valorEditandoIndex === $anterior) {
+            $this->valorEditandoIndex = $index;
+        }
+    }
+
+    public function moverValorAbajo(int $index): void
+    {
+        $ultimo = count($this->valores) - 1;
+
+        if (
+            $index < 0
+            || $index >= $ultimo
+            || !isset($this->valores[$index])
+        ) {
+            return;
+        }
+
+        $siguiente = $index + 1;
+
+        [
+            $this->valores[$index],
+            $this->valores[$siguiente],
+        ] = [
+            $this->valores[$siguiente],
+            $this->valores[$index],
+        ];
+
+        $this->normalizarValores();
+
+        if ($this->valorEditandoIndex === $index) {
+            $this->valorEditandoIndex = $siguiente;
+        } elseif ($this->valorEditandoIndex === $siguiente) {
+            $this->valorEditandoIndex = $index;
+        }
+    }
+
+    public function cancelarEdicionValor(): void
+    {
+        $this->resetEditorValor();
     }
 
     #[On('atributo-edicion-cargado')]
@@ -82,64 +361,45 @@ class AtributoForm extends Component
         $this->dispatch('loading-stop');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Guardar
-    |--------------------------------------------------------------------------
-    */
-
     public function save(): void
     {
         try {
+            $this->normalizarValores();
+
             $this->validate();
-        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->validarCodigosValores();
+        } catch (ValidationException $e) {
             $this->dispatch('loading-stop');
 
             throw $e;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | UPDATE
-        |--------------------------------------------------------------------------
-        */
+        $payload = $this->payload();
 
-        if ($this->atributoId) {
+        if ($this->atributoId !== null) {
+            $payload['id'] = $this->atributoId;
 
-            $payload = $this->payload();
-
-            //Logger()->info("ACTUALIZANDO PRODUCTO", ['payload'=>$payload]);
-
-            $atributo = $this->command(
+            $this->command(
                 'atributo.update',
-                $payload,
+                $payload
             );
 
             $this->dispatch(
-                'atributo-actualizado',
+                'atributo-actualizado'
             );
 
             $this->dispatch(
                 'livewire:alert',
                 [
                     'message' =>
-                        'Atributo Actualizado correctamente...',
+                        'Atributo actualizado correctamente...',
                     'type' => 'success',
                 ]
             );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE
-        |--------------------------------------------------------------------------
-        */
-
-        else {
-
-            $atributo = $this->command(
+        } else {
+            $this->command(
                 'atributo.create',
-                $this->payload()
+                $payload
             );
 
             $this->dispatch(
@@ -150,19 +410,11 @@ class AtributoForm extends Component
                 'livewire:alert',
                 [
                     'message' =>
-                        'Atributo Creado correctamente...',
+                        'Atributo creado correctamente...',
                     'type' => 'success',
                 ]
             );
-
-            $this->dispatch('loading-stop');
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Notificar página
-        |--------------------------------------------------------------------------
-        */
 
         $this->dispatch(
             'atributo-guardado'
@@ -170,41 +422,53 @@ class AtributoForm extends Component
 
         $this->dispatch('loading-stop');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Reset
-        |--------------------------------------------------------------------------
-        */
-
         $this->resetForm();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Payload CQRS
-    |--------------------------------------------------------------------------
-    */
+    private function validarCodigosValores(): void
+    {
+        $codigos = [];
+
+        foreach ($this->valores as $index => $valor) {
+            $codigo = mb_strtoupper(
+                trim((string) ($valor['codigo'] ?? ''))
+            );
+
+            if (isset($codigos[$codigo])) {
+                throw ValidationException::withMessages([
+                    "valores.{$index}.codigo" =>
+                        'Este código ya está siendo utilizado.',
+                ]);
+            }
+
+            $codigos[$codigo] = true;
+        }
+    }
 
     private function payload(): array
     {
         return [
             'id' => $this->atributoId,
 
-            'atributo_id' => $this->atributoId,
+            'codigo' => mb_strtoupper(
+                trim($this->codigo)
+            ),
 
-            'nombre' => $this->nombre,
+            'nombre' => trim(
+                $this->nombre
+            ),
 
-            'descripcion' => $this->descripcion,
+            'descripcion' => trim(
+                $this->descripcion
+            ) !== ''
+                ? trim($this->descripcion)
+                : null,
 
             'orden_visual' => $this->orden_visual,
+
+            'valores' => $this->valores,
         ];
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cancelar
-    |--------------------------------------------------------------------------
-    */
 
     public function cancel(): void
     {
@@ -213,44 +477,71 @@ class AtributoForm extends Component
         $this->dispatch(
             'livewire:alert',
             [
-                'message' =>
-                    'Acción cancelada...',
-                'type' =>
-                    'warning',
+                'message' => 'Acción cancelada...',
+                'type' => 'warning',
             ]
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Reset formulario
-    |--------------------------------------------------------------------------
-    */
-
     #[On('reset-form')]
     public function resetFormEvent(): void
     {
-        Log::info('Listener reset-form', [
-            'atributoId' => $this->atributoId,
-        ]);
-
         $this->resetForm();
     }
 
     public function resetForm(): void
     {
-        $this->reset([
-            'atributoId',
-            'nombre',
-            'descripcion',
-            'orden_visual',
-        ]);
+        $this->atributoId = null;
+        $this->codigo = '';
+        $this->nombre = '';
+        $this->descripcion = '';
+        $this->orden_visual = 1;
+        $this->valores = [];
 
+        $this->resetEditorValor();
         $this->resetValidation();
+    }
+
+    private function resetEditorValor(): void
+    {
+        $this->valorEditandoIndex = null;
+        $this->valorCodigo = '';
+        $this->valorNombre = '';
+
+        $this->resetValidation([
+            'valorCodigo',
+            'valorNombre',
+        ]);
+    }
+
+    private function normalizarValores(): void
+    {
+        foreach ($this->valores as $index => $valor) {
+            $this->valores[$index]['orden_visual'] =
+                $index + 1;
+
+            $this->valores[$index]['codigo'] =
+                mb_strtoupper(
+                    trim((string) (
+                        $valor['codigo'] ?? ''
+                    ))
+                );
+
+            $this->valores[$index]['nombre'] =
+                trim((string) (
+                    $valor['nombre'] ?? ''
+                ));
+        }
+
+        $this->valores = array_values(
+            $this->valores
+        );
     }
 
     public function render()
     {
-        return view('modules.inventario.atributo.form');
+        return view(
+            'modules.inventario.atributo.form'
+        );
     }
 }

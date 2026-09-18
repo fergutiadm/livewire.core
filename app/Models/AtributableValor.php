@@ -1,54 +1,43 @@
 <?php
 
-namespace App\Models;
+namespace App\Modules\Inventario\Atributo\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class AtributableValor extends Model
+class AtributoValor extends Model
 {
-    protected $table = 'atributables_valores';
+    use HasFactory;
+
+    protected $table = 'atributos_valores';
 
     protected $fillable = [
-        'atributo_valor_id',
-        'atributable_id',
-        'atributable_type',
+        'atributo_id',
+        'codigo',
+        'nombre',
         'orden_visual',
+        'activo',
     ];
 
-    public $timestamps = true;
+    protected $casts = [
+        'orden_visual' => 'integer',
+        'activo' => 'boolean',
+    ];
 
-    public function atributable(): MorphTo
+    public function atributo(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Atributo::class);
     }
 
-    public function valor()
-    {
-        return $this->belongsTo(AtributoValor::class, 'atributo_valor_id');
-    }
-
-    public function atributoValor()
-    {
-        return $this->belongsTo(AtributoValor::class, 'atributo_valor_id');
-    }
-
-    public function guardarCardsOrden(array $cards, string $modelType, int $modelId)
-    {
-        $orden = 1;
-        foreach ($cards as $atributoId => $card) {
-            foreach ($card['valores'] as $valorId => $valor) {
-                AtributableValor::updateOrCreate(
-                    [
-                        'atributo_valor_id' => $valorId,
-                        'atributable_type' => "App\\Models\\$modelType",
-                        'atributable_id' => $modelId,
-                    ],
-                    [
-                        'orden_visual' => $orden++
-                    ]
-                );
-            }
-        }
-    }
+    // public function variantes(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(
+    //         ProductoVariante::class,
+    //         'producto_variantes_atributos_valores',
+    //         'atributo_valor_id',
+    //         'producto_variante_id'
+    //     );
+    // }
 }

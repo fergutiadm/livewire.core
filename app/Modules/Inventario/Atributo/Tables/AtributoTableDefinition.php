@@ -14,27 +14,114 @@ class AtributoTableDefinition extends BaseTable
 {
     public function query(): Builder
     {
-        $query = Atributo::query()
+        return Atributo::query()
+            ->withCount([
+                'valores as valores_activos_count' => function ($query) {
+                    $query->where('activo', true);
+                },
+            ])
             ->orderBy('orden_visual');
-
-        return $query;
     }
 
     protected function searchable(): array
     {
         return [
             'nombre',
+            'codigo',
             'descripcion',
         ];
     }
 
     public function columns(): array
     {
+        $nombre = (new HtmlColumn(
+            label: 'Nombre',
+            field: 'nombre',
+        ))->formatStateUsing(function ($state, $atributo) {
+            $nombre = $atributo->nombre ?? '';
+            $ordenVisual = $atributo->orden_visual ?? '';
+
+            $colorText = $atributo->color_text
+                ?? 'text-white';
+
+            $colorBg = $atributo->color_bg
+                ?? 'bg-indigo-500';
+
+            return '
+                <p class="
+                    block
+                    text-sm
+                    text-slate-800
+                    flex
+                    items-center
+                    flex-wrap-0
+                ">
+                    <span class="truncate">
+                        ' . e($nombre) . '
+                    </span>
+
+                    <span
+                        class="
+                            text-xs
+                            font-semibold
+                            px-2
+                            py-0.5
+                            rounded-full
+                            ml-2
+                            flex-shrink-0
+                            ' . e($colorText) . '
+                            ' . e($colorBg) . '
+                        "
+                    >
+                        ' . e($ordenVisual) . '
+                    </span>
+                </p>
+            ';
+        });
+
+        $activo = (new HtmlColumn(
+            label: 'Activo',
+            field: 'activo',
+            extra: true,
+        ))->formatStateUsing(function ($state, $atributo) {
+            $texto = $state ? 'Sí' : 'NO';
+
+            $colorText = $state
+                ? 'text-green-700'
+                : 'text-red-700';
+
+            $colorBg = $state
+                ? 'bg-green-100'
+                : 'bg-red-100';
+
+            return '
+                <button
+                    type="button"
+                    wire:click="toggleActivo(' .
+                        e($atributo->id) .
+                    ')"
+                    title="Clic para cambiar"
+                    class="
+                        text-xs
+                        font-semibold
+                        px-2
+                        py-0.5
+                        rounded-full
+                        ml-2
+                        flex-shrink-0
+                        ' . $colorText . '
+                        ' . $colorBg . '
+                    "
+                >
+                    ' . e($texto) . '
+                </button>
+            ';
+        });
+
         $acciones = (new ActionsColumn(
             label: 'Acciones',
             field: 'acciones',
         ))->actions([
-
             (new TableAction('Editar'))
                 ->color('yellow')
                 ->event('atributo-editar')
@@ -43,46 +130,29 @@ class AtributoTableDefinition extends BaseTable
             (new TableAction('Eliminar'))
                 ->color('red')
                 ->event('atributo-eliminar')
-                ->loading('Eliminando atributo...'),
-
+                ->loading('Desactivando atributo...'),
         ])
         ->align('right');
-
-        $nombre = (new HtmlColumn(
-            label: 'Nombre',
-            field: 'nombre',
-        ))->formatStateUsing(function ($state, $atributo) {
-
-            $nombre = $atributo->nombre ?? '';
-            $orden_visual = $atributo->orden_visual ?? '';
-
-            $color_text = $atributo->color_text ?? 'text-white';
-            $color_bg = $atributo->color_bg ?? 'bg-indigo-500';
-
-
-            return '
-                <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
-
-                <span class="truncate">' . e($nombre) . '</span>
-
-                <span
-                        class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
-                        ' . e($color_text) . '
-                        ' . e($color_bg)  . '">
-                    ' . e($orden_visual) .
-                '</span>
-
-            </p>
-            ';
-        });
 
         return [
             $nombre,
 
             new TextColumn(
+                label: 'Código',
+                field: 'codigo',
+            ),
+
+            new TextColumn(
                 label: 'Descripción',
                 field: 'descripcion',
             ),
+
+            new TextColumn(
+                label: 'Valores',
+                field: 'valores_activos_count',
+            ),
+
+            $activo,
 
             $acciones,
         ];

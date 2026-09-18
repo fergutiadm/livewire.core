@@ -13,30 +13,37 @@ class Atributo extends Model
     protected bool $includeAllOnDelete = true;
 
     protected $fillable = [
-                            'nombre',
-                            'descripcion',
-                            'orden_visual',
-                            'color_bg',
-                            'color_text',
-                          ];
+        'codigo',
+        'nombre',
+        'descripcion',
+        'orden_visual',
+        'color_bg',
+        'color_text',
+        'activo',
+    ];
 
+    protected $casts = [
+        'orden_visual' => 'integer',
+        'activo' => 'boolean',
+    ];
 
     protected static function booted()
     {
         static::creating(function ($atributo) {
             if ($atributo->orden_visual === null) {
                 $atributo->orden_visual =
-                    self::max('orden_visual') + 1;
+                    ((int) self::max('orden_visual')) + 1;
+            }
+
+            if ($atributo->activo === null) {
+                $atributo->activo = true;
             }
         });
     }
 
-    /* =====================
-    |  RELACIONES
-    ===================== */
-
     public function valores(): HasMany
     {
-        return $this->hasMany(AtributoValor::class);
+        return $this->hasMany(AtributoValor::class)
+            ->orderBy('orden_visual');
     }
 }

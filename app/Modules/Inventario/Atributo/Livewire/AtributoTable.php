@@ -7,8 +7,6 @@ use App\Http\Livewire\Traits\HasReorderableItems;
 use App\Models\Atributo;
 use Livewire\Attributes\On;
 
-//use App\Modules\Inventario\Atributo\Tables\AtributoTableDefinition;
-
 class AtributoTable extends TableComponent
 {
     use HasReorderableItems;
@@ -16,7 +14,7 @@ class AtributoTable extends TableComponent
     #[On('atributo-guardado')]
     public function refreshTable(): void
     {
-        //$this->resetPage();
+        //
     }
 
     protected function sortable(): bool
@@ -40,22 +38,60 @@ class AtributoTable extends TableComponent
     {
         $this->reorderItems(
             $orderedIds,
-            Atributo::class);
+            Atributo::class
+        );
 
         $this->resetPage();
 
-        $this->dispatch('atributo-orden-actualizado');
+        $this->dispatch(
+            'atributo-orden-actualizado'
+        );
+    }
+
+    public function toggleActivo(int $id): void
+    {
+        $atributo = Atributo::query()
+            ->findOrFail($id);
+
+        $activoNuevo = !$atributo->activo;
+
+        $this->command(
+            'atributo.update',
+            [
+                'id' => $atributo->id,
+                'codigo' => $atributo->codigo,
+                'nombre' => $atributo->nombre,
+                'descripcion' => $atributo->descripcion,
+                'orden_visual' => $atributo->orden_visual,
+                'activo' => $activoNuevo,
+            ]
+        );
+
+        $this->dispatch(
+            'livewire:alert',
+            [
+                'message' => $activoNuevo
+                    ? 'Atributo activado correctamente...'
+                    : 'Atributo desactivado correctamente...',
+                'type' => 'success',
+            ]
+        );
+
+        $this->dispatch('loading-stop');
     }
 
     protected function tableClass(): string
     {
-        return \App\Modules\inventario\Atributo\Tables\AtributoTableDefinition::class;
+        return \App\Modules\Inventario\Atributo\Tables\AtributoTableDefinition::class;
     }
 
     public function placeholder()
     {
-        return view('components.loading-placeholder', [
-            'message' => 'Cargando atributos...',
-        ]);
+        return view(
+            'components.loading-placeholder',
+            [
+                'message' => 'Cargando atributos...',
+            ]
+        );
     }
 }

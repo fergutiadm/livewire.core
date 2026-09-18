@@ -19,27 +19,22 @@
         <x-slot name="header">
             <x-ui.crud.header
                 title="Atributos"
-                description="Gestión de atributos"
+                description="Gestión de atributos y sus valores"
                 :show-form="$showForm"
             />
         </x-slot>
 
         <x-slot name="form">
             <x-ui.crud.form :show="$showForm">
-
                 <livewire:inventario.atributo.form />
-
             </x-ui.crud.form>
         </x-slot>
 
-        <x-slot:table>
-
+        <x-slot name="table">
             <livewire:inventario.atributo.table
-                {{--  lazy  --}}
-                wire:key="atributo -table-{{ $tableVersion }}"
+                wire:key="atributo-table-{{ $tableVersion }}"
             />
-
-        </x-slot:table>
+        </x-slot>
 
         <x-slot name="deleteModal">
             <x-ui.crud.delete-modal

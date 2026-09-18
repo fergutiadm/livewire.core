@@ -2,43 +2,44 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasTrazas;
+use App\Models\Atributo;
+use App\Models\ProductoVariante;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AtributoValor extends Model
 {
-    use HasTrazas;
-
-    protected bool $includeAllOnDelete = true;
+    use HasFactory;
 
     protected $table = 'atributos_valores';
 
-    protected $fillable = ['atributo_id', 'valor', 'descripcion', 'orden_visual'];
+    protected $fillable = [
+        'atributo_id',
+        'codigo',
+        'nombre',
+        'orden_visual',
+        'activo',
+    ];
 
-    public function categorias()
-    {
-        return $this->morphedByMany(
-            Categoria::class,
-            'atributable',
-            'atributables_valores'
-        );
-    }
+    protected $casts = [
+        'orden_visual' => 'integer',
+        'activo' => 'boolean',
+    ];
 
-    public function productos()
-    {
-        return $this->morphedByMany(
-            Producto::class,
-            'atributable',
-            'atributables_valores'
-        );
-    }
-
-    /* =====================
-     |  RELACIONES
-     ===================== */
     public function atributo(): BelongsTo
     {
         return $this->belongsTo(Atributo::class);
     }
+
+    // public function variantes(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(
+    //         ProductoVariante::class,
+    //         'producto_variantes_atributos_valores',
+    //         'atributo_valor_id',
+    //         'producto_variante_id'
+    //     );
+    // }
 }

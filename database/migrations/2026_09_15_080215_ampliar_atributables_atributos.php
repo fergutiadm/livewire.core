@@ -21,17 +21,6 @@ return new class extends Migration
                 ->default(true)
                 ->after('orden_visual');
 
-            $table->timestamps();
-
-            $table->unique(
-                [
-                    'atributable_type',
-                    'atributable_id',
-                    'atributo_id',
-                ],
-                'atributables_atributos_unico'
-            );
-
             $table->index(
                 [
                     'atributable_type',
@@ -47,16 +36,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('atributables_atributos', function (Blueprint $table) {
-            $table->dropUnique('atributables_atributos_unico');
-
             $table->dropIndex('atributables_atributos_tipo_activo_index');
 
             $table->dropColumn([
                 'tipo',
                 'obligatorio',
                 'activo',
-                'created_at',
-                'updated_at',
             ]);
         });
     }

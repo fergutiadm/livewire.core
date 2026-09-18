@@ -2,16 +2,14 @@
 
 namespace App\Modules\Inventario\Atributo\Livewire;
 
-use Livewire\Component;
-use Livewire\Attributes\On;
-
 use App\Core\CQRS\HasCommands;
-
-use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class AtributoPage extends Component
 {
     use HasCommands;
+
     public bool $showForm = true;
 
     public int $tableVersion = 0;
@@ -21,19 +19,14 @@ class AtributoPage extends Component
     public ?int $atributoDeleteId = null;
 
     #[On('atributo-filtros-actualizados')]
-    public function actualizarFiltros(): void {
-
+    public function actualizarFiltros(): void
+    {
         $this->tableVersion++;
-
-        // Log::info('EVENTO ATRIBUTO FILTRO ACTUALIZADOS', [
-            //             'atributoId' => $atributoId,
-            //         ]);
     }
 
     #[On('atributo-guardado')]
     public function onSaved(): void
     {
-        // Log::info('Listener atributo-guardado', ['$this->tableVersion'=>$this->tableVersion]);
         $this->tableVersion++;
     }
 
@@ -70,7 +63,7 @@ class AtributoPage extends Component
 
         $this->dispatch('livewire:alert', [
             'message' => 'Acción cancelada...',
-            'type'    => 'warning',
+            'type' => 'warning',
         ]);
     }
 
@@ -88,8 +81,8 @@ class AtributoPage extends Component
         );
 
         $this->dispatch('livewire:alert', [
-            'message' => 'Atributo Eliminado...',
-            'type'    => 'success',
+            'message' => 'Atributo desactivado correctamente...',
+            'type' => 'success',
         ]);
 
         $this->showDeleteModal = false;
@@ -98,6 +91,7 @@ class AtributoPage extends Component
         $this->tableVersion++;
 
         $this->dispatch('reset-form');
+        $this->dispatch('loading-stop');
     }
 
     #[On('atributo-eliminado')]
@@ -109,13 +103,19 @@ class AtributoPage extends Component
     public function toggleForm(): void
     {
         $this->showForm = !$this->showForm;
+
+        if ($this->showForm) {
+            $this->dispatch('atributo-nuevo');
+        }
     }
 
     public function render()
     {
-        return view('modules.inventario.atributo.page', [
-            'tableVersion' => $this->tableVersion,
-        ])->layout('layouts.app_admin');
+        return view(
+            'modules.inventario.atributo.page',
+            [
+                'tableVersion' => $this->tableVersion,
+            ]
+        )->layout('layouts.app_admin');
     }
-
 }
