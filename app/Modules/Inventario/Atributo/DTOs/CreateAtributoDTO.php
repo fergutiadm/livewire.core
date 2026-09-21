@@ -35,6 +35,13 @@ class CreateAtributoDTO
                     'orden_visual' => isset($valor['orden_visual'])
                         ? (int) $valor['orden_visual']
                         : null,
+
+                    'activo' => array_key_exists(
+                            'activo',
+                            $valor
+                        )
+                            ? (bool) $valor['activo']
+                            : true,
                 ],
                 $data['valores'] ?? []
             ),

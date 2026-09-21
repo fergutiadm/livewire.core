@@ -4,13 +4,12 @@ namespace App\Modules\Inventario\Atributo\Actions;
 
 use App\Models\Atributo;
 use App\Modules\Inventario\Atributo\DTOs\CreateAtributoDTO;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CreateAtributoAction
 {
-    public function execute(CreateAtributoDTO $dto): Atributo
+    public function __invoke(CreateAtributoDTO $dto): Atributo
     {
         return DB::transaction(function () use ($dto) {
             $this->validateDatos($dto);
@@ -18,7 +17,8 @@ class CreateAtributoAction
             $ordenVisual = $dto->orden_visual;
 
             if ($ordenVisual === null) {
-                $ordenVisual = ((int) Atributo::max('orden_visual')) + 1;
+                $ordenVisual =
+                    ((int) Atributo::max('orden_visual')) + 1;
             }
 
             $atributo = Atributo::create([
@@ -33,15 +33,18 @@ class CreateAtributoAction
                 $atributo->valores()->create([
                     'codigo' => $valor['codigo'],
                     'nombre' => $valor['nombre'],
-                    'orden_visual' => $valor['orden_visual'] ?? ($index + 1),
-                    'activo' => true,
+                    'orden_visual' =>
+                        $valor['orden_visual'] ?? ($index + 1),
+                    'activo' => array_key_exists('activo', $valor)
+                        ? (bool) $valor['activo']
+                        : true,
                 ]);
             }
 
             return $atributo->load([
                 'valores' => function ($query) {
                     $query
-                        ->where('activo', true)
+                        // ->where('activo', true)
                         ->orderBy('orden_visual');
                 },
             ]);
@@ -52,17 +55,21 @@ class CreateAtributoAction
     {
         if ($dto->codigo === '') {
             throw ValidationException::withMessages([
-                'codigo' => 'El código del atributo es obligatorio.',
+                'codigo' =>
+                    'El código del atributo es obligatorio.',
             ]);
         }
 
         if ($dto->nombre === '') {
             throw ValidationException::withMessages([
-                'nombre' => 'El nombre del atributo es obligatorio.',
+                'nombre' =>
+                    'El nombre del atributo es obligatorio.',
             ]);
         }
 
-        $this->validateCodigosValores($dto->valores);
+        $this->validateCodigosValores(
+            $dto->valores
+        );
     }
 
     private function validateCodigosValores(array $valores): void
@@ -80,19 +87,22 @@ class CreateAtributoAction
 
             if ($codigo === '') {
                 throw ValidationException::withMessages([
-                    'valores' => 'Todos los valores deben tener código.',
+                    'valores' =>
+                        'Todos los valores deben tener código.',
                 ]);
             }
 
             if ($nombre === '') {
                 throw ValidationException::withMessages([
-                    'valores' => 'Todos los valores deben tener nombre.',
+                    'valores' =>
+                        'Todos los valores deben tener nombre.',
                 ]);
             }
 
             if (isset($codigos[$codigo])) {
                 throw ValidationException::withMessages([
-                    'valores' => "El código de valor '{$codigo}' está repetido.",
+                    'valores' =>
+                        "El código de valor '{$codigo}' está repetido.",
                 ]);
             }
 

@@ -4,13 +4,13 @@ namespace App\Modules\Inventario\Atributo\Actions;
 
 use App\Models\Atributo;
 use App\Modules\Inventario\Atributo\DTOs\UpdateAtributoDTO;
-use App\Modules\Inventario\Atributo\Models\AtributoValor;
+use App\Models\AtributoValor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class UpdateAtributoAction
 {
-    public function execute(UpdateAtributoDTO $dto): Atributo
+    public function __invoke(UpdateAtributoDTO $dto): Atributo
     {
         return DB::transaction(function () use ($dto) {
             $atributo = Atributo::query()
@@ -32,12 +32,6 @@ class UpdateAtributoAction
 
             $atributo->update($data);
 
-            /*
-             * NULL significa que esta operación no modifica
-             * la colección de valores.
-             *
-             * Esto ocurre al activar/desactivar desde la tabla.
-             */
             if ($dto->valores !== null) {
                 $this->sincronizarValores(
                     $atributo,
@@ -48,7 +42,7 @@ class UpdateAtributoAction
             return $atributo->load([
                 'valores' => function ($query) {
                     $query
-                        ->where('activo', true)
+                        // ->where('activo', true)
                         ->orderBy('orden_visual');
                 },
             ]);
@@ -126,9 +120,6 @@ class UpdateAtributoAction
             $ordenVisual =
                 $valor['orden_visual'] ?? ($index + 1);
 
-            /*
-             * Valor existente.
-             */
             if (!empty($valor['id'])) {
                 $atributoValor = AtributoValor::query()
                     ->where('id', (int) $valor['id'])
@@ -156,7 +147,9 @@ class UpdateAtributoAction
                         (string) $valor['nombre']
                     ),
                     'orden_visual' => $ordenVisual,
-                    'activo' => true,
+                    'activo' => array_key_exists('activo', $valor)
+                        ? (bool) $valor['activo']
+                        : true,
                 ]);
 
                 $idsActivos[] = $atributoValor->id;
@@ -164,9 +157,6 @@ class UpdateAtributoAction
                 continue;
             }
 
-            /*
-             * Valor nuevo.
-             */
             $atributoValor = $atributo->valores()->create([
                 'codigo' => mb_strtoupper(
                     trim((string) $valor['codigo'])
@@ -181,10 +171,6 @@ class UpdateAtributoAction
             $idsActivos[] = $atributoValor->id;
         }
 
-        /*
-         * Los valores anteriores que desaparecieron del
-         * formulario pasan a inactivos.
-         */
         $query = AtributoValor::query()
             ->where('atributo_id', $atributo->id);
 

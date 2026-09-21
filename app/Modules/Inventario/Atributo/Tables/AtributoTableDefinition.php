@@ -127,10 +127,10 @@ class AtributoTableDefinition extends BaseTable
                 ->event('atributo-editar')
                 ->loading('Cargando atributo...'),
 
-            (new TableAction('Eliminar'))
-                ->color('red')
-                ->event('atributo-eliminar')
-                ->loading('Desactivando atributo...'),
+            // (new TableAction('Eliminar'))
+            //     ->color('red')
+            //     ->event('atributo-eliminar')
+            //     ->loading('Desactivando atributo...'),
         ])
         ->align('right');
 

@@ -39,6 +39,10 @@
         <x-slot name="deleteModal">
             <x-ui.crud.delete-modal
                 :show="$showDeleteModal"
+                title="Desactivar atributo"
+                message="¿Está seguro de que desea desactivar este atributo?"
+                confirm-text="Desactivar"
+                loading-message="Desactivando atributo..."
             />
         </x-slot>
 

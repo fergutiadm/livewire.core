@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeleteAtributoAction
 {
-    public function execute(DeleteAtributoDTO $dto): void
+    public function __invoke(DeleteAtributoDTO $dto): void
     {
         DB::transaction(function () use ($dto) {
             $atributo = Atributo::query()
@@ -19,9 +19,12 @@ class DeleteAtributoAction
                 'activo' => false,
             ]);
 
-            $atributo->valores()->update([
-                'activo' => false,
-            ]);
+            /**
+             * Desactiva todos los valores del Atributo
+             */
+            // $atributo->valores()->update([
+            //     'activo' => false,
+            // ]);
         });
     }
 }

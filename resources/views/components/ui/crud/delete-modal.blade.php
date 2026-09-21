@@ -1,11 +1,19 @@
 @props([
     'show' => false,
+
     'title' => 'Confirmar eliminación',
+
     'message' => '¿Está seguro de que desea eliminar este registro?',
+
     'cancelMethod' => 'cancelarEliminacion',
+
     'confirmMethod' => 'confirmarEliminacion',
+
     'cancelText' => 'Cancelar',
+
     'confirmText' => 'Eliminar',
+
+    'loadingMessage' => 'Eliminando...',
 ])
 
 @if($show)
@@ -44,6 +52,7 @@
 
             <div class="mt-6 flex justify-end gap-3">
 
+                {{-- CANCELAR --}}
                 <button
                     type="button"
                     wire:click="{{ $cancelMethod }}"
@@ -60,10 +69,11 @@
                     {{ $cancelText }}
                 </button>
 
+                {{-- CONFIRMAR --}}
                 <button
                     type="button"
                     wire:click="{{ $confirmMethod }}"
-                    x-on="$dispatch('loading-start', { message: 'Eliminando...' })"
+                    x-on:click="$dispatch('loading-start', { message: @js($loadingMessage) })"
                     class="
                         rounded-lg
                         bg-red-600
@@ -78,9 +88,7 @@
                 </button>
 
             </div>
-
         </div>
-
     </div>
 
 @endif

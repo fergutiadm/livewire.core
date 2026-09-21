@@ -2,6 +2,7 @@
 
 namespace App\Modules\Inventario\Atributo\Livewire;
 
+use App\Core\CQRS\HasCommands;
 use App\Core\Tables\TableComponent;
 use App\Http\Livewire\Traits\HasReorderableItems;
 use App\Models\Atributo;
@@ -9,6 +10,7 @@ use Livewire\Attributes\On;
 
 class AtributoTable extends TableComponent
 {
+    use HasCommands;
     use HasReorderableItems;
 
     #[On('atributo-guardado')]
