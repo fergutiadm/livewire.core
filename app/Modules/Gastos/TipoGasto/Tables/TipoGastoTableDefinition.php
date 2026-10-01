@@ -31,7 +31,7 @@ class TipoGastoTableDefinition extends BaseTable
 
     public function query(): Builder
     {
-        $query = Gasto::query()
+        $query = TipoGasto::query()
 
             ->when(
                 filled($this->getParameter('localId')),

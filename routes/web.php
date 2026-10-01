@@ -108,15 +108,17 @@
         Route::get('/configuracion', function () {
             return view('admin.en-contruccion', ['seccion', 'Configuracion']);
         })->name('configuracion');
-    });
-
-    // Middleware para proteger rutas internas (solo usuarios con permiso)
-    Route::middleware(['auth', 'permission:acceder panel interno'])->group(function() {
 
         // -------------------
         // Gastos
         // -------------------
+        Route::get('/tipos-gastos', TipoGastoPage::class)->name('tipos_gastos');
         Route::get('/gastos', GastoPage::class)->name('gastos');
+        Route::get('/gastos-pagos', GastoPagoPage::class)->name('gastos_pagos');
+    });
+
+    // Middleware para proteger rutas internas (solo usuarios con permiso)
+    Route::middleware(['auth', 'permission:acceder panel interno'])->group(function() {
 
         // -------------------
         // Ventas

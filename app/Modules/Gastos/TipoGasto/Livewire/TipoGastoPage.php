@@ -6,6 +6,7 @@ use App\Core\CQRS\HasCommands;
 use Livewire\Attributes\On;
 
 use Livewire\Component;
+use App\Models\Local;
 
 class TipoGastoPage extends Component
 {

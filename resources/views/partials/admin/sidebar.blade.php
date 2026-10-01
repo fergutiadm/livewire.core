@@ -28,6 +28,7 @@
   $items[] = $make('Periodos Contables', 'admin.periodos_contables', 'accounting_period', 'admin.periodos_contables');
   $items[] = $make('Usuarios',   'admin.usuarios',    'user-group',  'admin.usuarios');
   $items[] = $make('Trazas', 'admin.trazas', 'shield', 'admin.trazas');
+  $items[] = $make('Tipos Gastos', 'admin.tipos_gastos', 'shield', 'admin.tipos_gastos');
 
   /*if ($isAdmin) {
       if (Route::has('zapatera.admin.users.index')) {

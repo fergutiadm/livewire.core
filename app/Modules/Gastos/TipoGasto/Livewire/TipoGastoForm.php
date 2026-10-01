@@ -4,6 +4,7 @@ namespace App\Modules\Gastos\TipoGasto\Livewire;
 
 use App\Core\CQRS\HasCommands;
 use App\Models\TipoGasto;
+use App\Models\Local;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
