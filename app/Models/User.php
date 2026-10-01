@@ -100,4 +100,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Gestor::class);
     }
+
+    public function gastosOperador(): HasOne
+    {
+        return $this->hasOne(Gasto::class, 'operador_id');
+    }
+
+    public function gastosPagosOperador(): HasOne
+    {
+        return $this->hasOne(GastoPago::class, 'operador_id');
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AtributableAtributo extends Model
 {
@@ -15,21 +17,25 @@ class AtributableAtributo extends Model
         'atributo_id',
         'atributable_type',
         'atributable_id',
+        'tipo',
+        'obligatorio',
         'orden_visual',
+        'activo',
     ];
 
-    /**
-     * Polimórfica: el modelo que tiene este atributo
-     */
-    public function atributable()
+    protected $casts = [
+        'tipo' => 'string',
+        'obligatorio' => 'boolean',
+        'orden_visual' => 'integer',
+        'activo' => 'boolean',
+    ];
+
+    public function atributable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Relación con el modelo Atributo
-     */
-    public function atributo()
+    public function atributo(): BelongsTo
     {
         return $this->belongsTo(Atributo::class, 'atributo_id');
     }

@@ -80,6 +80,18 @@ use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableForm;
 // use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableMediaManager;
 // use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableAttributesManager;
 
+use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoPage;
+use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoTable;
+use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoForm;
+
+use App\Modules\Gastos\Gasto\Livewire\GastoPage;
+use App\Modules\Gastos\Gasto\Livewire\GastoTable;
+use App\Modules\Gastos\Gasto\Livewire\GastoForm;
+
+use App\Modules\Gastos\GastoPago\Livewire\GastoPagoPage;
+use App\Modules\Gastos\GastoPago\Livewire\GastoPagoTable;
+use App\Modules\Gastos\GastoPago\Livewire\GastoPagoForm;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -195,5 +207,17 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('contabilidad.periodo-contable.table', PeriodoContableTable::class);
         // $this->registerLivewire('contabilidad.periodo-contable.media-manager', PeriodoContableMediaManager::class);
         // $this->registerLivewire('contabilidad.periodo-contable.attributes-manager', PeriodoContableAttributesManager::class);
+        
+        $this->registerLivewire('gastos.gasto.page', GastoPage::class);
+        $this->registerLivewire('gastos.gasto.form', GastoForm::class);
+        $this->registerLivewire('gastos.gasto.table', GastoTable::class);
+        
+        $this->registerLivewire('gastos.tipo-gasto.page', TipoGastoPage::class);
+        $this->registerLivewire('gastos.tipo-gasto.form', TipoGastoForm::class);
+        $this->registerLivewire('gastos.tipo-gasto.table', TipoGastoTable::class);
+        
+        $this->registerLivewire('gastos.gasto-pago.page', GastoPgoPage::class);
+        $this->registerLivewire('gastos.gasto-pago.form', GastoPgoForm::class);
+        $this->registerLivewire('gastos.gasto-pago.table', GastoPgoTable::class);
     }
 }

@@ -30,6 +30,10 @@
 
     use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContablePage;
 
+    use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoPage;
+    use App\Modules\Gastos\Gasto\Livewire\GastoPage;
+    use App\Modules\Gastos\GastoPago\Livewire\GastoPagoPage;
+
     use App\Modules\Seguridad\User\Livewire\UserPage;
 
     /*
@@ -106,11 +110,16 @@
         })->name('configuracion');
     });
 
-    // Middleware para proteger rutas internas
+    // Middleware para proteger rutas internas (solo usuarios con permiso)
     Route::middleware(['auth', 'permission:acceder panel interno'])->group(function() {
 
         // -------------------
-        // Ventas (solo usuarios con permiso)
+        // Gastos
+        // -------------------
+        Route::get('/gastos', GastoPage::class)->name('gastos');
+
+        // -------------------
+        // Ventas
         // -------------------
         Route::get('/ventas', VentasIndex::class)
             ->name('ventas.index');

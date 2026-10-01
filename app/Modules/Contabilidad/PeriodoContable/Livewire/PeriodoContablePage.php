@@ -78,7 +78,7 @@ class PeriodoContablePage extends Component
         }
 
         $this->command(
-            'periodocontable.delete',
+            'periodoContable.delete',
             [
                 'id' => $this->periodoContableDeleteId,
             ]

@@ -47,6 +47,16 @@ class Moneda extends Model
         return $this->hasMany(TarjetaMagnetica::class);
     }
 
+    public function gastos(): HasMany
+    {
+        return $this->hasMany(Gasto::class);
+    }
+
+    public function tipoGastos(): HasMany
+    {
+        return $this->hasMany(TipoGasto::class);
+    }
+
     public function desgloses_monedas(): MorphMany
     {
         return $this->morphMany(DesgloseMoneda::class, 'desglosable');

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Atributo;
-use App\Models\ProductoVariante;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,13 +31,13 @@ class AtributoValor extends Model
         return $this->belongsTo(Atributo::class);
     }
 
-    // public function variantes(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(
-    //         ProductoVariante::class,
-    //         'producto_variantes_atributos_valores',
-    //         'atributo_valor_id',
-    //         'producto_variante_id'
-    //     );
-    // }
+    public function variantes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProductoVariante::class,
+            'producto_variantes_atributos_valores',
+            'atributo_valor_id',
+            'producto_variante_id'
+        );
+    }
 }

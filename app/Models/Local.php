@@ -53,4 +53,14 @@ class Local extends Model
     {
         return $this->hasMany(MovimientoInventario::class, 'destino');
     }
+
+    public function gastos(): HasMany
+    {
+        return $this->hasMany(Gasto::class);
+    }
+
+    public function tiposGastos(): HasMany
+    {
+        return $this->hasMany(TipoGasto::class);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\HasTrazas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TarjetaMagnetica extends Model
 {
@@ -28,26 +29,31 @@ class TarjetaMagnetica extends Model
         return $this->belongsTo(Moneda::class);
     }
 
-    public function ventas()
+    /* =====================
+    |  RELACIONES
+    ===================== */
+
+    public function ventas(): HasMany
     {
         return $this->hasMany(Venta::class);
     }
 
-    /* =====================
-     |  RELACIONES
-     ===================== */
-
-    public function ventas_producto()
+    public function ventas_producto(): HasMany
     {
         return $this->hasMany(VentaProducto::class);
     }
 
-    public function trazas_tarjetas_magneticas()
+    public function trazas_tarjetas_magneticas(): HasMany
     {
         return $this->hasMany(TrazasTarjetasMagneticas::class);
     }
 
-    public function movimientos_inventarios()
+    public function movimientos_inventarios(): HasMany
+    {
+        return $this->hasMany(MovimientoInventario::class);
+    }
+
+    public function gastosPagos(): HasMany
     {
         return $this->hasMany(MovimientoInventario::class);
     }

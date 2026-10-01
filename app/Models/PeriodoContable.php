@@ -87,6 +87,11 @@ class PeriodoContable extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function gastos(): HasMany
+    {
+        return $this->hasMany(Gasto::class);
+    }
+
     /* =====================================================
      |  SCOPES (mínimos, reutilizables)
      ===================================================== */
