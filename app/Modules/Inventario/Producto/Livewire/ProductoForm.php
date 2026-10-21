@@ -188,7 +188,12 @@ class ProductoForm extends Component
 
     public function localChanged(): void
     {
-        $this->categoriaId = null;
+        $this->categoriaId = null;   
+
+        $this->dispatch(
+            'loading-start',
+            message: 'Cargando productos...'
+        );
 
         $this->dispatch(
             'producto-filtros-actualizados',

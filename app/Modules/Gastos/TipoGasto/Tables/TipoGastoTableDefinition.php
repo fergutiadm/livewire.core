@@ -9,6 +9,7 @@ use App\Core\Tables\Columns\HtmlColumn;
 use App\Core\Tables\Columns\TextColumn;
 use App\Models\TipoGasto;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class TipoGastoTableDefinition extends BaseTable
 {
@@ -70,16 +71,41 @@ class TipoGastoTableDefinition extends BaseTable
 
             (new TableAction('Editar'))
                 ->color('yellow')
-                ->event('gasto-editar')
-                ->loading('Cargando gasto...'),
+                ->event('tipo-gasto-editar')
+                ->loading('Cargando tipo de gasto...'),
 
+            /* */
             (new TableAction('Eliminar'))
                 ->color('red')
-                ->event('gasto-eliminar')
-                ->loading('Eliminando gasto...'),
+                ->event('tipo-gasto-eliminar')
+                ->loading('Eliminando tipo de gasto...'),
+            /* */
 
         ])
         ->align('right');
+
+        $nombre = (new HtmlColumn(
+            label: 'Nombre',
+            field: 'nombre',
+        ))->formatStateUsing(function ($state, $tipo_gasto) {
+
+            $color_text = $tipo_gasto->color_text ?? '';
+            $color_bg = $tipo_gasto->color_bg ?? '';
+
+
+            return '
+                <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
+
+                <span
+                        class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
+                        ' . e($color_text) . '
+                        ' . e($color_bg)  . '">
+                        ' . e($state) .
+                '</span>
+
+            </p>
+            ';
+        });
 
         $activo = (new HtmlColumn(
             label: 'Activo',
@@ -138,10 +164,7 @@ class TipoGastoTableDefinition extends BaseTable
         });
 
         return [
-            new TextColumn(
-                label: 'Nombre',
-                field: 'nombre',
-            ),
+           $nombre,
 
             new TextColumn(
                 label: 'Descripcion',

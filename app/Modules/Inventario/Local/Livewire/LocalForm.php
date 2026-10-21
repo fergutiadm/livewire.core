@@ -16,6 +16,7 @@ class LocalForm extends Component
 
     public string $nombre = '';
     public string $descripcion = '';
+    public bool $es_principal = false;
 
     protected $rules = [
         'nombre' => 'required|string|max:255',
@@ -48,7 +49,7 @@ class LocalForm extends Component
 
         $this->descripcion = $local->descripcion ?? '';
 
-        // $this->orden_visual = (int) $local->orden_visual;
+        $this->es_principal = (bool) $local->es_principal;
 
         // $this->icono = $local->icono;
 
@@ -194,8 +195,7 @@ class LocalForm extends Component
 
             'descripcion' => $this->descripcion,
 
-            // 'orden_visual' =>
-            //     $this->orden_visual,
+            'es_principal' => $this->es_principal,
 
             // 'icono' =>
             //     $this->icono,
@@ -257,7 +257,7 @@ class LocalForm extends Component
             'localId',
             'nombre',
             'descripcion',
-            // 'orden_visual',
+            'es_principal',
             // 'icono',
             // 'icono_secundario',
             // 'color_bg',

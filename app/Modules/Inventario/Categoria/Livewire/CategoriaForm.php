@@ -383,7 +383,12 @@ class CategoriaForm extends Component
     */
 
     public function localChanged(): void
-    {
+    {   
+        $this->dispatch(
+            'loading-start',
+            message: 'Cargando categorias...'
+        );
+
         $this->dispatch(
             'categoria-media-reset'
         );

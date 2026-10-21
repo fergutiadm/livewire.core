@@ -30,7 +30,7 @@ class MonedaPage extends Component
     #[On('moneda-guardada')]
     public function onSaved(): void
     {
-        // Log::info('Listener moneda-guardado', ['$this->tableVersion'=>$this->tableVersion]);
+        // Log::info('Listener moneda-guardada', ['$this->tableVersion'=>$this->tableVersion]);
         $this->tableVersion++;
     }
 
@@ -79,7 +79,7 @@ class MonedaPage extends Component
         );
 
         $this->dispatch('livewire:alert', [
-            'message' => 'Moneda Eliminado...',
+            'message' => 'Moneda Eliminada...',
             'type'    => 'success',
         ]);
 

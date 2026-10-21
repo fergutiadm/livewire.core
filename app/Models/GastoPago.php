@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasTrazas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasTrazas;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class GastoPago extends Model
 {
     use HasFactory, HasTrazas;
 
-    protected $table = 'gastos_pagos';
+    protected $table = 'gasto_pagos';
 
     protected bool $includeAllOnDelete = true;
 
@@ -22,33 +24,45 @@ class GastoPago extends Model
 
     protected $fillable = [
         'gasto_id',
-        'metodo',
-        'tarjeta_magnetica_id',
-        'numero_tarjeta',
-        'moneda_id',
-        'cantidad',
-        'tasa_cambio',
+        'estado',
         'fecha_pago',
         'operador_id',
         'descripcion',
     ];
-
-    /* =====================
-     |  RELACIONES
-     ===================== */
 
     public function gasto(): BelongsTo
     {
         return $this->belongsTo(Gasto::class);
     }
 
-    public function moneda(): BelongsTo
-    {
-        return $this->belongsTo(Moneda::class);
-    }
-
     public function operador(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function desgloses(): HasMany
+    {
+        return $this->hasMany(GastoPagoDesglose::class);
+    }
+
+    protected function importeCup(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => number_format(
+                $this->calcularImporteCup(),
+                2,
+                '.',
+                ''
+            )
+        );
+    }
+
+    public function calcularImporteCup(): float
+    {
+        return (float) $this->desgloses
+            ->sum(function (GastoPagoDesglose $desglose) {
+                return (float) $desglose->cantidad
+                    * (float) $desglose->tasa_cambio;
+            });
     }
 }

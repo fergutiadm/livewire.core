@@ -65,7 +65,8 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="px-4 sm:px-6 lg:px-8 py-6
+                    bg-slate-50 dark:bg-slate-900">
                 {{ $slot }}
             </main>
         </div>

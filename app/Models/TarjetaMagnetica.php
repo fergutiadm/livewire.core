@@ -53,9 +53,9 @@ class TarjetaMagnetica extends Model
         return $this->hasMany(MovimientoInventario::class);
     }
 
-    public function gastosPagos(): HasMany
+    public function gastosPagosDesgloses(): HasMany
     {
-        return $this->hasMany(MovimientoInventario::class);
+        return $this->hasMany(GastoPagoDesglose::class);
     }
 
     /* =========================

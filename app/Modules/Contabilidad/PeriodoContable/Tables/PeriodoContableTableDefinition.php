@@ -15,13 +15,7 @@ class PeriodoContableTableDefinition extends BaseTable
     public function query(): Builder
     {
         $query = PeriodoContable::query()
-            ->when(
-                filled($this->getParameter('localId')),
-                fn ($q) => $q->where(
-                    'local_id',
-                    $this->getParameter('localId')
-                )
-            )
+            ->DeLocal($this->getParameter('localId'))
             ->orderByDesc('activo')
             ->orderByDesc('fecha_inicio');
 
@@ -40,7 +34,7 @@ class PeriodoContableTableDefinition extends BaseTable
     public function columns(): array
     {
         $nombre = (new HtmlColumn(
-            label: 'Periodo',
+            label: 'Nombre',
             field: 'nombre',
         ))->formatStateUsing(function ($state, $periodo) {
 
@@ -73,6 +67,38 @@ class PeriodoContableTableDefinition extends BaseTable
 
         });
 
+        $fecha_inicio = (new HtmlColumn(
+            label: 'Inicio',
+            field: 'fecha_inicio',
+        ))->formatStateUsing(function ($state, $periodo) {
+
+            $fecha_inicio = $periodo->fecha_inicio ? format_fecha($periodo->fecha_inicio) : '';
+
+
+            return '
+                <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
+
+                <span>' . e($fecha_inicio) . '</span>
+            </p>
+            ';
+        });
+
+        $fecha_fin = (new HtmlColumn(
+            label: 'Fin',
+            field: 'fecha_fin',
+        ))->formatStateUsing(function ($state, $periodo) {
+
+            $fecha_fin = $periodo->fecha_fin ? format_fecha($periodo->fecha_fin) : '';
+
+
+            return '
+                <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
+
+                <span>' . e($fecha_fin) . '</span>
+            </p>
+            ';
+        });
+
 
         $acciones = (new ActionsColumn(
             label: 'Acciones',
@@ -95,14 +121,9 @@ class PeriodoContableTableDefinition extends BaseTable
         return [
             $nombre,
 
-            new TextColumn(
-                label: 'Inicio',
-                field: 'fecha_inicio',
-            ),
-            new TextColumn(
-                label: 'Fin',
-                field: 'fecha_fin',
-            ),
+            $fecha_inicio,
+
+            $fecha_fin,
 
             $acciones,
         ];

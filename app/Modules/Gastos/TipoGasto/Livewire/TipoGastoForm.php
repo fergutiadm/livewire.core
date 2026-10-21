@@ -14,23 +14,37 @@ class TipoGastoForm extends Component
     use HasCommands;
 
     public ?int $tipoGastoId = null;
-
     public ?int $localId = null;
 
     public string $nombre = '';
-
     public string $descripcion = '';
 
     public bool $fijo = false;
-
     public bool $activo = true;
 
     public $locales;
 
+    public $color_bg = 'bg-white';  // Default color
+    public $color_text = 'text-black'; // Default color
+
+    public array $palette = [
+        ['bg' => 'bg-white',      'text' => 'text-black'],
+        ['bg' => 'bg-blue-500',   'text' => 'text-white'],
+        ['bg' => 'bg-green-500',  'text' => 'text-white'],
+        ['bg' => 'bg-yellow-500', 'text' => 'text-black'],
+        ['bg' => 'bg-purple-500', 'text' => 'text-white'],
+        ['bg' => 'bg-pink-500',   'text' => 'text-white'],
+        ['bg' => 'bg-indigo-500', 'text' => 'text-white'],
+        ['bg' => 'bg-teal-500',   'text' => 'text-white'],
+        ['bg' => 'bg-orange-500', 'text' => 'text-black'],
+        ['bg' => 'bg-cyan-500',   'text' => 'text-black'],
+        ['bg' => 'bg-black',      'text' => 'text-white'],
+    ];
+
     protected $rules = [
         'localId' => 'required|exists:locales,id',
-        'nombre' => 'required|string|max:255',
-        'descripcion' => 'string|min:3|max:10',
+        'nombre' => 'required|string|max:50',
+        'descripcion' => 'string|min:3|max:200',
         ];
 
     protected function messages(): array
@@ -42,10 +56,24 @@ class TipoGastoForm extends Component
         'nombre.required' => 'El Nombre es obligatorio',
 
         'descripcion.min' => 'La Descripción debe tener al menos 3 caracteres',
-        'descripcion.max' => 'La Descripción no puede tener más de 10 caracteres',
+        'descripcion.max' => 'La Descripción no puede tener más de 200 caracteres',
         ];
 
     }
+
+    public function selectPalette(string $bg, string $text): void
+    {
+        $this->color_bg = $bg;
+        $this->color_text = $text;
+    }
+
+    private function paletteIsValid(): bool
+    {
+        return collect($this->palette)->contains(fn ($p) =>
+            $p['bg'] === $this->color_bg && $p['text'] === $this->color_text
+        );
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -79,17 +107,12 @@ class TipoGastoForm extends Component
         $tipoGasto = TipoGasto::findOrFail($id);
 
         $this->tipoGastoId = $tipoGasto->id;
-
         $this->localId = $tipoGasto->local_id;
-
-        $this->monedaId = $tipoGasto->moneda_id;
-
         $this->nombre = $tipoGasto->nombre;
-
+        $this->color_bg = $tipoGasto->color_bg;
+        $this->color_text = $tipoGasto->color_text;
         $this->descripcion = $tipoGasto->descripcion ?? '';
-
         $this->fijo = $tipoGasto->fijo;
-
         $this->activo = $tipoGasto->activo;
 
         // Avisar que terminó la edición
@@ -104,6 +127,7 @@ class TipoGastoForm extends Component
     #[On('tipo-gasto-edicion-cargado')]
     public function tipoGastoEdicionCargado(): void
     {
+        Log::info("EVENTO - tipo-gasto-edicion-cargado");
         $this->dispatch('loading-stop');
     }
 
@@ -113,17 +137,18 @@ class TipoGastoForm extends Component
     |--------------------------------------------------------------------------
     */
 
-    public function localChanged(): void
-    {
+    /*public function localChanged(): void
+    {   
         $this->dispatch(
-            'tipo-gasto-media-reset'
+            'loading-start',
+            message: 'Cargando tipos de gastos...'
         );
 
         $this->dispatch(
             'tipo-gasto-filtros-actualizados',
             localId: $this->localId,
         );
-    }
+    }*/
 
     public function tipoGastoChanged(): void
     {
@@ -159,7 +184,7 @@ class TipoGastoForm extends Component
 
             $payload = $this->payload();
 
-            //Logger()->info("ACTUALIZANDO PRODUCTO", ['payload'=>$payload]);
+            Logger()->info("ACTUALIZANDO TIPO DE GASTO", ['payload'=>$payload]);
 
             $tipoGasto = $this->command(
                 'tipoGasto.update',
@@ -167,14 +192,14 @@ class TipoGastoForm extends Component
             );
 
             $this->dispatch(
-                'tipoGasto-actualizada',
+                'tipo-gasto-actualizado',
             );
 
             $this->dispatch(
                 'livewire:alert',
                 [
                     'message' =>
-                        'tipoGasto Actualizada correctamente...',
+                        'Tipo de Gasto Actualizado correctamente...',
                     'type' => 'success',
                 ]
             );
@@ -194,14 +219,14 @@ class TipoGastoForm extends Component
             );
 
             $this->dispatch(
-                'tipoGasto-creado'
+                'tipo-gasto-creado'
             );
 
             $this->dispatch(
                 'livewire:alert',
                 [
                     'message' =>
-                        'tipoGasto Creada correctamente...',
+                        'Tipo de Gasto Creado correctamente...',
                     'type' => 'success',
                 ]
             );
@@ -214,7 +239,7 @@ class TipoGastoForm extends Component
         */
 
         $this->dispatch(
-            'tipoGasto-guardada'
+            'tipo-gasto-guardado'
         );
 
         $this->dispatch('loading-stop');
@@ -241,11 +266,11 @@ class TipoGastoForm extends Component
 
             'local_id' => $this->localId,
 
-            'tipo_gasto_id' => $this->tipoGastoId,
-
-            'moneda_id' => $this->monedaId,
-
             'nombre' => $this->nombre,
+
+            'color_bg' => $this->color_bg,
+
+            'color_text' => $this->color_text,
 
             'descripcion' => $this->descripcion,
 
@@ -296,6 +321,8 @@ class TipoGastoForm extends Component
             'descripcion',
             'fijo',
             'activo',
+            'color_bg',
+            'color_text',
         ]);
 
         /*

@@ -15,17 +15,19 @@
         class="space-y-6"
     >
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             {{-- LOCAL --}}
-            <div>
+            <div class="col-span-2">
                 <label class="block text-sm font-medium text-slate-700 mb-1">
                     Local
                 </label>
 
-                <select
+               <select
                     wire:model="localId"
                     wire:change="localChanged"
+                    wire:loading.attr="disabled"
+                    wire:target="localChanged"
                     class="w-full rounded-xl border-slate-300"
                 >
                     <option value="">Seleccione un local</option>
@@ -41,43 +43,6 @@
                     <p class="text-xs text-red-500 mt-1">
                         {{ $message }}
                     </p>
-                @enderror
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-            {{-- NOMBRE --}}
-            <div>
-
-                <label class="block text-sm font-medium text-slate-700 mb-1">
-                    Nombre
-                </label>
-
-                <input
-                    type="text"
-                    wire:model="nombre"
-                    class="w-full rounded-xl border-slate-300"
-                    Laravel blade snippets                  placeholder="Nombre del tipo de gasto"
-                >
-                @error('nombre')<p class="panel-form-error">{{ $message }}</p>@enderror
-            </div>
-
-            {{-- DESCRIPCIÓN --}}
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">
-                    Descripción
-                </label>
-
-                <textarea
-                    wire:model="descripcion"
-                    class="w-full rounded-xl border-slate-300"
-                    placeholder="Descripción del tipo de gasto"
-                    rows="3"
-                ></textarea>
-
-                @error('descripcion')
-                    <p class="panel-form-error">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -111,6 +76,112 @@
                 @error('activo')<p class="panel-form-error">{{ $message }}</p>@enderror
             </div>
 
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {{-- NOMBRE --}}
+            <div>
+
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Nombre
+                </label>
+
+                <input
+                    type="text"
+                    wire:model="nombre"
+                    class="w-full rounded-xl border-slate-300" placeholder="Nombre del tipo de gasto"
+                >
+                @error('nombre')<p class="panel-form-error">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- DESCRIPCIÓN --}}
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Descripción
+                </label>
+
+                <textarea
+                    wire:model="descripcion"
+                    class="w-full rounded-xl border-slate-300"
+                    placeholder="Descripción del tipo de gasto"
+                    rows="3"
+                ></textarea>
+
+                @error('descripcion')
+                    <p class="panel-form-error">{{ $message }}</p>
+                @enderror
+            </div>
+
+        </div>
+
+        {{-- ============================================================
+            PALETA DE COLORES
+        ============================================================= --}}
+
+        <div class="mt-6">
+
+            <div class="panel-form-group">
+
+                <x-label class="panel-form-label">
+                    Paleta de Color
+                </x-label>
+
+                <div class="flex flex-wrap gap-2 mt-2">
+
+                    @foreach($palette as $p)
+
+                        <button
+                            type="button"
+                            wire:click="selectPalette('{{ $p['bg'] }}', '{{ $p['text'] }}')"
+                            class="
+                                w-9
+                                h-9
+                                rounded-full
+                                border-2
+                                flex
+                                items-center
+                                justify-center
+                                transition
+                                {{ $p['bg'] }}
+
+                                {{
+                                    $color_bg === $p['bg'] &&
+                                    $color_text === $p['text']
+                                        ? 'border-black ring-2 ring-offset-2 ring-black'
+                                        : 'border-gray-300'
+                                }}
+                            "
+                            title="{{ $p['bg'] }} / {{ $p['text'] }}"
+                        >
+                            <span
+                                class="
+                                    text-xs
+                                    font-bold
+                                    {{ $p['text'] }}
+                                "
+                            >
+                                Aa
+                            </span>
+                        </button>
+
+                    @endforeach
+
+                </div>
+
+                @error('color_bg')
+                    <p class="panel-form-error mt-2">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+                @error('color_text')
+                    <p class="panel-form-error mt-2">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+            </div>
 
         </div>
 

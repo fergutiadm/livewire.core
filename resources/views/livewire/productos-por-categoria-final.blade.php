@@ -2,10 +2,10 @@
 
     {{-- Selector de local --}}
     <div class="mb-3 flex gap-2 overflow-x-auto">
-        <button wire:click="setLocal()"
+        {{-- <button wire:click="setLocal()"
                 class="px-3 py-1 rounded-full border {{ $localId === null ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700' }}">
             Todos los locales
-        </button>
+        </button> --}}
         @foreach($locales as $local)
             <button wire:click="setLocal({{ $local->id }})"
                     class="px-3 py-1 rounded-full border {{ $localId === $local->id ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700' }}">

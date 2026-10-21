@@ -12,8 +12,8 @@
     ];
   };
 
-  $isAdmin = true;#auth()->check() && auth()->user()->hasRole('admin');
-
+  $isAdmin = auth()->check() && auth()->user()->hasRole('admin');
+  
   $items = [];
   $items[] = $make('Panel',     'admin.index',            'home',        'admin.index');
   $items[] = $make('Locales',    'admin.locales',     'store',       'admin.locales');
@@ -23,23 +23,26 @@
   $items[] = $make('Inventario', 'admin.inventarios',  'inventory',   'admin.inventarios');
   $items[] = $make('Monedas',    'admin.monedas', 'currency',    'admin.monedas');
   $items[] = $make('Tarjetas Magnéticas',    'admin.tarjetas_magneticas', 'card',    'admin.tarjetas_magneticas');
+  $items[] = $make('Cajas-Cash',    'admin.cajas', 'boths_cash',    'admin.cajas');
   $items[] = $make('Clientes',   'admin.clientes',    'clients',       'admin.clientes');
   $items[] = $make('Gestores',   'admin.gestores',    'users',       'admin.gestores');
   $items[] = $make('Periodos Contables', 'admin.periodos_contables', 'accounting_period', 'admin.periodos_contables');
-  $items[] = $make('Usuarios',   'admin.usuarios',    'user-group',  'admin.usuarios');
+  $items[] = $make('Denominaciones',    'admin.denominaciones', 'denominacion',    'admin.denominaciones');
+  
   $items[] = $make('Trazas', 'admin.trazas', 'shield', 'admin.trazas');
-  $items[] = $make('Tipos Gastos', 'admin.tipos_gastos', 'shield', 'admin.tipos_gastos');
+  $items[] = $make('Tipos Gastos', 'admin.tipos_gastos', 'receipt', 'admin.tipos_gastos');
 
-  /*if ($isAdmin) {
-      if (Route::has('zapatera.admin.users.index')) {
-          $items[] = $make('Usuarios', 'zapatera.admin.users.index', 'shield', 'zapatera.admin.users.*');
+  
+  if ($isAdmin) {
+      if (Route::has('admin.usuarios')) {
+          $items[] = $make('Usuarios',   'admin.usuarios',    'user-group',  'admin.usuarios');
       }
 
       // 👉 NUEVO: Settings (solo admin)
-      if (Route::has('zapatera.admin.settings.edit')) {
-          $items[] = $make('Configuración', 'zapatera.admin.settings.index', 'settings', 'zapatera.admin.settings.*');
+      if (Route::has('admin.configuracion')) {
+          $items[] = $make('Configuración', 'admin.configuracion', 'settings', 'admin.configuracion');
       }
-  }*/
+  }
 
   /*  $base   = 'group flex items-center gap-3 px-3 py-2 rounded-md text-base';
   $active = 'bg-indigo-50 text-indigo-700 border border-indigo-100 underline font-black text-lg';
@@ -81,6 +84,26 @@
           <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.75v10.5M9 9.75h6M6.75 12A5.25 5.25 0 0012 17.25 5.25 5.25 0 0017.25 12 5.25 5.25 0 0012 6.75 5.25 5.25 0 006.75 12z"/></svg>
         @break
 
+        @case('denominacion')
+          <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.75v10.5M9 9.75h6M6.75 12A5.25 5.25 0 0012 17.25 5.25 5.25 0 0017.25 12 5.25 5.25 0 0012 6.75 5.25 5.25 0 006.75 12z"/></svg>
+        @break
+
+        @case('receipt')
+          <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M6 3.75h12a1.5 1.5 0 0 1 1.5 1.5v15L15 18l-3 2.25L9 18l-3 2.25v-15a1.5 1.5 0 0 1 1.5-1.5Z"/>
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M9 8h6M9 11.5h6M9 15h3"/>
+          </svg>
+        @break
+
         @case('card')
           <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75-10.5h16.5a1.5 1.5 0 011.5 1.5v10.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5V5.25a1.5 1.5 0 011.5-1.5z" />
@@ -96,6 +119,10 @@
         @break
 
         @case('inventory')
+          <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 7.5l-9-4.5-9 4.5 9 4.5 9-4.5zM12 12v9m0 0l9-4.5M12 21l-9-4.5"/></svg>
+        @break
+
+        @case('boths_cash')
           <svg class="{{ $i['active'] ? $svg_class_active : $svg_class }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 7.5l-9-4.5-9 4.5 9 4.5 9-4.5zM12 12v9m0 0l9-4.5M12 21l-9-4.5"/></svg>
         @break
 

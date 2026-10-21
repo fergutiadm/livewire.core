@@ -49,7 +49,7 @@ class MonedaForm extends Component
         'codigo' => 'required|string|min:3|max:10',
         'simbolo' => 'required|string|max:10',
         'es_principal' => 'boolean',
-        'tasa_cambio' => 'required|numeric|min:0',
+        'tasa_cambio' => 'required|numeric|min:1',
         ];
 
     protected function messages(): array
@@ -68,7 +68,7 @@ class MonedaForm extends Component
 
         'tasa_cambio.required' => 'La Tasa de cambio es obligatoria',
         'tasa_cambio.numeric' => 'La Tasa de cambio debe ser numérica',
-        'tasa_cambio.min' => 'La Tasa de cambio no puede ser negativa',
+        'tasa_cambio.min' => 'La Tasa de cambio tiene que ser mayor que cero',
         ];
 
     }
@@ -228,8 +228,6 @@ class MonedaForm extends Component
     {
         return [
             'id' => $this->monedaId,
-
-            'moneda_id' => $this->monedaId,
 
             'nombre' => $this->nombre,
 

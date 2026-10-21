@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Finanzas\TipoGasto\Actions;
+namespace App\Modules\Gastos\TipoGasto\Actions;
 
 use App\Models\TipoGasto;
 

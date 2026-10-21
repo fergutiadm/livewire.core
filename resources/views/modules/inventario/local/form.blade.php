@@ -15,7 +15,7 @@
         class="space-y-6"
     >
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             {{-- NOMBRE --}}
             <div>
@@ -47,6 +47,21 @@
                     rows="3"
                 ></textarea>
                 @error('descripcion')<p class="panel-form-error">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Es Principal --}}
+            <div class="flex flex-col items-center">
+
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Principal
+                </label>
+
+                <input
+                    type="checkbox"
+                    wire:model="es_principal"
+                    class="w-10 h-10 rounded-md border-slate-300"
+                >
+                @error('es_principal')<p class="panel-form-error">{{ $message }}</p>@enderror
             </div>
 
         </div>

@@ -1,3 +1,4 @@
+{{-- resources/views/components/input-flatpickr.blade.php --}}
 @props([
 'label' => '',
 'model' => null,
@@ -72,7 +73,9 @@
             dark:text-slate-100
             pr-10
         "
-        {{ $attributes->except('wire:model') }}
+        {{ $attributes->filter(
+            fn ($value, $key) => !str_starts_with($key, 'wire:model')
+        ) }}
     />
 
     <button

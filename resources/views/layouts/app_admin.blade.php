@@ -84,6 +84,7 @@
                       ">{{ auth()->user()->name }}</span>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
+            
             <button type="submit" class="text-sm px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800">
               Cerrar sesión
             </button>

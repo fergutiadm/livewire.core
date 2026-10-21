@@ -7,6 +7,7 @@ use Livewire\Attributes\On;
 
 use Livewire\Component;
 use App\Models\Local;
+use Illuminate\Support\Facades\Log;
 
 class TipoGastoPage extends Component
 {
@@ -27,28 +28,18 @@ class TipoGastoPage extends Component
         // Valor inicial GLOBAL de la página.
         // No corresponde al estado interno del formulario.
         $this->localId = Local::orderBy('nombre')->value('id');
-    }
-
-    public function syncFilters(
-        ?int $localId = null,
-        ?int $tipoGastoId = null
-    ): void {
-        $this->localId = $localId;
-
-        $this->tableVersion++;
-    }
+    }   
 
     #[On('tipo-gasto-filtros-actualizados')]
     public function actualizarFiltros(
-        ?int $localId = null,
-        ?int $tipoGastoId = null
+        ?int $localId = null
     ): void {
         $this->localId = $localId;
 
         $this->tableVersion++;
     }
 
-    #[On('tipo-gasto-guardada')]
+    #[On('tipo-gasto-guardado')]
     public function onSaved(): void
     {
         // Log::info('Listener tipo-gasto-guardado', ['$this->tableVersion'=>$this->tableVersion]);
@@ -56,7 +47,7 @@ class TipoGastoPage extends Component
     }
 
     #[On('tipo-gasto-editar')]
-    public function editartipoGasto(int $id): void
+    public function editarTipoGasto(int $id): void
     {
         $this->showForm = true;
 
@@ -81,7 +72,7 @@ class TipoGastoPage extends Component
         $this->tipoGastoDeleteId = null;
 
         $this->dispatch('livewire:alert', [
-            'message' => 'Acción cancelada...',
+            'message' => 'Acción cancelado...',
             'type'    => 'warning',
         ]);
     }

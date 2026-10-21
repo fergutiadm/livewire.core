@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasTrazas;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,7 +23,8 @@ class Local extends Model
 
     protected $fillable = [
         'nombre',
-        'descripcion'
+        'descripcion',
+        'es_principal'
     ];
 
     /* =====================
@@ -62,5 +64,24 @@ class Local extends Model
     public function tiposGastos(): HasMany
     {
         return $this->hasMany(TipoGasto::class);
+    }
+
+    public function Cajas(): HasMany
+    {
+        return $this->hasMany(Caja::class);
+    }
+
+    public function CierresCaja(): HasMany
+    {
+        return $this->hasMany(CierreCaja::class);
+    }
+
+    /* =====================
+     |  SCOPES
+     ===================== */
+     
+    public function scopeEsPrincipal($query): Builder
+    {
+        return $query->where('es_principal', true);
     }
 }

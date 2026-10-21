@@ -21,14 +21,18 @@
     use App\Modules\Inventario\Categoria\Livewire\CategoriaPage;
     use App\Modules\Inventario\Producto\Livewire\ProductoPage;
     use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
-
+    
     use App\Modules\Finanzas\Moneda\Livewire\MonedaPage;
     use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaPage;
-
+    use App\Modules\Finanzas\Caja\Livewire\CajaPage;
+    use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaPage;
+    
     use App\Modules\Comercial\Cliente\Livewire\ClientePage;
     use App\Modules\Comercial\Gestor\Livewire\GestorPage;
-
+    
     use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContablePage;
+
+    use App\Modules\Admin\Denominacion\Livewire\DenominacionPage;
 
     use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoPage;
     use App\Modules\Gastos\Gasto\Livewire\GastoPage;
@@ -57,15 +61,16 @@
     //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     // });
 
-    Route::middleware([
-        'auth:sanctum',
-        config('jetstream.auth_session'),
-        'verified',
-    ])->group(function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard');
-    });
+    // Comentado Sabado 17-10-2026 5:11 am
+    // Route::middleware([
+    //     'auth:sanctum',
+    //     config('jetstream.auth_session'),
+    //     'verified',
+    // ])->group(function () {
+    //     Route::get('/dashboard', function () {
+    //         return view('dashboard');
+    //     })->name('dashboard');
+    // });
 
     Route::middleware([
         'auth:sanctum',
@@ -99,6 +104,9 @@
 
         Route::get('/monedas', MonedaPage::class)->name('monedas');
         Route::get('/tarjetas_magneticas', TarjetaMagneticaPage::class)->name('tarjetas_magneticas');
+        Route::get('/cajas-cash', CajaPage::class)->name('cajas');
+                
+        Route::get('/denominaciones', DenominacionPage::class)->name('denominaciones');
 
         Route::get('/periodos_contables', PeriodoContablePage::class)->name('periodos_contables');
 
@@ -113,18 +121,23 @@
         // Gastos
         // -------------------
         Route::get('/tipos-gastos', TipoGastoPage::class)->name('tipos_gastos');
-        Route::get('/gastos', GastoPage::class)->name('gastos');
-        Route::get('/gastos-pagos', GastoPagoPage::class)->name('gastos_pagos');
     });
 
     // Middleware para proteger rutas internas (solo usuarios con permiso)
     Route::middleware(['auth', 'permission:acceder panel interno'])->group(function() {
 
         // -------------------
+        // Gastos
+        // -------------------
+        Route::get('/gastos', GastoPage::class)->name('gastos');
+        Route::get('/gastos-pagos', GastoPagoPage::class)->name('gastos_pagos');
+
+        // -------------------
         // Ventas
         // -------------------
         Route::get('/ventas', VentasIndex::class)
             ->name('ventas.index');
+        Route::get('/cierres-caja-cash', CierreCajaPage::class)->name('cierres_caja');
 
         // -------------------
         // Inventario

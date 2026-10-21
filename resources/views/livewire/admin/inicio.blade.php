@@ -5,9 +5,6 @@
         $fi = $periodoActivo->fecha_inicio ?? $periodoActivo->fecha_inicial ?? null;
         $ff = $periodoActivo->fecha_fin    ?? $periodoActivo->fecha_fin    ?? null;
 
-        $fmt = function($d) {
-            try { return \Carbon\Carbon::parse($d)->isoFormat('DD/MM/YYYY'); } catch(\Throwable $e) { return $d; }
-        };
         @endphp
 
         @if($periodoActivo)
@@ -16,8 +13,8 @@
             <span class="inline-flex items-center rounded-full bg-emerald-600 px-2 py-0.5 text-white text-xs font-semibold">Periodo activo</span>
             @if($fi || $ff)
                 <span class="text-emerald-900">
-                Rango: <strong>{{ $fi ? $fmt($fi) : '—' }}</strong>
-                – <strong>{{ $ff ? $fmt($ff) : '—' }}</strong>
+                Rango: <strong>{{ $fi ? format_fecha($fi) : '—' }}</strong>
+                – <strong>{{ $ff ? format_fecha($ff) : '—' }}</strong>
                 </span>
             @endif
             @if(optional($periodoActivo->local)->nombre)

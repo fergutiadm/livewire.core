@@ -12,6 +12,22 @@
         loading = false;
         loadingMessage = '';
     "
+
+    x-init="
+        Livewire.hook('request', ({ fail }) => {
+            fail(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+    "
     class="relative"
 >
     <x-ui.crud.page>
@@ -33,8 +49,8 @@
         </x-slot>
 
         <x-slot:table>
-
             <livewire:gastos.tipo-gasto.table
+                :local-id="$localId"
                 {{--  lazy  --}}
                 wire:key="tipo-gasto-table-{{ $tableVersion }}"
             />

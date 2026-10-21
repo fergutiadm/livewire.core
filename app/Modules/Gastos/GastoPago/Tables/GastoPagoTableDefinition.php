@@ -36,39 +36,12 @@ class GastoPagoTableDefinition extends BaseTable
 
     public function query(): Builder
     {
-        $query = Gasto::query()
-
-            ->when(
-                filled($this->getParameter('localId')),
-                fn ($q) => $q->where(
-                    'local_id',
-                    $this->getParameter('localId')
-                )
-            )
-
-            ->when(
-                filled($this->getParameter('tarjetaMagneticaId')),
-                fn ($q) => $q->where(
-                    'tarjeta_magnetica_id',
-                    $this->getParameter('tarjetaMagneticaId')
-                )
-            )
-
-            ->when(
-                filled($this->getParameter('monedaId')),
-                fn ($q) => $q->where(
-                    'moneda_id',
-                    $this->getParameter('monedaId')
-                )
-            )
-
-            ->when(
-                filled($this->getParameter('operadorId')),
-                fn ($q) => $q->where(
-                    'operador_id',
-                    $this->getParameter('operadorId')
-                )
-            );
+        $query = GastoPago::query()
+            ->with([
+                'operador',
+                'desgloses.moneda',
+                'desgloses.tarjetaMagnetica',
+            ]);
 
             // $sql = vsprintf(
             //     str_replace('?', "'%s'", $query->toSql()),
@@ -96,7 +69,6 @@ class GastoPagoTableDefinition extends BaseTable
             label: 'Acciones',
             field: 'acciones',
         ))->actions([
-
             (new TableAction('Editar'))
                 ->color('yellow')
                 ->event('gasto-pago-editar')
@@ -106,40 +78,10 @@ class GastoPagoTableDefinition extends BaseTable
                 ->color('red')
                 ->event('gasto-pago-eliminar')
                 ->loading('Eliminando gasto pago...'),
-
         ])
         ->align('right');
 
         return [
-            new TextColumn(
-                label: 'Operador',
-                field: 'operador_id',
-            ),
-
-            new TextColumn(
-                label: 'Metodo',
-                field: 'metodo',
-            ),
-
-            new TextColumn(
-                label: 'Numero-Tarjeta',
-                field: 'numero_tarjeta',
-            ),
-
-            new TextColumn(
-                label: 'Moneda',
-                field: 'moneda_id',
-            ),
-
-            new TextColumn(
-                label: 'Cantidad',
-                field: 'cantidad',
-            ),
-
-            new TextColumn(
-                label: 'Tasa-Cambio',
-                field: 'tasa_cambio',
-            ),
 
             new TextColumn(
                 label: 'Fecha-Pago',
@@ -147,7 +89,22 @@ class GastoPagoTableDefinition extends BaseTable
             ),
 
             new TextColumn(
-                label: 'Descripcion',
+                label: 'Operador',
+                field: 'operador_id',
+            ),
+
+            new TextColumn(
+                label: 'Estado',
+                field: 'estado',
+            ),
+
+            new TextColumn(
+                label: 'Total CUP',
+                field: 'importe_cup',
+            ),
+
+            new TextColumn(
+                label: 'Descripción',
                 field: 'descripcion',
             ),
 

@@ -3,13 +3,26 @@
 namespace App\Modules\Gastos\TipoGasto\Livewire;
 
 use App\Core\Tables\TableComponent;
-//use App\Modules\Gastos\TipoGasto\Tables\TipoGastoTableDefinition;
+use App\Modules\Gastos\TipoGasto\Actions\ToggleTipoGastoFijoAction;
+use App\Modules\Gastos\TipoGasto\Actions\ToggleTipoGastoActivoAction;
+use App\Models\TipoGasto;
+use Livewire\Attributes\Reactive;
 
 class TipoGastoTable extends TableComponent
 {
+    #[Reactive]
+    public ?int $localId = null;
+
     protected function tableClass(): string
     {
-        return \App\Modules\gastos\TipoGasto\Tables\TipoGastoTableDefinition::class;
+        return \App\Modules\Gastos\TipoGasto\Tables\TipoGastoTableDefinition::class;
+    }
+
+    protected function tableParameters(): array
+    {
+        return [
+            'localId' => $this->localId,
+        ];
     }
 
     public function toggleFijo(int $tipoGastoId): void

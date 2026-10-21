@@ -10,6 +10,8 @@ class MonedaService
 {
     public const CACHE_KEY = 'ui.monedas';
     public const CACHE_TTL = 300;
+    public const CODIGO_USD = 'USD';
+    public const CODIGO_CUP = 'CUP';
 
     public function listForDisplay(): array
     {
@@ -47,6 +49,55 @@ class MonedaService
         return collect($this->listForDisplay())
             ->firstWhere('es_principal', true)['codigo'] ?? '—';
     }
+
+    public function tasaPorId(int $monedaId): ?float
+    {
+        if (!Schema::hasTable('monedas')) {
+            return null;
+        }
+
+        return Moneda::query()
+            ->whereKey($monedaId)
+            ->Activas()
+            ->value('tasa_cambio');
+    }
+
+    public function tasaPorCodigo(string $codigo): ?float
+    {
+        if (!Schema::hasTable('monedas')) {
+            return null;
+        }
+
+        return Moneda::query()
+            ->whereRaw('UPPER(codigo) = ?', [strtoupper($codigo)])
+            ->Activas()
+            ->value('tasa_cambio');
+    }
+
+    public function decorateCodigo(string $codigo): array
+    {
+        if (!Schema::hasTable('monedas')) {
+            return [];
+        }
+
+        // Buscamos el registro único de la moneda por su código
+        $moneda = Moneda::query()
+            ->whereRaw('UPPER(codigo) = ?', [strtoupper($codigo)])
+            ->activas() // Usamos el scope en minúsculas corregido anteriormente
+            ->first(['codigo', 'simbolo', 'color_bg', 'color_text']);
+
+        if (!$moneda) {
+            return [];
+        }
+
+        return [
+            'codigo'      => strtoupper($moneda->codigo),
+            'simbolo'     => strtoupper($moneda->simbolo),
+            'color_bg'    => $moneda->color_bg ?: 'bg-white',
+            'color_text'  => $moneda->color_text ?: 'text-black',
+        ];
+    }
+
 
     public function forgetCache(): void
     {

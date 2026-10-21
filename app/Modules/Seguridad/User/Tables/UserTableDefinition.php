@@ -73,7 +73,7 @@ class UserTableDefinition extends BaseTable
 
             (new TableAction('Editar'))
                 ->color('yellow')
-                ->event('user-editar'),
+                ->event('user-cargar-edicion'),
 
             (new TableAction('Eliminar'))
                 ->color('red')

@@ -153,10 +153,21 @@ abstract class TableComponent extends Component
 
         $rows = $table->getRows();
         $columns = $table->getColumns();
+        
+        // Verificamos si la definición de tabla incluye un método de totales personalizado
+        $data_decorate = [];
+        $totals = method_exists($table, 'getTotals') ? $table->getTotals($data_decorate) : null;
+        
+        $data_decorate_local_periodo = [];
+        $totals_local_periodo = method_exists($table, 'getTotalsLocalPeriodo') ? $table->getTotalsLocalPeriodo($data_decorate) : null;
 
         return view('components.ui.table.table-component', [
             'rows' => $rows,
             'columns' => $columns,
+            'totals' => $totals, // 🔥 Inyectado en la vista Blade
+            'data_decorate' => $data_decorate, // 🔥 Inyectado en la vista Blade
+            'totals_local_periodo' => $totals_local_periodo, // 🔥 Inyectado en la vista Blade
+            'data_decorate_local_periodo' => $data_decorate_local_periodo, // 🔥 Inyectado en la vista Blade
             'tableOptions' => $this->tableOptions(),
             'sortable' => $this->sortable(),
             'sortableMethod' => $this->sortableMethod(),

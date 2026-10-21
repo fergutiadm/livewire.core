@@ -147,10 +147,14 @@ class PeriodoContableForm extends Component
         $this->activo = $periodoContable->activo ?? false;
 
         $this->cerrado = $periodoContable->cerrado ?? false;
+        
+        $this->fecha_inicio = $periodoContable->fecha_inicio
+            ? \Carbon\Carbon::parse($periodoContable->fecha_inicio)->format('Y-m-d')
+            : '';
 
-        $this->fecha_inicio = $periodoContable->fecha_inicio;
-
-        $this->fecha_fin = $periodoContable->fecha_fin;
+        $this->fecha_fin = $periodoContable->fecha_fin
+            ? \Carbon\Carbon::parse($periodoContable->fecha_fin)->format('Y-m-d')
+            : '';
 
 
         // Avisar al MediaManager qué categoría se está editando
@@ -181,7 +185,13 @@ class PeriodoContableForm extends Component
     */
 
     public function localChanged(): void
-    {
+    { 
+
+        $this->dispatch(
+            'loading-start',
+            message: 'Cargando periodos...'
+        );
+
         // Al cambiar de local dejamos de editar el período anterior.
         $this->periodoContableId = null;
 
@@ -237,10 +247,24 @@ class PeriodoContableForm extends Component
 
             //Logger()->info("ACTUALIZANDO PERIODO CONTABLE", ['payload'=>$payload]);
 
-            $periodoContable = $this->command(
-                'periodoContable.update',
-                $payload,
-            );
+            try {
+                $periodoContable = $this->command(
+                    'periodoContable.update',
+                    $payload,
+                );
+            } catch(\LogicException $e) {
+                $this->dispatch('loading-stop');
+                $this->dispatch(
+                    'livewire:alert',
+                    [
+                        'message' =>
+                            $e->getMessage(),
+                        'type' => 'error',
+                    ]
+                );
+
+                return;
+            }
 
             $this->dispatch(
                 'periodo-contable-actualizado',
@@ -264,10 +288,24 @@ class PeriodoContableForm extends Component
 
         else {
 
-            $periodoContable = $this->command(
-                'periodoContable.create',
-                $this->payload()
-            );
+            try {
+                $periodoContable = $this->command(
+                    'periodoContable.create',
+                    $this->payload()
+                );
+            } catch(\LogicException $e) {
+                $this->dispatch('loading-stop');
+                $this->dispatch(
+                    'livewire:alert',
+                    [
+                        'message' =>
+                            $e->getMessage(),
+                        'type' => 'error',
+                    ]
+                );
+
+                return;
+            }
 
             $this->dispatch(
                 'periodo-contable-creado'

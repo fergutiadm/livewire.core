@@ -1,43 +1,39 @@
 <?php
 
-namespace App\Modules\Inventario\Atributo\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class AtributoValor extends Model
+class AtributableValor extends Model
 {
     use HasFactory;
 
-    protected $table = 'atributos_valores';
+    protected $table = 'atributables_valores';
 
     protected $fillable = [
-        'atributo_id',
-        'codigo',
-        'nombre',
         'orden_visual',
-        'activo',
+        'atributo_valor_id',
+        'atributable_id',
+        'atributable_type',
     ];
 
     protected $casts = [
         'orden_visual' => 'integer',
-        'activo' => 'boolean',
     ];
 
-    public function atributo(): BelongsTo
+    public function atributoValor(): BelongsTo
     {
-        return $this->belongsTo(Atributo::class);
+        return $this->belongsTo(
+            AtributoValor::class,
+            'atributo_valor_id'
+        );
     }
 
-    // public function variantes(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(
-    //         ProductoVariante::class,
-    //         'producto_variantes_atributos_valores',
-    //         'atributo_valor_id',
-    //         'producto_variante_id'
-    //     );
-    // }
+    public function atributable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }

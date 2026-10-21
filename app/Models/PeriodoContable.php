@@ -92,6 +92,11 @@ class PeriodoContable extends Model
         return $this->hasMany(Gasto::class);
     }
 
+    public function cierresCaja(): HasMany
+    {
+        return $this->hasMany(Local::class);
+    }
+
     /* =====================================================
      |  SCOPES (mínimos, reutilizables)
      ===================================================== */
@@ -100,14 +105,19 @@ class PeriodoContable extends Model
     {
         return $q->where('local_id', $localId);
     }
-
+    
     public function scopeVigente(Builder $q): Builder
     {
         return $q->where('activo', true)
                  ->where('cerrado', false);
     }
 
-    public function scopeMasReciente(Builder $q): Builder
+    public function scopeDeLocalVigente(Builder $q, int $localId): Builder
+    {
+        return $q->deLocal($localId)->vigente();
+    }
+
+    public function scopeMasReciente(Builder $q ): Builder
     {
         return $q->orderByDesc('fecha_inicio');
     }

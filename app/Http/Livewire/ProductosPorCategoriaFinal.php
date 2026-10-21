@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Core\Context\LocalContext;
 use Livewire\Component;
 use App\Models\Producto;
 use App\Models\Categoria;
@@ -19,12 +20,20 @@ class ProductosPorCategoriaFinal extends Component
     public $perPage = 5;
     public $search = '';
 
+    public function mount()
+    {
+        $this->localId = app(LocalContext::class)->id();
+    }
+
     // Seleccionar local desde botones
     public function setLocal($id = null)
     {
         $this->localId = $id;
         $this->categoriaId = null;
         $this->setPage(1);
+    
+        // 🔥 Avisa a JS que redibuje los Swipers
+        $this->dispatch('post-render'); 
     }
 
     // Seleccionar categoria desde botones
@@ -59,7 +68,7 @@ class ProductosPorCategoriaFinal extends Component
 
     public function render()
     {
-        $locales = Local::orderBy('nombre')->get();
+        $locales = Local::orderByDesc('es_principal')->orderBy('nombre')->get();
         $searchTerm = trim($this->search);
 
         // Traemos productos filtrados por local y búsqueda

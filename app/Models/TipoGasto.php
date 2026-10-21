@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasTrazas;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class TipoGasto extends Model
 {
@@ -24,6 +25,8 @@ class TipoGasto extends Model
     protected $fillable = [
         'local_id',
         'nombre',
+        'color_bg',
+        'color_text',
         'descripcion',
         'fijo',
         'activo',
@@ -41,5 +44,14 @@ class TipoGasto extends Model
     public function gastos(): HasMany
     {
         return $this->hasMany(Gasto::class);
+    }
+
+    /* =====================================================
+     |  SCOPES (mínimos, reutilizables)
+     ===================================================== */
+
+    public function scopeActivos(Builder $q): Builder
+    {
+        return $q->where('activo', true);
     }
 }

@@ -85,9 +85,9 @@ class CategoriaAttributesManager extends Component
         // ]);
 
         if ($this->categoriaId) {
-            Log::info('CATEGORIA ATTRIBUTES MOUNT(2)', [
-                'categoriaId' => $this->categoriaId,
-            ]);
+            // Log::info('CATEGORIA ATTRIBUTES MOUNT(2)', [
+            //     'categoriaId' => $this->categoriaId,
+            // ]);
 
             $this->loadAttributes();
         }
@@ -184,11 +184,11 @@ class CategoriaAttributesManager extends Component
             return;
         }
 
-        Log::info('CATEGORIA ATTRIBUTES GUARDAR INICIO', [
+        /*Log::info('CATEGORIA ATTRIBUTES GUARDAR INICIO', [
             'categoriaId' => $this->categoriaId,
             'originalCards' => $this->originalCards,
             'cards' => $this->cards,
-        ]);
+        ]);*/
 
         $dto = new SaveCategoriaAttributesDTO(
             categoriaId: $this->categoriaId,
@@ -219,11 +219,11 @@ class CategoriaAttributesManager extends Component
         $this->availableExistingValores = [];
         $this->selectedExistingValores = [];
 
-        Log::info('CATEGORIA ATTRIBUTES GUARDADOS', [
-            'categoriaId' => $this->categoriaId,
-            'cards' => $this->cards,
-            'originalCards' => $this->originalCards,
-        ]);
+        // Log::info('CATEGORIA ATTRIBUTES GUARDADOS', [
+        //     'categoriaId' => $this->categoriaId,
+        //     'cards' => $this->cards,
+        //     'originalCards' => $this->originalCards,
+        // ]);
 
         $this->dispatch('livewire:alert', [
             'message' => 'Atributos guardados correctamente',
@@ -320,13 +320,13 @@ class CategoriaAttributesManager extends Component
         $this->availableValores = [];
         $this->selectedValores = [];
 
-        Log::info('CATEGORIA ATTRIBUTE AGREGADO EN MEMORIA', [
+        /*Log::info('CATEGORIA ATTRIBUTE AGREGADO EN MEMORIA', [
             'categoriaId' => $this->categoriaId,
             'atributoId' => $atributo->id,
             'atributo' => $atributo->nombre,
             'valores' => $valores,
             'cards' => $this->cards,
-        ]);
+        ]);*/
     }
 
     /*
@@ -395,13 +395,13 @@ class CategoriaAttributesManager extends Component
             ];
         }
 
-        Log::info('PRODUCTO ATTRIBUTE VALORES AGREGADOS EN MEMORIA', [
+        /*Log::info('PRODUCTO ATTRIBUTE VALORES AGREGADOS EN MEMORIA', [
             'productoId' => $this->productoId,
             'atributoId' => $atributoId,
             'atributo' => $atributo->nombre,
             'valoresSeleccionados' => $this->selectedExistingValores,
             'cards' => $this->cards,
-        ]);
+        ]);*/
 
         /*
         * --------------------------------------------------------------------------
@@ -505,12 +505,12 @@ class CategoriaAttributesManager extends Component
 
         $this->cards = $nuevoOrden;
 
-        Log::info('CATEGORIA ATTRIBUTES REORDENADOS EN MEMORIA', [
+        /*Log::info('CATEGORIA ATTRIBUTES REORDENADOS EN MEMORIA', [
             'categoriaId' => $this->categoriaId,
             'atributoIdOrigen' => $atributoIdOrigen,
             'atributoIdDestino' => $atributoIdDestino,
             'cards' => $this->cards,
-        ]);
+        ]);*/
     }
 
     /**
@@ -564,13 +564,13 @@ class CategoriaAttributesManager extends Component
 
         $this->cards[$atributoId]['valores'] = $nuevoOrden;
 
-        Log::info('CATEGORIA ATTRIBUTE VALORES REORDENADOS EN MEMORIA', [
+        /*Log::info('CATEGORIA ATTRIBUTE VALORES REORDENADOS EN MEMORIA', [
             'categoriaId' => $this->categoriaId,
             'atributoId' => $atributoId,
             'valorIdOrigen' => $valorIdOrigen,
             'valorIdDestino' => $valorIdDestino,
             'valores' => $this->cards[$atributoId]['valores'],
-        ]);
+        ]);*/
     }
 
     public function moverAtributoArriba(int $atributoId): void
@@ -738,10 +738,10 @@ class CategoriaAttributesManager extends Component
             $this->cards[$atributoId]['orden_visual'] = $orden;
         }
 
-        Log::info('CATEGORIA ATTRIBUTES ORDEN ATRIBUTOS ACTUALIZADO', [
+        /*Log::info('CATEGORIA ATTRIBUTES ORDEN ATRIBUTOS ACTUALIZADO', [
             'categoriaId' => $this->categoriaId,
             'cards' => $this->cards,
-        ]);
+        ]);*/
     }
 
     /**
@@ -770,11 +770,11 @@ class CategoriaAttributesManager extends Component
             $this->cards[$atributoId]['valores'][$valorId]['orden_visual'] = $orden;
         }
 
-        Log::info('CATEGORIA ATTRIBUTES ORDEN VALORES ACTUALIZADO', [
+        /*Log::info('CATEGORIA ATTRIBUTES ORDEN VALORES ACTUALIZADO', [
             'categoriaId' => $this->categoriaId,
             'atributoId' => $atributoId,
             'cards' => $this->cards,
-        ]);
+        ]);*/
     }
 
     /*
@@ -817,12 +817,12 @@ class CategoriaAttributesManager extends Component
             $this->selectedExistingValores = [];
         }
 
-        Log::info('CATEGORIA ATTRIBUTE ELIMINADO EN MEMORIA', [
+        /*Log::info('CATEGORIA ATTRIBUTE ELIMINADO EN MEMORIA', [
             'categoriaId' => $this->categoriaId,
             'atributoId' => $atributoId,
             'atributo' => $atributo['atributo'] ?? null,
             'cards' => $this->cards,
-        ]);
+        ]);*/
     }
 
     /*
@@ -876,13 +876,13 @@ class CategoriaAttributesManager extends Component
             }
         }
 
-        Log::info('CATEGORIA ATTRIBUTE VALOR ELIMINADO EN MEMORIA', [
-            'categoriaId' => $this->categoriaId,
-            'atributoId' => $atributoId,
-            'valorId' => $valorId,
-            'valor' => $valor,
-            'cards' => $this->cards,
-        ]);
+        // Log::info('CATEGORIA ATTRIBUTE VALOR ELIMINADO EN MEMORIA', [
+        //     'categoriaId' => $this->categoriaId,
+        //     'atributoId' => $atributoId,
+        //     'valorId' => $valorId,
+        //     'valor' => $valor,
+        //     'cards' => $this->cards,
+        // ]);
 
     }
 
@@ -991,14 +991,14 @@ class CategoriaAttributesManager extends Component
             }
         }
 
-        Log::info('CATEGORIA ATTRIBUTES CAMBIOS DEBUG', [
+        /*Log::info('CATEGORIA ATTRIBUTES CAMBIOS DEBUG', [
             'categoriaId' => $this->categoriaId,
             'originalCards' => $this->originalCards,
             'cards' => $this->cards,
             'atributosOriginales' => $atributosOriginales,
             'atributosActuales' => $atributosActuales,
             'cambios' => $cambios,
-        ]);
+        ]);*/
 
         return $cambios;
     }
@@ -1031,9 +1031,9 @@ class CategoriaAttributesManager extends Component
     ): void {
         $this->categoriaId = $categoriaId;
 
-        Log::info('cargarCategoriaAtributos', [
-            'categoriaId' => $this->categoriaId,
-        ]);
+        // Log::info('cargarCategoriaAtributos', [
+        //     'categoriaId' => $this->categoriaId,
+        // ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -1203,11 +1203,11 @@ class CategoriaAttributesManager extends Component
 
         $this->originalCards = $this->cards;
 
-        Log::info('CATEGORIA ATTRIBUTES SNAPSHOT', [
+        /*Log::info('CATEGORIA ATTRIBUTES SNAPSHOT', [
             'categoriaId' => $this->categoriaId,
             'originalCards' => $this->originalCards,
             'cards' => $this->cards,
-        ]);
+        ]);*/
 
         /*
         |--------------------------------------------------------------------------
@@ -1219,13 +1219,13 @@ class CategoriaAttributesManager extends Component
 
         $this->cargarAtributosExistentes();
 
-        Log::info('CATEGORIA ATTRIBUTES LOAD', [
-            'categoriaId' => $this->categoriaId,
-            'cards' => $this->cards,
-            'availableAtributos' => $this->availableAtributos,
-            'availableExistingAtributos' =>
-                $this->availableExistingAtributos,
-        ]);
+        // Log::info('CATEGORIA ATTRIBUTES LOAD', [
+        //     'categoriaId' => $this->categoriaId,
+        //     'cards' => $this->cards,
+        //     'availableAtributos' => $this->availableAtributos,
+        //     'availableExistingAtributos' =>
+        //         $this->availableExistingAtributos,
+        // ]);
     }
 
     /*
@@ -1349,13 +1349,13 @@ class CategoriaAttributesManager extends Component
             })
             ->toArray();
 
-        Log::info('CATEGORIA ATTRIBUTE SELECTED', [
-            'categoriaId' => $this->categoriaId,
-            'atributoId' => $atributo->id,
-            'atributo' => $atributo->nombre,
-            'valoresAsociados' => $valoresAsociados,
-            'valores' => $this->availableValores,
-        ]);
+        // Log::info('CATEGORIA ATTRIBUTE SELECTED', [
+        //     'categoriaId' => $this->categoriaId,
+        //     'atributoId' => $atributo->id,
+        //     'atributo' => $atributo->nombre,
+        //     'valoresAsociados' => $valoresAsociados,
+        //     'valores' => $this->availableValores,
+        // ]);
     }
 
     /*
@@ -1425,16 +1425,16 @@ class CategoriaAttributesManager extends Component
             })
             ->toArray();
 
-        Log::info(
-            'CATEGORIA ATTRIBUTE EXISTENTE SELECTED',
-            [
-                'categoriaId' => $this->categoriaId,
-                'atributoId' => $atributo->id,
-                'atributo' => $atributo->nombre,
-                'valoresAsociados' => $valoresAsociados,
-                'valores' => $this->availableExistingValores,
-            ]
-        );
+        // Log::info(
+        //     'CATEGORIA ATTRIBUTE EXISTENTE SELECTED',
+        //     [
+        //         'categoriaId' => $this->categoriaId,
+        //         'atributoId' => $atributo->id,
+        //         'atributo' => $atributo->nombre,
+        //         'valoresAsociados' => $valoresAsociados,
+        //         'valores' => $this->availableExistingValores,
+        //     ]
+        // );
     }
 
     /*

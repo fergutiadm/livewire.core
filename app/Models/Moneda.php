@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasTrazas;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,23 +83,82 @@ class Moneda extends Model
         return $this->hasMany(VentaProducto::class);
     }
 
+    public function cierres_caja_moneda(): HasMany
+    {
+        return $this->hasMany(CierreCajaMoneda::class);
+    }
+
+    public function denominaciones(): HasMany
+    {
+        return $this->hasMany(Denominacion::class);
+    }
+
+    /*
     public function atributables_valores_movimientos(): HasMany
     {
         return $this->hasMany(AtributablesValoresMovimientos::class);
     }
+    */
 
     /* =====================
      |  SCOPES
      ===================== */
 
-    public function scopeActivas($query)
+    public function scopeEsPrincipal($query): Builder
+    {
+        return $query->where('es_principal', true);
+    }
+
+    /**
+     * Filtra solo las monedas que están activas.
+     */
+    public function scopeActivas($query): Builder
     {
         return $query->where('activa', true);
     }
 
-    public function scopeParaBarra($query)
+    /**
+     * Obtiene las monedas ordenadas priorizando la moneda principal y luego por código alfabético.
+     */
+    public function scopeOrdenadas($query): Builder
     {
-        return $query->select(
+        return $query
+            ->orderBy('es_principal', 'desc')
+            ->orderBy('codigo');
+    }
+
+    /**
+     * Obtiene las monedas activas con los campos necesarios
+     * ordenadas priorizando la moneda principal y luego por código alfabético.
+     */
+    public function scopeParaSelect($query): Builder
+    {
+        return $query->activas()
+            ->select(
+                'id',
+                'codigo',
+                'tasa_cambio',
+                'es_principal'
+            )
+            ->ordenadas();
+    }
+
+    /**
+     * Alias semántico para la barra de navegación (hereda el ordenamiento por defecto).
+     */
+    public function scopeParaBarra($query): Builder
+    {
+        return $query->paraSelect();
+    }
+
+    /**
+     * COMPATIBILIDAD VARIANTE: Devuelve exactamente los mismos campos y filtros, 
+     * pero SIN aplicar ningún tipo de ordenamiento.
+     */
+    public function scopeParaSelectSinOrden($query): Builder
+    {
+        return $query->activas()->select(
+            'id',
             'codigo',
             'tasa_cambio',
             'es_principal'

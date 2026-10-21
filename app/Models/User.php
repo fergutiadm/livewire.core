@@ -110,4 +110,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(GastoPago::class, 'operador_id');
     }
+
+    public function cierresCaja(): HasMany
+    {
+        return $this->hasMany(Local::class, 'operador_id');
+    }
 }

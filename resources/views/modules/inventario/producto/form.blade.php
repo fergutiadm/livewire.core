@@ -27,6 +27,8 @@
                 <select
                     wire:model="localId"
                     wire:change="localChanged"
+                    wire:loading.attr="disabled"
+                    wire:target="localChanged"
                     class="w-full rounded-xl border-slate-300"
                 >
 

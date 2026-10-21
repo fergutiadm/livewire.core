@@ -15,9 +15,29 @@ class UpdateLocalAction
 
                 $model = Local::findOrFail($dto->id);
 
-                $model->update(
-                    $dto->attributes()
-                );
+                $data = $dto->attributes();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Regla de negocio
+                |--------------------------------------------------------------------------
+                | Solo puede existir una local principal.
+                |
+                | Si esta local pasa a ser principal, todas las demás
+                | locales dejan de ser principales.
+                |--------------------------------------------------------------------------
+                */
+                if ((bool) ($data['es_principal'] ?? false)) {
+
+                    Local::query()
+                        ->where('id', '!=', $model->id)
+                        ->where('es_principal', true)
+                        ->update([
+                            'es_principal' => false,
+                        ]);
+                }
+
+                $model->update($data);
 
                 $model->refresh();
 

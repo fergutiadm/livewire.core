@@ -32,6 +32,8 @@ class AtributoForm extends Component
 
     public string $valorNombre = '';
 
+    public bool $valorActivo = true;
+
     public bool $showDeleteValorModal = false;
 
     public ?int $valorEliminarIndex = null;
@@ -251,6 +253,9 @@ class AtributoForm extends Component
                 $this->valores[$index]['nombre'] =
                     $this->valorNombre;
 
+                $this->valores[$index]['nombre'] =
+                    $this->valorActivo;
+
                 $this->normalizarValores();
 
                 $this->resetEditorValor();
@@ -267,6 +272,8 @@ class AtributoForm extends Component
             'codigo' => $this->valorCodigo,
 
             'nombre' => $this->valorNombre,
+
+            'activo' => $this->valorActivo,
 
             'orden_visual' => count($this->valores) + 1,
         ];

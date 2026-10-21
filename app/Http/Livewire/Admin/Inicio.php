@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin;
 
+use App\Core\Context\LocalContext;
 use App\Models\Atributo;
 use App\Models\Categoria;
 use App\Models\PeriodoContable;
@@ -17,11 +18,19 @@ class Inicio extends Component
 
     public function mount()
     {
+        $localId = app(LocalContext::class)->id();
         $this->periodoActivo = PeriodoContable::with('local')
+                                    ->where('local_id', $localId)
                                     ->where('activo', 1)
                                     ->where('cerrado', 0)
                                     ->latest('id')
                                     ->first();
+        /*
+        $this->periodoActivo = PeriodoContable::vigenteActual($localId)
+                                    ->with('local')
+                                    ->latest('id')
+                                    ->first();
+        */
         // Métricas base
         $this->stats = [
                 'productos'   => Producto::count(),

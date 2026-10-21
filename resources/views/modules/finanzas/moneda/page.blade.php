@@ -12,6 +12,22 @@
         loading = false;
         loadingMessage = '';
     "
+
+    x-init="
+        Livewire.hook('request', ({ fail }) => {
+            fail(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+    "
     class="relative"
 >
     <x-ui.crud.page>

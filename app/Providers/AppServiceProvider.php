@@ -33,14 +33,26 @@ use App\Modules\Inventario\Categoria\Livewire\CategoriaAttributesManager;
 use App\Modules\Inventario\Local\Livewire\LocalPage;
 use App\Modules\Inventario\Local\Livewire\LocalTable;
 use App\Modules\Inventario\Local\Livewire\LocalForm;
-use App\Modules\Inventario\Local\Livewire\LocalMediaManager;
-use App\Modules\Inventario\Local\Livewire\LocalAttributesManager;
+// use App\Modules\Inventario\Local\Livewire\LocalMediaManager;
+// use App\Modules\Inventario\Local\Livewire\LocalAttributesManager;
 
 use App\Modules\Finanzas\Moneda\Livewire\MonedaPage;
 use App\Modules\Finanzas\Moneda\Livewire\MonedaTable;
 use App\Modules\Finanzas\Moneda\Livewire\MonedaForm;
-use App\Modules\Finanzas\Moneda\Livewire\MonedaMediaManager;
-use App\Modules\Finanzas\Moneda\Livewire\MonedaAttributesManager;
+// use App\Modules\Finanzas\Moneda\Livewire\MonedaMediaManager;
+// use App\Modules\Finanzas\Moneda\Livewire\MonedaAttributesManager;
+
+use App\Modules\Finanzas\Caja\Livewire\CajaPage;
+use App\Modules\Finanzas\Caja\Livewire\CajaTable;
+use App\Modules\Finanzas\Caja\Livewire\CajaForm;
+// use App\Modules\Finanzas\Caja\Livewire\CajaMediaManager;
+// use App\Modules\Finanzas\Caja\Livewire\CajaAttributesManager;
+
+use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaPage;
+use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaTable;
+use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaForm;
+// use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaMediaManager;
+use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaDetallesManager;
 
 use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaPage;
 use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaTable;
@@ -91,6 +103,10 @@ use App\Modules\Gastos\Gasto\Livewire\GastoForm;
 use App\Modules\Gastos\GastoPago\Livewire\GastoPagoPage;
 use App\Modules\Gastos\GastoPago\Livewire\GastoPagoTable;
 use App\Modules\Gastos\GastoPago\Livewire\GastoPagoForm;
+
+use App\Modules\Admin\Denominacion\Livewire\DenominacionPage;
+use App\Modules\Admin\Denominacion\Livewire\DenominacionTable;
+use App\Modules\Admin\Denominacion\Livewire\DenominacionForm;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -151,8 +167,8 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('inventario.local.page', LocalPage::class);
         $this->registerLivewire('inventario.local.form', LocalForm::class);
         $this->registerLivewire('inventario.local.table', LocalTable::class);
-        $this->registerLivewire('inventario.local.media-manager', LocalMediaManager::class);
-        $this->registerLivewire('inventario.local.attributes-manager', LocalAttributesManager::class);
+        // $this->registerLivewire('inventario.local.media-manager', LocalMediaManager::class);
+        // $this->registerLivewire('inventario.local.attributes-manager', LocalAttributesManager::class);
 
         $this->registerLivewire('inventario.categoria.page', CategoriaPage::class);
         $this->registerLivewire('inventario.categoria.form', CategoriaForm::class);
@@ -177,6 +193,18 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('finanzas.moneda.table', MonedaTable::class);
         // $this->registerLivewire('finanzas.moneda.media-manager', MonedaMediaManager::class);
         // $this->registerLivewire('finanzas.moneda.attributes-manager', MonedaAttributesManager::class);
+
+        $this->registerLivewire('finanzas.caja.page', CajaPage::class);
+        $this->registerLivewire('finanzas.caja.form', CajaForm::class);
+        $this->registerLivewire('finanzas.caja.table', CajaTable::class);
+        // $this->registerLivewire('finanzas.caja.media-manager', CajaMediaManager::class);
+        // $this->registerLivewire('finanzas.caja.attributes-manager', CajaAttributesManager::class);
+
+        $this->registerLivewire('finanzas.cierre-caja.page', CierreCajaPage::class);
+        $this->registerLivewire('finanzas.cierre-caja.form', CierreCajaForm::class);
+        $this->registerLivewire('finanzas.cierre-caja.table', CierreCajaTable::class);
+        // $this->registerLivewire('finanzas.cierre-caja.media-manager', CierreCajaMediaManager::class);
+        $this->registerLivewire('finanzas.cierre-caja.detalles-manager', CierreCajaDetallesManager::class);
 
         $this->registerLivewire('finanzas.tarjeta-magnetica.page', TarjetaMagneticaPage::class);
         $this->registerLivewire('finanzas.tarjeta-magnetica.form', TarjetaMagneticaForm::class);
@@ -216,8 +244,12 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('gastos.tipo-gasto.form', TipoGastoForm::class);
         $this->registerLivewire('gastos.tipo-gasto.table', TipoGastoTable::class);
         
-        $this->registerLivewire('gastos.gasto-pago.page', GastoPgoPage::class);
-        $this->registerLivewire('gastos.gasto-pago.form', GastoPgoForm::class);
-        $this->registerLivewire('gastos.gasto-pago.table', GastoPgoTable::class);
+        $this->registerLivewire('gastos.gasto-pago.page', GastoPagoPage::class);
+        $this->registerLivewire('gastos.gasto-pago.form', GastoPagoForm::class);
+        $this->registerLivewire('gastos.gasto-pago.table', GastoPagoTable::class);
+        
+        $this->registerLivewire('admin.denominacion.page', DenominacionPage::class);
+        $this->registerLivewire('admin.denominacion.form', DenominacionForm::class);
+        $this->registerLivewire('admin.denominacion.table', DenominacionTable::class);
     }
 }

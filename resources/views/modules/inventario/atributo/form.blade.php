@@ -1,3 +1,4 @@
+{{-- resources/views/modules/inventario/atributo/form.blade.php --}}
 <div
     class="
         rounded-2xl

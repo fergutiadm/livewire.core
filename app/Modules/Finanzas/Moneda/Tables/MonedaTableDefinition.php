@@ -14,7 +14,9 @@ class MonedaTableDefinition extends BaseTable
 {
     public function query(): Builder
     {
-        $query = Moneda::query();
+        $query = Moneda::query()
+            ->orderByDesc('es_principal')
+            ->orderBy('codigo');
 
         return $query;
     }
@@ -40,19 +42,22 @@ class MonedaTableDefinition extends BaseTable
             $color_text = $moneda->color_text ?? '';
             $color_bg = $moneda->color_bg ?? '';
 
+            $es_principal = $moneda->es_principal
+                ? '<i class="bi bi-check-circle-fill text-green-600"
+                     title="Local activo"></i>'
+                : '';
 
+            
             return '
                 <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
-
+                ' . $es_principal . '
                 <span class="truncate">' . e($nombre) . '</span>
-
                 <span
                         class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
                         ' . e($color_text) . '
                         ' . e($color_bg)  . '">
                     ' . e($simbolo) .
                 '</span>
-
             </p>
             ';
         });

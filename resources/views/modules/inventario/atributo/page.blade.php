@@ -1,3 +1,4 @@
+{{-- resources/views/modules/inventario/atributo/page.blade.php --}}
 <div
     x-data="{ loading: false, loadingMessage: '' }"
     x-on:loading-start.window="
@@ -11,6 +12,22 @@
     x-on:media-procesada.window="
         loading = false;
         loadingMessage = '';
+    "
+
+    x-init="
+        Livewire.hook('request', ({ fail }) => {
+            fail(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
     "
     class="relative"
 >

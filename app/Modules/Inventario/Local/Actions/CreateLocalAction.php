@@ -15,9 +15,28 @@ class CreateLocalAction
         return DB::transaction(
             function () use ($dto) {
 
-                $model = Local::create(
-                    $dto->toArray()
-                );
+                $data = $dto->toArray();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Regla de negocio
+                |--------------------------------------------------------------------------
+                | Solo puede existir una local principal.
+                |
+                | Si la nueva local es principal, todas las demás
+                | locales dejan de ser principales.
+                |--------------------------------------------------------------------------
+                */
+                if ((bool) ($data['es_principal'] ?? false)) {
+
+                    Local::query()
+                        ->where('es_principal', true)
+                        ->update([
+                            'es_principal' => false,
+                        ]);
+                }
+
+                $model = Local::create($data);
 
                 /*
                 |--------------------------------------------------------------------------
