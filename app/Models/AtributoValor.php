@@ -31,7 +31,7 @@ class AtributoValor extends Model
         return $this->belongsTo(Atributo::class);
     }
 
-    public function variantes(): BelongsToMany
+    public function productoVariantes(): BelongsToMany
     {
         return $this->belongsToMany(
             ProductoVariante::class,

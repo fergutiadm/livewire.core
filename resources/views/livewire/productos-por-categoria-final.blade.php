@@ -1,3 +1,4 @@
+{{-- resources/views/livewire/productos-por-categoria-final.blade.php --}}
 <div class="max-w-7xl mx-auto px-4 py-6" wire:key="portada-lista-{{ $categoriaId }}">
 
     {{-- Selector de local --}}
@@ -52,57 +53,134 @@
                 {{ $categoria->nombre }}
             </h2>
 
+            @if (!$categoriaId)
             <div
                 x-data="carousel(@js($categoria->productos_filtrados))"
                 x-init="init()"
                 class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 carousel-container mb-8"
                 id="categoria-{{ $categoria->id }}"
             >
-                @foreach($categoria->productos_filtrados as $producto)
-                    <div class="flex-none w-60 snap-start bg-white rounded-lg shadow p-4 flex flex-col hover:shadow-lg transition duration-300">
+            @else
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+            @endif
 
-                        {{-- Imagen --}}
+            @foreach($categoria->productos_filtrados as $producto)
+                @php
+                    $agotado = (float) ($producto->stock ?? 0) <= 0;
+                @endphp
+
+                <article
+                    wire:key="producto-card-{{ $producto->id }}"
+                    @class([
+                        'group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl',
+                        'border border-slate-200/80 bg-white shadow-sm',
+                        'transition duration-200 hover:-translate-y-0.5 hover:shadow-lg',
+                        'w-60 flex-none snap-start' => !$categoriaId,
+                        'w-full' => $categoriaId,
+                    ])
+                >
+                    {{-- Imagen: altura idéntica en todas las tarjetas --}}
+                    <div class="relative h-48 shrink-0 overflow-hidden bg-slate-100">
                         <img
-                            src="{{ $producto->imagen_url ?? url('/placeholder/categoria/' . $categoria->id) . '?v=' . time() }}"
+                            src="{{ $producto->imagen_url ?? url('/placeholder/categoria/' . $categoria->id) }}"
                             alt="{{ $producto->nombre }}"
-                            class="h-48 w-full object-cover rounded mb-4"
+                            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
                             loading="lazy"
                         >
 
-                        {{-- Nombre --}}
-                        <h3 class="text-lg font-semibold mb-1">{{ $producto->nombre }}</h3>
+                        {{-- Estado del producto --}}
+                        <div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
+                            @if($agotado)
+                                <span class="inline-flex items-center gap-1 rounded-full bg-red-600/95 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                                    Agotado
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-600/95 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                                    Disponible
+                                </span>
+                            @endif
 
-                        {{-- Descripción --}}
-                        <p class="text-sm text-gray-600 mb-2">{{ $producto->descripcion }}</p>
+                            @if($producto->oferta)
+                                <span class="rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-amber-950 shadow-sm">
+                                    Oferta
+                                </span>
+                            @endif
+                        </div>
+                    </div>
 
-                        {{-- Precio y Moneda --}}
-                        <div class="flex items-center gap-2 text-sm mb-2">
-                            <span class="text-indigo-600 font-bold">${{ number_format($producto->precio, 2) }}</span>
-                            <span>{{ $producto->moneda_codigo ?? '' }}</span>
-                            @if($producto->moneda_simbolo ?? false)
-                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ $producto->moneda_color_text ?? 'text-white' }} {{ $producto->moneda_color_bg ?? 'bg-indigo-500' }}">
+                    {{-- Contenido con secciones de altura uniforme --}}
+                    <div class="flex flex-1 flex-col p-4">
+
+                        {{-- Nombre: reserva espacio para dos líneas --}}
+                        <h3
+                            class="h-12 overflow-hidden text-base font-semibold leading-6 text-slate-800"
+                            style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;"
+                            title="{{ $producto->nombre }}"
+                        >
+                            {{ $producto->nombre }}
+                        </h3>
+
+                        {{-- Descripción: reserva espacio para tres líneas --}}
+                        <p
+                            class="mt-1 h-[3.75rem] overflow-hidden text-sm leading-5 text-slate-500"
+                            style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;"
+                            title="{{ $producto->descripcion }}"
+                        >
+                            {{ $producto->descripcion ?: 'Sin descripción disponible.' }}
+                        </p>
+
+                        {{-- Precio: siempre en la misma posición relativa --}}
+                        <div class="mt-3 flex min-h-10 items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                            <div class="min-w-0">
+                                <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                    Precio
+                                </p>
+
+                                <p class="truncate text-lg font-bold leading-6 text-indigo-700">
+                                    ${{ number_format($producto->precio, 2) }}
+                                </p>
+                            </div>
+
+                            @if($producto->moneda_simbolo)
+                                <span
+                                    class="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold {{ $producto->moneda_color_text ?? 'text-white' }} {{ $producto->moneda_color_bg ?? 'bg-indigo-500' }}"
+                                    title="{{ $producto->moneda_codigo }}"
+                                >
                                     {{ $producto->moneda_simbolo }}
+                                </span>
+                            @elseif($producto->moneda_codigo)
+                                <span class="shrink-0 rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                                    {{ $producto->moneda_codigo }}
                                 </span>
                             @endif
                         </div>
 
-                        {{-- Stock y Oferta --}}
-                        <div class="flex gap-2 mb-4">
-                            @if($producto->stock == 0)
-                                <span class="text-xs px-2 py-1 bg-red-500 text-white rounded-full">Agotado</span>
-                            @endif
-                            @if($producto->oferta)
-                                <span class="text-xs px-2 py-1 bg-green-500 text-white rounded-full">Oferta</span>
-                            @endif
+                        {{-- Acción: alineada al fondo de la tarjeta --}}
+                        <div class="mt-auto pt-4">
+                            <button
+                                type="button"
+                                wire:click="addToCart({{ $producto->id }})"
+                                @disabled($agotado)
+                                class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition
+                                    {{ $agotado
+                                        ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                        : 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 active:scale-[0.98]' }}"
+                            >
+                                @if($agotado)
+                                    <i class="bi bi-cart-x"></i>
+                                    No disponible
+                                @else
+                                    <i class="bi bi-cart-plus"></i>
+                                    Agregar al carrito
+                                @endif
+                            </button>
                         </div>
-
-                        {{-- Botón agregar --}}
-                        <button wire:click="addToCart({{ $producto->id }})"
-                                class="mt-auto bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">
-                            Agregar al carrito
-                        </button>
                     </div>
-                @endforeach
+                </article>
+            @endforeach
+
             </div>
         @endif
     @endforeach

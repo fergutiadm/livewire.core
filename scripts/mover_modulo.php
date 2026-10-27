@@ -5,7 +5,7 @@ echo "    MOVEDOR DE SUBMÓDULOS (CON CONTROL DE EPERM)   \n";
 echo "==================================================\n\n";
 
 // Definir origen fijo (Inventario)
-$moduloOrigen = 'Inventario';
+$moduloOrigen = 'Admin';
 
 // 1. Solicitar Submódulo/Entidad a mover
 $submodulo = trim(readline("1. Ingresa el SUBMÓDULO / ENTIDAD a mover (ej. Cliente): "));

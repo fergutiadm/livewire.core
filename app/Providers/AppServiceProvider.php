@@ -60,6 +60,10 @@ use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaForm;
 // use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaMediaManager;
 // use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaAttributesManager;
 
+use App\Modules\Finanzas\Denominacion\Livewire\DenominacionPage;
+use App\Modules\Finanzas\Denominacion\Livewire\DenominacionTable;
+use App\Modules\Finanzas\Denominacion\Livewire\DenominacionForm;
+
 use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
 use App\Modules\Inventario\Atributo\Livewire\AtributoTable;
 use App\Modules\Inventario\Atributo\Livewire\AtributoForm;
@@ -104,9 +108,9 @@ use App\Modules\Gastos\GastoPago\Livewire\GastoPagoPage;
 use App\Modules\Gastos\GastoPago\Livewire\GastoPagoTable;
 use App\Modules\Gastos\GastoPago\Livewire\GastoPagoForm;
 
-use App\Modules\Admin\Denominacion\Livewire\DenominacionPage;
-use App\Modules\Admin\Denominacion\Livewire\DenominacionTable;
-use App\Modules\Admin\Denominacion\Livewire\DenominacionForm;
+use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
+use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigTable;
+use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigForm;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -211,6 +215,10 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('finanzas.tarjeta-magnetica.table', TarjetaMagneticaTable::class);
         // $this->registerLivewire('finanzas.tarjeta-magnetica.media-manager', TarjetaMagneticaMediaManager::class);
         // $this->registerLivewire('finanzas.tarjeta-magnetica.attributes-manager', TarjetaMagneticaAttributesManager::class);
+        
+        $this->registerLivewire('finanzas.denominacion.page', DenominacionPage::class);
+        $this->registerLivewire('finanzas.denominacion.form', DenominacionForm::class);
+        $this->registerLivewire('finanzas.denominacion.table', DenominacionTable::class);
 
         $this->registerLivewire('comercial.cliente.page', ClientePage::class);
         $this->registerLivewire('comercial.cliente.form', ClienteForm::class);
@@ -248,8 +256,8 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('gastos.gasto-pago.form', GastoPagoForm::class);
         $this->registerLivewire('gastos.gasto-pago.table', GastoPagoTable::class);
         
-        $this->registerLivewire('admin.denominacion.page', DenominacionPage::class);
-        $this->registerLivewire('admin.denominacion.form', DenominacionForm::class);
-        $this->registerLivewire('admin.denominacion.table', DenominacionTable::class);
+        $this->registerLivewire('configuracion.setup-config.page', SetupConfigPage::class);
+        $this->registerLivewire('configuracion.setup-config.form', SetupConfigForm::class);
+        $this->registerLivewire('configuracion.setup-config.table', SetupConfigTable::class);
     }
 }

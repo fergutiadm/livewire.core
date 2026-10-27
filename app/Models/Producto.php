@@ -89,6 +89,10 @@ class Producto extends Model
         return $this->hasMany(ProductoUnidad::class);
     }
 
+    public function variantes(): HasMany
+    {
+        return $this->hasMany(ProductoVariante::class);
+    }
 
     /**
      * Valores reales del producto

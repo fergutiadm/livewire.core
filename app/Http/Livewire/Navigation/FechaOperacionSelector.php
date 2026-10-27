@@ -20,8 +20,12 @@ class FechaOperacionSelector extends Component
     public ?string $fechaOperacion = null;
     public array $fechas_periodo = [];
 
+    public bool $mostrarResumen = false;
+
     public function mount(PeriodoContext $periodoContext): void
     {
+        $this->fechaOperacion = app(FechaOperacionContext::class)->fecha();
+
         $this->periodoId = $periodoContext->id();
 
         $this->actualizarFechaOperacion($this->periodoId);
@@ -33,25 +37,42 @@ class FechaOperacionSelector extends Component
      * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage 
      * o el listener de Login modifican el periodo en el servidor.
      */
-    #[On('periodo-context-changed')]
-    public function actualizarFechaOperacion(int $periodoId): void
-    {
-        // 1. Buscamos el periodo contable actual en la base de datos
-        $periodoActual = PeriodoContable::find($periodoId);
+        #[On('periodo-context-changed')]
+        public function actualizarFechaOperacion(int $periodoId): void
+        {
+            // 1. Buscamos el periodo contable actual en la base de datos
+            $periodoActual = PeriodoContable::find($periodoId);
 
-        $hoy = now()->format('Y-m-d');
-        if ($periodoActual) {
-            // 2. Asignamos las fechas límite (soportando los nombres de columna que tengas)
-            $fechaMinima = $periodoActual->fecha_inicio ?? $periodoActual->fecha_inicial ?? null;
-            $fechaMaxima = $periodoActual->fecha_fin ?? $periodoActual->fecha_final ?? null;
+            $hoy = now()->format('Y-m-d');
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 0', [
+            //     'hoy' => $hoy
+            // ]);
+            if ($periodoActual) {
+                // 2. Asignamos las fechas límite (soportando los nombres de columna que tengas)
+                $fechaMinima = $periodoActual->fecha_inicio ?? $periodoActual->fecha_inicial ?? null;
+                $fechaMaxima = $periodoActual->fecha_fin ?? $periodoActual->fecha_final ?? null;
+            }
+
+            $fechaPeriodo = \Carbon\Carbon::parse($this->fechaOperacion)->format('Y-m-d') ?? $hoy;
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 1', [
+            //     'fechaPeriodo' => $fechaPeriodo
+            // ]);
+            if($fechaPeriodo < $fechaMinima || $fechaPeriodo > $fechaMaxima){
+                $fechaPeriodo = ($hoy < $fechaMinima) ? $fechaMinima : (($hoy > $fechaMaxima) ? $fechaMaxima : $hoy);
+                app(FechaOperacionContext::class)->set($fechaPeriodo);
+            }
+
+            $this->fechaOperacion = $fechaPeriodo;
+
+            $this->dispatch(
+                'fecha-operacion-context-changed',
+                fechaOperacion: $fechaPeriodo,
+            );
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 2', [
+            //     'fechaPeriodo' => $fechaPeriodo
+            // ]);
+
         }
-
-        $fechaPeriodo = ($hoy < $fechaMinima) ? $fechaMinima : (($hoy > $fechaMaxima) ? $fechaMaxima : $hoy);
-
-        app(FechaOperacionContext::class)->set($fechaPeriodo);
-        $this->fechaOperacion = $fechaPeriodo;
-
-    }
 
     /**
      * OPTIMIZACIÓN EXTRA: Aislamos la carga de periodos para no repetir código
@@ -77,13 +98,6 @@ class FechaOperacionSelector extends Component
                         ];
             $fecha->addDay();
         }
-
-        Log::info('cargarFechas', 
-            [
-                '$periodoId' => $periodoId,
-                'fechas_periodo' => $this->fechas_periodo
-            ]
-        );
     }
 
     /**
@@ -98,12 +112,6 @@ class FechaOperacionSelector extends Component
         
         // 2. Sincronizamos el fechaOperacion para que la vista HTML marque la correcto
         $this->fechaOperacion = $fechaOperacion;
-        
-        Log::info('actualizarFechaOperacionActual',
-            [
-                '$this->fechaOperacion' => $this->fechaOperacion
-            ]
-        );
     }
 
     public function openModal(): void

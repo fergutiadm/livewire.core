@@ -71,13 +71,13 @@ class CierreCajaTable extends TableComponent
 
     protected function tableParameters(): array
     {
-        Log::info('tableParameters',
-            [
-                'localId' => $this->localId,
-                'periodoContableId' => $this->periodoContableId,
-                'cajaId' => $this->cajaId,
-            ]
-        );
+        // Log::info('tableParameters',
+        //     [
+        //         'localId' => $this->localId,
+        //         'periodoContableId' => $this->periodoContableId,
+        //         'cajaId' => $this->cajaId,
+        //     ]
+        // );
         return [
             'localId' => $this->localId,
             'periodoContableId' => $this->periodoContableId,

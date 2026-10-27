@@ -7,8 +7,10 @@ use App\Models\AtributableValor;
 use App\Models\Atributo;
 use App\Models\AtributoValor;
 use App\Models\Producto;
+use App\Models\ProductoVariante;
 use App\Modules\Inventario\Producto\DTOs\SaveProductoAttributesDTO;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SaveProductoAttributesAction
 {
@@ -18,33 +20,20 @@ class SaveProductoAttributesAction
         DB::transaction(function () use ($dto) {
 
             /*
-             * --------------------------------------------------------------------------
-             * 1. Validar producto
-             * --------------------------------------------------------------------------
+             * 1. Validar y bloquear el producto.
              */
             $producto = Producto::query()
+                ->lockForUpdate()
                 ->findOrFail($dto->productoId);
 
             /*
-             * --------------------------------------------------------------------------
-             * 2. Normalizar matriz
-             * --------------------------------------------------------------------------
-             *
-             * $cards representa el estado final deseado.
-             *
-             * Los IDs determinan las relaciones.
-             * Conservamos orden_visual porque forma parte del estado.
-             *
+             * 2. Normalizar la matriz final.
              */
             $cardsNormalizadas = [];
 
             foreach ($dto->cards as $atributoId => $card) {
-
                 $atributoId = (int) $atributoId;
 
-                /*
-                 * El atributo debe existir.
-                 */
                 $atributo = Atributo::query()
                     ->find($atributoId);
 
@@ -52,26 +41,14 @@ class SaveProductoAttributesAction
                     continue;
                 }
 
-                /*
-                 * ----------------------------------------------------------------------
-                 * Valores
-                 * ----------------------------------------------------------------------
-                 */
                 $valores = [];
 
                 foreach (($card['valores'] ?? []) as $valorId => $valorData) {
-
                     $valorId = (int) $valorId;
 
-                    /*
-                     * El valor debe existir y pertenecer al atributo.
-                     */
                     $valorExiste = AtributoValor::query()
                         ->whereKey($valorId)
-                        ->where(
-                            'atributo_id',
-                            $atributoId
-                        )
+                        ->where('atributo_id', $atributoId)
                         ->exists();
 
                     if (!$valorExiste) {
@@ -86,10 +63,6 @@ class SaveProductoAttributesAction
                     ];
                 }
 
-                /*
-                 * Un atributo sin valores no forma parte
-                 * del estado persistible.
-                 */
                 if (empty($valores)) {
                     continue;
                 }
@@ -104,50 +77,16 @@ class SaveProductoAttributesAction
             }
 
             /*
-             * --------------------------------------------------------------------------
-             * 3. IDs finales de atributos
-             * --------------------------------------------------------------------------
+             * 3. Obtener los IDs del estado final.
              */
             $atributosActuales = array_map(
                 'intval',
                 array_keys($cardsNormalizadas)
             );
 
-            /*
-             * --------------------------------------------------------------------------
-             * 4. Eliminar atributos que ya no están en la matriz
-             * --------------------------------------------------------------------------
-             */
-            $atributosQuery = AtributableAtributo::query()
-                ->where(
-                    'atributable_type',
-                    Producto::class
-                )
-                ->where(
-                    'atributable_id',
-                    $producto->id
-                );
-
-            if (empty($atributosActuales)) {
-                $atributosQuery->delete();
-            } else {
-                $atributosQuery
-                    ->whereNotIn(
-                        'atributo_id',
-                        $atributosActuales
-                    )
-                    ->delete();
-            }
-
-            /*
-             * --------------------------------------------------------------------------
-             * 5. IDs finales de valores
-             * --------------------------------------------------------------------------
-             */
             $valoresActuales = [];
 
             foreach ($cardsNormalizadas as $card) {
-
                 foreach ($card['valores'] as $valorId => $valorData) {
                     $valoresActuales[] = (int) $valorId;
                 }
@@ -158,40 +97,105 @@ class SaveProductoAttributesAction
             );
 
             /*
-             * --------------------------------------------------------------------------
-             * 6. Eliminar valores que ya no están en la matriz
-             * --------------------------------------------------------------------------
+             * 4. Identificar atributos que se eliminarían.
+             */
+            $atributosAsignados = AtributableAtributo::query()
+                ->where('atributable_type', Producto::class)
+                ->where('atributable_id', $producto->id)
+                ->pluck('atributo_id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+
+            $atributosEliminados = array_values(
+                array_diff($atributosAsignados, $atributosActuales)
+            );
+
+            /*
+             * 5. Proteger atributos utilizados por variantes.
+             */
+            if (!empty($atributosEliminados)) {
+                $atributoEnUso = ProductoVariante::query()
+                    ->where('producto_id', $producto->id)
+                    ->whereHas('atributosValores', function ($query) use (
+                        $atributosEliminados
+                    ) {
+                        $query->whereIn(
+                            'atributos_valores.atributo_id',
+                            $atributosEliminados
+                        );
+                    })
+                    ->exists();
+
+                if ($atributoEnUso) {
+                    throw ValidationException::withMessages([
+                        'cards' =>
+                            'No se puede quitar un atributo utilizado por una o más variantes del producto.',
+                    ]);
+                }
+            }
+
+            /*
+             * 6. Proteger valores utilizados por variantes.
+             *
+             * Si alguna variante utiliza un valor que no estará
+             * asignado al producto después de guardar, se cancela
+             * toda la transacción.
+             */
+            $varianteConValorEliminado = ProductoVariante::query()
+                ->where('producto_id', $producto->id)
+                ->whereHas('atributosValores', function ($query) use (
+                    $valoresActuales
+                ) {
+                    if (!empty($valoresActuales)) {
+                        $query->whereNotIn(
+                            'atributos_valores.id',
+                            $valoresActuales
+                        );
+                    }
+                })
+                ->exists();
+
+            if ($varianteConValorEliminado) {
+                throw ValidationException::withMessages([
+                    'cards' =>
+                        'No se puede quitar un valor de atributo utilizado por una o más variantes del producto.',
+                ]);
+            }
+
+            /*
+             * 7. Eliminar atributos que ya no están en la matriz.
+             */
+            $atributosQuery = AtributableAtributo::query()
+                ->where('atributable_type', Producto::class)
+                ->where('atributable_id', $producto->id);
+
+            if (empty($atributosActuales)) {
+                $atributosQuery->delete();
+            } else {
+                $atributosQuery
+                    ->whereNotIn('atributo_id', $atributosActuales)
+                    ->delete();
+            }
+
+            /*
+             * 8. Eliminar valores que ya no están en la matriz.
              */
             $valoresQuery = AtributableValor::query()
-                ->where(
-                    'atributable_type',
-                    Producto::class
-                )
-                ->where(
-                    'atributable_id',
-                    $producto->id
-                );
+                ->where('atributable_type', Producto::class)
+                ->where('atributable_id', $producto->id);
 
             if (empty($valoresActuales)) {
                 $valoresQuery->delete();
             } else {
                 $valoresQuery
-                    ->whereNotIn(
-                        'atributo_valor_id',
-                        $valoresActuales
-                    )
+                    ->whereNotIn('atributo_valor_id', $valoresActuales)
                     ->delete();
             }
 
             /*
-             * --------------------------------------------------------------------------
-             * 7. Persistir atributos y orden
-             * --------------------------------------------------------------------------
+             * 9. Persistir atributos y orden.
              */
-            foreach (
-                $cardsNormalizadas as $atributoId => $card
-            ) {
-
+            foreach ($cardsNormalizadas as $atributoId => $card) {
                 AtributableAtributo::updateOrCreate(
                     [
                         'atributo_id' => $atributoId,
@@ -205,23 +209,12 @@ class SaveProductoAttributesAction
             }
 
             /*
-             * --------------------------------------------------------------------------
-             * 8. Persistir valores y orden
-             * --------------------------------------------------------------------------
-             *
-             * Cada atributo tiene su propio orden_visual
-             * comenzando en 1.
+             * 10. Persistir valores y orden.
              */
-            foreach (
-                $cardsNormalizadas as $atributoId => $card
-            ) {
-
+            foreach ($cardsNormalizadas as $card) {
                 $ordenValor = 1;
 
-                foreach (
-                    $card['valores'] as $valorId => $valorData
-                ) {
-
+                foreach ($card['valores'] as $valorId => $valorData) {
                     AtributableValor::updateOrCreate(
                         [
                             'atributo_valor_id' => $valorId,

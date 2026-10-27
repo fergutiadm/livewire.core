@@ -1,3 +1,5 @@
+{{-- resources/views/modules/inventario/producto/attributes-manager.blade.php --}}
+
 <div>
 
     @if($show)

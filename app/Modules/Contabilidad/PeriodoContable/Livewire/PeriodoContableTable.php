@@ -38,5 +38,4 @@ class PeriodoContableTable extends TableComponent
             'message' => 'Cargando periodos contables...',
         ]);
     }
-
 }

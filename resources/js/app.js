@@ -156,3 +156,23 @@ function fallbackCopiar(texto) {
 
     document.body.removeChild(temp);
 }
+
+
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('request', ({ fail }) => {
+        fail(({ status, preventDefault }) => {
+            if (status !== 419) {
+                return;
+            }
+
+            // Evita el modal predeterminado de Livewire.
+            preventDefault();
+
+            // Limpia los indicadores de carga de la interfaz.
+            window.dispatchEvent(new CustomEvent('loading-stop'));
+
+            // Revalida la sesión mediante una navegación completa.
+            window.location.reload();
+        });
+    });
+});

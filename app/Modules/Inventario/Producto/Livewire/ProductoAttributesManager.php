@@ -332,7 +332,7 @@ class ProductoAttributesManager extends Component
                 ->mapWithKeys(function ($valor) {
                     return [
                         (int) $valor->id => [
-                            'valor' => (string) $valor->valor,
+                            'valor' => (string) $valor->nombre,
                             'orden_visual' => (int) $valor->pivot->orden_visual,
                         ],
                     ];
@@ -507,7 +507,7 @@ class ProductoAttributesManager extends Component
             ->mapWithKeys(function ($valor) {
                 return [
                     (int) $valor->id => [
-                        'valor' => (string) $valor->valor,
+                        'valor' => (string) $valor->nombre,
                         'orden_visual' => (int) $valor->orden_visual,
                     ],
                 ];
@@ -551,7 +551,7 @@ class ProductoAttributesManager extends Component
             ->mapWithKeys(function ($valor) {
                 return [
                     (int) $valor->id => [
-                        'valor' => (string) $valor->valor,
+                        'valor' => (string) $valor->nombre,
                         'orden_visual' => (int) $valor->orden_visual,
                     ],
                 ];
@@ -611,7 +611,7 @@ class ProductoAttributesManager extends Component
             ->mapWithKeys(function ($valor) {
                 return [
                     (int) $valor->id => [
-                        'valor' => (string) $valor->valor,
+                        'valor' => (string) $valor->nombre,
                         'orden_visual' => (int) $valor->orden_visual,
                     ],
                 ];
@@ -730,7 +730,7 @@ class ProductoAttributesManager extends Component
             }
 
             $valores[$valorId] = [
-                'valor' => (string) $valor->valor,
+                'valor' => (string) $valor->nombre,
                 'orden_visual' => $ordenValor++,
             ];
         }
@@ -822,7 +822,7 @@ class ProductoAttributesManager extends Component
             ->mapWithKeys(function ($valor) use ($idsAsociados) {
                 return [
                     (int) $valor->id => [
-                        'valor' => (string) $valor->valor,
+                        'valor' => (string) $valor->nombre,
                         'orden_visual' => (int) $valor->orden_visual,
                         'asociado' => in_array(
                             (int) $valor->id,
@@ -884,7 +884,7 @@ class ProductoAttributesManager extends Component
             }
 
             $this->cards[$atributoId]['valores'][$valorId] = [
-                'valor' => (string) $valor->valor,
+                'valor' => (string) $valor->nombre,
                 'orden_visual' => (int) $valor->orden_visual,
             ];
         }

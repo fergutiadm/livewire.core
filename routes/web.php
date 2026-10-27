@@ -26,19 +26,20 @@
     use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaPage;
     use App\Modules\Finanzas\Caja\Livewire\CajaPage;
     use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaPage;
+    use App\Modules\Finanzas\Denominacion\Livewire\DenominacionPage;
     
     use App\Modules\Comercial\Cliente\Livewire\ClientePage;
     use App\Modules\Comercial\Gestor\Livewire\GestorPage;
     
     use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContablePage;
 
-    use App\Modules\Admin\Denominacion\Livewire\DenominacionPage;
-
     use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoPage;
     use App\Modules\Gastos\Gasto\Livewire\GastoPage;
     use App\Modules\Gastos\GastoPago\Livewire\GastoPagoPage;
 
     use App\Modules\Seguridad\User\Livewire\UserPage;
+
+    use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
 
     /*
     |--------------------------------------------------------------------------
@@ -111,7 +112,8 @@
         Route::get('/periodos_contables', PeriodoContablePage::class)->name('periodos_contables');
 
         Route::get('/usuarios', UserPage::class)->name('usuarios');
-
+        
+        Route::get('/configuracion-setup', SetupConfigPage::class)->name('setup_config');
 
         Route::get('/configuracion', function () {
             return view('admin.en-contruccion', ['seccion', 'Configuracion']);

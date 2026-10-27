@@ -53,12 +53,12 @@ class CierreCajaTableDefinition extends BaseTable
                 str_replace('?', "'%s'", $query->toSql()),
                 $query->getBindings()
             );
-            Log::info('CierreCajaTableDefinition->query', [
+            /*Log::info('CierreCajaTableDefinition->query', [
                 'sql' => $sql,
                 '$query->toSql()' => $query->toSql(),
                 ' $query->getBindings()' => $query->getBindings(),
                 '$query->count()' => $query->count()]
-            );
+            );*/
 
         return $query;
     }
