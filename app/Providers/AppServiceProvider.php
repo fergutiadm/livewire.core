@@ -93,6 +93,7 @@ use App\Http\Livewire\Admin\TablaTrazasViewer;
 use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContablePage;
 use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableTable;
 use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableForm;
+use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableModalEdit;
 // use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableMediaManager;
 // use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContableAttributesManager;
 
@@ -111,6 +112,16 @@ use App\Modules\Gastos\GastoPago\Livewire\GastoPagoForm;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigTable;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigForm;
+
+use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaPage;
+use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaTable;
+use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaForm;
+
+use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloPage;
+use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloTable;
+use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloForm;
+
+use App\Modules\Ayuda\AyudaVisor\Livewire\AyudaVisorPage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -241,6 +252,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('contabilidad.periodo-contable.page', PeriodoContablePage::class);
         $this->registerLivewire('contabilidad.periodo-contable.form', PeriodoContableForm::class);
         $this->registerLivewire('contabilidad.periodo-contable.table', PeriodoContableTable::class);
+        $this->registerLivewire('contabilidad.periodo-contable.modal-edit', PeriodoContableModalEdit::class);
         // $this->registerLivewire('contabilidad.periodo-contable.media-manager', PeriodoContableMediaManager::class);
         // $this->registerLivewire('contabilidad.periodo-contable.attributes-manager', PeriodoContableAttributesManager::class);
         
@@ -259,5 +271,15 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('configuracion.setup-config.page', SetupConfigPage::class);
         $this->registerLivewire('configuracion.setup-config.form', SetupConfigForm::class);
         $this->registerLivewire('configuracion.setup-config.table', SetupConfigTable::class);
-    }
+
+        $this->registerLivewire('ayuda.ayuda-categoria.page', AyudaCategoriaPage::class);
+        $this->registerLivewire('ayuda.ayuda-categoria.form', AyudaCategoriaForm::class);
+        $this->registerLivewire('ayuda.ayuda-categoria.table', AyudaCategoriaTable::class);
+
+        $this->registerLivewire('ayuda.ayuda-articulo.page', AyudaArticuloPage::class);
+        $this->registerLivewire('ayuda.ayuda-articulo.form', AyudaArticuloForm::class);
+        $this->registerLivewire('ayuda.ayuda-articulo.table', AyudaArticuloTable::class);
+
+        $this->registerLivewire('ayuda.ayuda-visor.page', AyudaVisorPage::class);
+        }
 }

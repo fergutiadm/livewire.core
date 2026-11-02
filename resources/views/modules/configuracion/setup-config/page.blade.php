@@ -34,24 +34,11 @@
     
     <x-ui.crud.page>
         <x-slot name="header">
-            <div class="flex items-center justify-between gap-3">
-                <div>
-                    <h1 class="text-xl font-semibold text-gray-800">
-                        Configuración del sistema
-                    </h1>
-                    <p class="mt-1 text-sm text-gray-500">
-                        Administra las variables globales de configuración.
-                    </p>
-                </div>
-
-                <button
-                    type="button"
-                    wire:click="toggleForm"
-                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                >
-                    {{ $showForm ? 'Ocultar formulario' : 'Nueva configuración' }}
-                </button>
-            </div>
+            <x-ui.crud.header
+                title="Configuración del sistema"
+                description="Administra las variables globales de configuración."
+                :show-form="$showForm"
+            />
         </x-slot>
 
         <x-slot name="form">

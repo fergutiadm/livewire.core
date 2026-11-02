@@ -41,6 +41,9 @@
 
     use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
 
+    use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaPage;
+    use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloPage;
+
     /*
     |--------------------------------------------------------------------------
     | Web Routes
@@ -114,6 +117,9 @@
         Route::get('/usuarios', UserPage::class)->name('usuarios');
         
         Route::get('/configuracion-setup', SetupConfigPage::class)->name('setup_config');
+
+        Route::get('/ayuda-categoria', AyudaCategoriaPage::class)->name('ayuda_categoria');
+        Route::get('/ayuda-articulo', AyudaArticuloPage::class)->name('ayuda_articulo');
 
         Route::get('/configuracion', function () {
             return view('admin.en-contruccion', ['seccion', 'Configuracion']);

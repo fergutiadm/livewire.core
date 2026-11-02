@@ -15,7 +15,15 @@ class PeriodoContableTableDefinition extends BaseTable
     public function query(): Builder
     {
         $query = PeriodoContable::query()
-            ->DeLocal($this->getParameter('localId'))
+
+            ->when(
+                filled($this->getParameter('localId')),
+                fn ($q) => $q->where(
+                    'local_id',
+                        $this->getParameter('localId')
+                )
+            )
+
             ->orderByDesc('activo')
             ->orderByDesc('fecha_inicio');
 

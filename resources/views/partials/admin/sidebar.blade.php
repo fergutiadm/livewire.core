@@ -36,7 +36,7 @@
                 $make('Productos', 'admin.productos', 'tag', 'admin.productos'),
                 $make('Atributos', 'admin.atributos', 'adjustments', 'admin.atributos'),
                 $make('Inventario', 'admin.inventarios', 'inventory', 'admin.inventarios'),
-                $make('Inventario operativo', 'inventario.index', 'inventory', 'inventario.*'),
+                // $make('Inventario operativo', 'inventario.index', 'inventory', 'inventario.*'),
             ],
         ],
         [
@@ -103,6 +103,24 @@
                 'admin.setup_config',
                 'settings',
                 'admin.setup_config'
+            );
+        }
+
+        if (Route::has('admin.ayuda_categoria')) {
+            $adminItems[] = $make(
+                'Categorías de Ayuda',
+                'admin.ayuda_categoria',
+                'folder',
+                'admin.ayuda_categoria'
+            );
+        }
+
+        if (Route::has('admin.ayuda_articulo')) {
+            $adminItems[] = $make(
+                'Artículos de Ayuda',
+                'admin.ayuda_articulo',
+                'tag',
+                'admin.ayuda_articulo'
             );
         }
     }
@@ -292,6 +310,6 @@
 
     {{-- Barra de monedas --}}
     <div class="pt-3">
-        <livewire:currency.rates-bar decimals="4" variant="stacked" showBoth="0" />
+        <livewire:currency.rates-bar variant="stacked" showBoth="0" />
     </div>
 </nav>

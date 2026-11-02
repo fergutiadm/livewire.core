@@ -16,17 +16,6 @@ class GestionCierre extends Component
         // $this->periodoId = $periodoContext->id();
     }
 
-    /**
-     * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage 
-     * o el listener de Login modifican el periodo en el servidor.
-     */
-    // #[On('periodo-context-changed')]
-    // public function actualizarPeriodoActual(int $periodoId): void
-    // {
-    //     $this->periodoId = $periodoId;
-
-    // }
-
     public function openModal(): void
     {
         $this->showModal = true;

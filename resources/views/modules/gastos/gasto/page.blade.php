@@ -42,6 +42,7 @@
                 :show-toggle=false
                 :selector-periodo=true
                 :selector-fecha-operacion=true
+                :mostrar-tasa-cambio="$mostrarTasaCambio"
             />
         </x-slot>
 

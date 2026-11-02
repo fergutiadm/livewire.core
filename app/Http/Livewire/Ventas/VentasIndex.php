@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Ventas;
 
 use App\Core\CQRS\HasCommands;
+use App\Modules\Configuracion\SetupConfig\Services\SetupConfigService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -22,8 +23,11 @@ class VentasIndex extends Component
 
     public array $detallesVentaVisibles = [];
 
-    public function mount(): void
+    public bool $mostrarTasaCambio = false;
+
+    public function mount(SetupConfigService $config): void
     {
+        $this->mostrarTasaCambio = $config->get('mostrar_tasa_cambio');
         $this->fechaOperacion = now()->format('Y-m-d');
     }
 

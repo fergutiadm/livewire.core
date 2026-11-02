@@ -44,33 +44,85 @@
 
     @if($showModal)
         <div
-            class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6"
+            class="fixed inset-0 z-[9999] flex items-center
+                   justify-center overflow-y-auto bg-slate-950/60
+                   p-2 backdrop-blur-sm sm:p-5"
             wire:click.self="closeModal"
         >
             <div
-                class="flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="periodo-selector-modal-title"
+                class="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg
+                    flex-col overflow-hidden rounded-2xl
+                    border border-white/70 bg-white
+                    shadow-2xl shadow-slate-950/20
+                    sm:max-h-[90vh] sm:rounded-3xl"
             >
-                {{-- Encabezado --}}
-                <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-800">
-                            Seleccionar período
-                        </h2>
+                {{-- ============================================================
+                    ENCABEZADO DEL MODAL
+                ============================================================ --}}
+                <header
+                    class="relative shrink-0 overflow-hidden border-b
+                        border-slate-200 bg-gradient-to-br
+                        from-emerald-50 via-white to-indigo-50
+                        px-4 py-4 sm:px-6 sm:py-5"
+                >
+                    {{-- Efecto decorativo --}}
+                    <div
+                        class="pointer-events-none absolute -right-8 -top-12
+                            h-36 w-36 rounded-full
+                            bg-emerald-100/60 blur-2xl"
+                    ></div>
 
-                        <p class="mt-0.5 text-xs text-slate-500">
-                            Filtra por año y mes antes de seleccionar.
-                        </p>
+                    <div class="relative flex items-start gap-3">
+
+                        {{-- Icono --}}
+                        <div
+                            class="flex h-11 w-11 shrink-0 items-center
+                                justify-center rounded-xl
+                                bg-emerald-100 text-emerald-700
+                                ring-1 ring-emerald-200/70"
+                        >
+                            <i class="bi bi-calendar-range text-xl"></i>
+                        </div>
+
+                        {{-- Título y descripción --}}
+                        <div class="min-w-0 flex-1">
+
+                            <h2
+                                id="periodo-selector-modal-title"
+                                class="text-lg font-bold text-slate-900"
+                            >
+                                Seleccionar período
+                            </h2>
+
+                            <p class="mt-1 text-xs leading-5 text-slate-600">
+                                Filtra por año y mes antes de seleccionar
+                                un período contable.
+                            </p>
+
+                        </div>
+
+                        {{-- Botón cerrar --}}
+                        <button
+                            type="button"
+                            wire:click="closeModal"
+                            aria-label="Cerrar"
+                            class="flex h-10 w-10 shrink-0 items-center
+                                justify-center rounded-xl
+                                border border-slate-200 bg-white/90
+                                text-slate-500 transition
+                                hover:border-slate-300 hover:bg-white
+                                hover:text-slate-900
+                                focus:outline-none focus:ring-2
+                                focus:ring-emerald-500/40"
+                        >
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+
                     </div>
-
-                    <button
-                        type="button"
-                        wire:click="closeModal"
-                        class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                        aria-label="Cerrar"
-                    >
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+                </header>
 
                 {{-- Filtros --}}
                 <div class="border-b border-slate-100 bg-slate-50/80 px-5 py-4">
@@ -263,20 +315,57 @@
                 </div>
 
                 {{-- Pie --}}
-                <div class="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-5 py-3">
-                    <span class="text-xs text-slate-500">
-                        {{ $periodos->count() === 1 ? '1 período encontrado' : $periodos->count() . ' períodos encontrados' }}
-                    </span>
+                <div class="flex flex-wrap items-center justify-end gap-2">
 
                     <button
                         type="button"
                         wire:click="closeModal"
-                        class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-100"
+                        class="rounded-xl border border-slate-200
+                            bg-white px-4 py-2 text-sm
+                            font-medium text-slate-600
+                            hover:bg-slate-100"
                     >
                         Cerrar
                     </button>
+
+                    @if($periodoId)
+                        <button
+                            type="button"
+                            wire:click="editarPeriodo"
+                            @disabled(!($this->buscarPeriodo($periodoId)?->cerrado === false))
+                            class="inline-flex items-center gap-2 rounded-xl
+                                border border-amber-200 bg-amber-50
+                                px-4 py-2 text-sm font-semibold
+                                text-amber-800 hover:bg-amber-100
+                                disabled:cursor-not-allowed
+                                disabled:opacity-50"
+                        >
+                            <i class="bi bi-pencil-square"></i>
+                            Editar
+                        </button>
+                    @endif
+
+                    <button
+                        type="button"
+                        wire:click="nuevoPeriodo"
+                        class="inline-flex items-center gap-2 rounded-xl
+                            bg-indigo-600 px-4 py-2 text-sm
+                            font-semibold text-white
+                            hover:bg-indigo-700"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Nuevo
+                    </button>
+
                 </div>
             </div>
         </div>
+    @endif
+
+    @if($showModalEdit)
+        <livewire:contabilidad.periodo-contable.modal-edit
+            :periodo-contable-id="$periodoEditId"
+            :key="'periodo-modal-' . ($periodoEditId ?? 'nuevo')"
+        />
     @endif
 </div>

@@ -43,14 +43,14 @@
         <x-slot name="form">
             <x-ui.crud.form :show="$showForm">
 
-                <livewire:admin.denominacion.form />
+                <livewire:finanzas.denominacion.form />
 
             </x-ui.crud.form>
         </x-slot>
 
         <x-slot:table>
 
-            <livewire:admin.denominacion.table
+            <livewire:finanzas.denominacion.table
                 :moneda-id="$monedaId"
                 {{--  lazy  --}}
                 wire:key="denominacion-table-{{ $tableVersion }}"

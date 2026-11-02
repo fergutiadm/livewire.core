@@ -10,6 +10,20 @@ import 'swiper/css/navigation';
 
 import './common';
 
+// ============================================================
+// TIPTAP 3 — EDITOR DE CONTENIDO PARA AYUDA
+// ============================================================
+
+import { Editor } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+
+window.Tiptap = {
+    Editor,
+    StarterKit,
+    Link,
+};
+
 function initFlatpickr() {
     ['#fecha_inicio', '#fecha_fin'].forEach(selector => {
         const el = document.querySelector(selector);

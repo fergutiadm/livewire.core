@@ -17,6 +17,9 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@tiptap/core": "^3.32.2",
+        "@tiptap/extension-link": "^3.32.2",
+        "@tiptap/starter-kit": "^3.32.2",
         "bootstrap-icons": "^1.13.1",
         "flatpickr": "^4.6.13",
         "flowbite": "^4.0.1",

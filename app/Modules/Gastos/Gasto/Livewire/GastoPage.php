@@ -6,6 +6,7 @@ use App\Core\Context\LocalContext;
 use App\Core\Context\PeriodoContext;
 use App\Core\CQRS\HasCommands;
 use App\Models\PeriodoContable;
+use App\Modules\Configuracion\SetupConfig\Services\SetupConfigService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -28,9 +29,11 @@ class GastoPage extends Component
     public int $tableVersion = 0;
     public bool $showDeleteModal = false;
     public ?int $gastoDeleteId = null;
+    public bool $mostrarTasaCambio = false;
 
-    public function mount(): void
+    public function mount(SetupConfigService $config): void
     {
+        $this->mostrarTasaCambio = $config->get('mostrar_tasa_cambio');
         $this->localId = app(LocalContext::class)->id();
         $this->periodoContableId  = app(PeriodoContext::class)->id();
         $this->evaluarVisibilidadFormulario($this->periodoContableId);

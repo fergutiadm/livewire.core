@@ -146,12 +146,10 @@ class SaveProductoAttributesAction
                 ->whereHas('atributosValores', function ($query) use (
                     $valoresActuales
                 ) {
-                    if (!empty($valoresActuales)) {
-                        $query->whereNotIn(
-                            'atributos_valores.id',
-                            $valoresActuales
-                        );
-                    }
+                    $query->whereNotIn(
+                        'atributos_valores.id',
+                        $valoresActuales
+                    );
                 })
                 ->exists();
 

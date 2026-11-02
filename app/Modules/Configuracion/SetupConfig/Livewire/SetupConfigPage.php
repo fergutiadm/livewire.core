@@ -51,7 +51,7 @@ class SetupConfigPage extends Component
         $this->showDeleteModal = false;
         $this->setupConfigDeleteId = null;
 
-        $this->dispatch('alert', [
+        $this->dispatch('livewire:alert', [
             'type' => 'warning',
             'message' => 'Eliminación cancelada.',
         ]);

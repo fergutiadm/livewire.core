@@ -299,7 +299,7 @@ class DenominacionForm extends Component
             $this->monedaId = $monedas->first()->id;
         }
 
-        return view('modules.admin.denominacion.form', 
+        return view('modules.finanzas.denominacion.form',
                     ['monedas' => $monedas]
                 );
     }

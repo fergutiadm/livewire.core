@@ -2,6 +2,7 @@
 
 namespace App\Modules\Contabilidad\PeriodoContable\Livewire;
 
+use App\Core\Context\LocalContext;
 use App\Core\CQRS\HasCommands;
 use App\Models\Local;
 use App\Models\PeriodoContable;
@@ -52,21 +53,26 @@ class PeriodoContableForm extends Component
         ];
     }
 
-    public function mount(): void
+    public function mount(LocalContext $localContext): void
     {
-        $this->localId = Local::orderBy('nombre')->value('id');
+        $this->localId = $localContext->id();
 
         if ($this->localId) {
             $this->bootFormulario();
         }
     }
 
-
     private function bootFormulario(): void
     {
         if (! $this->localId) {
-        return;
+            return;
         }
+
+        // Actualizar la tabla.
+        $this->dispatch(
+            'periodo-contable-filtros-actualizados',
+            localId: $this->localId,
+        );
 
         $this->nombre = $this->generarNombreSugerido();
 
@@ -85,11 +91,6 @@ class PeriodoContableForm extends Component
                 ->copy()
                 ->addDays(6)
                 ->format('Y-m-d');
-
-                Log::info('bootFormulario - UltimoPeriodo', [
-                    'fecha_inicio' => $this->fecha_inicio,
-                    'fecha_fin' => $this->fecha_fin,
-                ]);
         } else {
 
             // No hay periodos: iniciar semana actual
@@ -100,12 +101,6 @@ class PeriodoContableForm extends Component
             $this->fecha_fin = now()
                 ->endOfWeek()
                 ->format('Y-m-d');
-
-            Log::info('bootFormulario - NO HAY Periodo', [
-                    'fecha_inicio' => $this->fecha_inicio,
-                    'fecha_fin' => $this->fecha_fin,
-                ]);
-
         }
 
     }
@@ -131,7 +126,6 @@ class PeriodoContableForm extends Component
 
         return "Periodo {$year}";
     }
-
 
     #[On('periodo-contable-cargar-edicion')]
     public function edit(int $id): void
@@ -208,12 +202,6 @@ class PeriodoContableForm extends Component
 
         // Generar nuevamente nombre y fechas para el nuevo local.
         $this->bootFormulario();
-
-        // Actualizar la tabla.
-        $this->dispatch(
-            'periodo-contable-filtros-actualizados',
-            localId: $this->localId,
-        );
 
         // Si posteriormente existe MediaManager.
         $this->dispatch('periodo-contable-media-reset');
@@ -413,12 +401,12 @@ class PeriodoContableForm extends Component
         $this->resetValidation();
     }
 
-    public function render()
+    public function render(LocalContext $localContext)
     {
         $locales = Local::orderBy('nombre')->get();
 
         if (!$this->localId) {
-            $this->localId = $locales->first()?->id;
+            $this->localId = $localContext->id();
         }
 
         return view('modules.contabilidad.periodo-contable.form',

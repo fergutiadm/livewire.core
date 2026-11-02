@@ -22,7 +22,7 @@ class SetupConfigTableDefinition extends BaseTable
                     $this->getParameter('tipo')
                 )
             )
-            ->orderByDesc('nombre');
+            ->orderBy('nombre');
     }
 
     protected function searchable(): array
@@ -36,6 +36,57 @@ class SetupConfigTableDefinition extends BaseTable
 
     public function columns(): array
     {
+        $nombre = (new HtmlColumn(
+            label: 'Nombre',
+            field: 'nombre',
+        ))->formatStateUsing(function ($state, $setupConfig) {
+            return '
+                <div class="space-y-1">
+                    <p class="flex items-start">
+                        <span class="break-words font-semibold">'
+                            . e($setupConfig->nombre ?? '—') .
+                        '</span>
+                    </p>
+
+                    <p class="flex items-start gap-1 text-xs">
+                        <span class="shrink-0 font-semibold text-slate-800">
+                            ITEMID:
+                        </span>
+                        <span class="break-words text-slate-500">'
+                            . e($setupConfig->item_id ?? '—') .
+                        '</span>
+                    </p>
+                </div>
+            ';
+        });
+
+        $tipoValor = (new HtmlColumn(
+            label: 'Valor',
+            field: 'tipo',
+        ))->formatStateUsing(function ($state, $setupConfig) {
+            $tipo_valor = match ((int) $state) {
+                                    SetupConfig::TIPO_NUMERO => 'Numérico',
+                                    SetupConfig::TIPO_TEXTO => 'Texto',
+                                    SetupConfig::TIPO_ARREGLO => 'Arreglo',
+                                    default => 'Desconocido',
+                                };
+            return '
+                <div class="space-y-1">
+                    <p class="flex items-start">
+                        <span class="break-words font-semibold">'
+                            . e($tipo_valor) .
+                        '</span>
+                    </p>
+
+                    <p class="flex items-start mt-1 text-sm">
+                        <span class="break-words">'
+                            . e($setupConfig->valor) .
+                        '</span>
+                    </p>
+                </div>
+            ';
+        });
+
         $definicionValor = (new HtmlColumn(
             label: 'Def. Valor',
             field: 'valor_inicial',
@@ -88,37 +139,14 @@ class SetupConfigTableDefinition extends BaseTable
         ])->align('right');
 
         return [
-            new TextColumn(
-                label: 'Nombre',
-                field: 'nombre',
-            ),
-
-            new TextColumn(
-                label: 'ItemId',
-                field: 'item_id',
-            ),
+            $nombre,
 
             new TextColumn(
                 label: 'Descripción',
                 field: 'descripcion',
             ),
 
-            (new TextColumn(
-                label: 'Tipo',
-                field: 'tipo',
-            ))->formatStateUsing(
-                fn ($state) => match ((int) $state) {
-                    SetupConfig::TIPO_NUMERO => 'Numérico',
-                    SetupConfig::TIPO_TEXTO => 'Texto',
-                    SetupConfig::TIPO_ARREGLO => 'Arreglo',
-                    default => 'Desconocido',
-                }
-            ),
-
-            new TextColumn(
-                label: 'Valor',
-                field: 'valor',
-            ),
+            $tipoValor,
 
             $definicionValor,
 

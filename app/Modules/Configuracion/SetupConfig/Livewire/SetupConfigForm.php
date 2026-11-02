@@ -24,9 +24,9 @@ class SetupConfigForm extends Component
     public string $valor_maximo = '';
 
     public array $tipos = [
-        ['id' => 1, 'nombre' => 'Numérico'],
-        ['id' => 2, 'nombre' => 'Texto'],
-        ['id' => 3, 'nombre' => 'Arreglo'],
+        ['id' => SetupConfig::TIPO_NUMERO,  'nombre' => 'Numérico'],
+        ['id' => SetupConfig::TIPO_TEXTO,   'nombre' => 'Texto'],
+        ['id' => SetupConfig::TIPO_ARREGLO, 'nombre' => 'Arreglo'],
     ];
 
     protected function rules(): array
@@ -70,7 +70,7 @@ class SetupConfigForm extends Component
     }
 
     #[On('setup-config-cargar-edicion')]
-    public function cargarEdicion(int $id): void
+    public function edit(int $id): void
     {
         $config = SetupConfig::findOrFail($id);
 
@@ -92,52 +92,94 @@ class SetupConfigForm extends Component
         );
     }
 
-    public function guardar(): void
-    {
-        $data = $this->validate();
+    /*
+    |--------------------------------------------------------------------------
+    | Guardar
+    |--------------------------------------------------------------------------
+    */
 
-        $payload = [
-            'id' => $this->setupConfigId,
-            'nombre' => trim($data['nombre']),
-            'item_id' => trim($data['item_id']),
-            'descripcion' => $data['descripcion'] ?: null,
-            'tipo' => (int) $data['tipo'],
-            'valor' => $data['valor'],
-            'valor_inicial' => $data['valor_inicial'] ?? '',
-            'valor_minimo' => $data['valor_minimo'] ?? '',
-            'valor_maximo' => $data['valor_maximo'] ?? '',
-        ];
+    public function save(): void
+    {
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->dispatch('loading-stop');
+
+            throw $e;
+        }
 
         if ($this->setupConfigId !== null) {
-            $this->command('setupConfig.update', $payload);
+            $this->command('setupConfig.update', $this->payload());
 
             $mensaje = 'Configuración actualizada correctamente.';
         } else {
-            unset($payload['id']);
-
-            $this->command('setupConfig.create', $payload);
+            $this->command('setupConfig.create', $this->payload());
 
             $mensaje = 'Configuración creada correctamente.';
         }
 
         $this->dispatch('setup-config-guardado');
         $this->dispatch('loading-stop');
-        $this->dispatch('alert', [
+        $this->dispatch('livewire:alert', [
             'type' => 'success',
             'message' => $mensaje,
         ]);
 
+        $this->dispatch('actualizar-rates-bar');
+
         $this->resetForm();
     }
 
-    public function cancelar(): void
+    /*
+    |--------------------------------------------------------------------------
+    | Payload CQRS
+    |--------------------------------------------------------------------------
+    */
+
+    private function payload(): array
+    {
+        return [
+            'id' => $this->setupConfigId,
+
+            'setupConfig_id' => $this->setupConfigId,
+
+            'nombre' => $this->nombre,
+
+            'item_id' => $this->item_id,
+
+            'descripcion' => $this->descripcion,
+
+            'tipo' => $this->tipo,
+
+            'valor' => $this->valor,
+
+            'valor_inicial' => $this->valor_inicial,
+
+            'valor_minimo' => $this->valor_minimo,
+
+            'valor_maximo' => $this->valor_maximo,
+        ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cancelar
+    |--------------------------------------------------------------------------
+    */
+
+    public function cancel(): void
     {
         $this->resetForm();
 
-        $this->dispatch('alert', [
-            'type' => 'warning',
-            'message' => 'Edición cancelada.',
-        ]);
+        $this->dispatch(
+            'livewire:alert',
+            [
+                'message' =>
+                    'Acción cancelada...',
+                'type' =>
+                    'warning',
+            ]
+        );
     }
 
     #[On('reset-form')]

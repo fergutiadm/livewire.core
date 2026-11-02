@@ -27,11 +27,11 @@ class LocalSelector extends Component
             $this->localId = $this->locales->firstWhere('es_principal', true)->id;
 
             $localContext->set($this->localId);
-            Log::info('LocalSelector - es_principal', 
-                [
-                    '$localId' => $this->localId,
-                ]
-            );  
+            // Log::info('LocalSelector - es_principal',
+            //     [
+            //         '$localId' => $this->localId,
+            //     ]
+            // );
         }
     }
 
@@ -66,12 +66,12 @@ class LocalSelector extends Component
         $periodoContableVigenteId = PeriodoContable::query()->where('activo', true)
                  ->where('cerrado', false)->where('local_id', $localId)->value('id');
 
-        Log::info('LocalSelector - seleccionarLocal', 
-            [
-                '$localId' => $localId,
-                '$periodoContableVigenteId'=>$periodoContableVigenteId
-            ]
-        );
+        // Log::info('LocalSelector - seleccionarLocal',
+        //     [
+        //         '$localId' => $localId,
+        //         '$periodoContableVigenteId'=>$periodoContableVigenteId
+        //     ]
+        // );
         
         $this->dispatch(
             'periodo-context-changed',

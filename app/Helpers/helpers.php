@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 if (! function_exists('format_fecha')) {
     function format_fecha($fecha): string
@@ -32,5 +33,12 @@ if (! function_exists('format_numero_raw')) {
 if (! function_exists('format_view_usd')) {
     function format_view_usd($valor){
         return floor($valor * 2) / 2; //Se redondea HACIA ABAJO al múltiplo de 0.5 más cercano.
+    }
+}
+
+if (! function_exists('generate_slug')) {
+    function generate_slug(string $valor){
+        // return Str::kebab($valor);
+        return str_replace(' ', '-', strtolower(trim($valor)));
     }
 }

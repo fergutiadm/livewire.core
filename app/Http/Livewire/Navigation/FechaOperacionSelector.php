@@ -51,16 +51,23 @@ class FechaOperacionSelector extends Component
                 // 2. Asignamos las fechas límite (soportando los nombres de columna que tengas)
                 $fechaMinima = $periodoActual->fecha_inicio ?? $periodoActual->fecha_inicial ?? null;
                 $fechaMaxima = $periodoActual->fecha_fin ?? $periodoActual->fecha_final ?? null;
+            }else{
+                return;
             }
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 1', [
+            //     'fechaMinima' => $fechaMinima,
+            //     'fechaMaxima' => $fechaMaxima
+            // ]);
 
             $fechaPeriodo = \Carbon\Carbon::parse($this->fechaOperacion)->format('Y-m-d') ?? $hoy;
-            // Log::info('periodo-context-changed - actualizarFechaOperacion - 1', [
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 2', [
             //     'fechaPeriodo' => $fechaPeriodo
             // ]);
             if($fechaPeriodo < $fechaMinima || $fechaPeriodo > $fechaMaxima){
                 $fechaPeriodo = ($hoy < $fechaMinima) ? $fechaMinima : (($hoy > $fechaMaxima) ? $fechaMaxima : $hoy);
-                app(FechaOperacionContext::class)->set($fechaPeriodo);
             }
+
+            app(FechaOperacionContext::class)->set($fechaPeriodo);
 
             $this->fechaOperacion = $fechaPeriodo;
 
@@ -68,9 +75,9 @@ class FechaOperacionSelector extends Component
                 'fecha-operacion-context-changed',
                 fechaOperacion: $fechaPeriodo,
             );
-            // Log::info('periodo-context-changed - actualizarFechaOperacion - 2', [
-            //     'fechaPeriodo' => $fechaPeriodo
-            // ]);
+            Log::info('periodo-context-changed - actualizarFechaOperacion - 3', [
+                'fechaPeriodo' => $fechaPeriodo
+            ]);
 
         }
 
@@ -80,8 +87,25 @@ class FechaOperacionSelector extends Component
     private function cargarFechas(): void
     {
         $periodoId = app(PeriodoContext::class)->id();
+
+        $this->fechas_periodo = [];
+
+        if(!$periodoId || empty($periodoId)){
+            $this->fechaOperacion = '';
+            return;
+        }
         
-        $this->periodoActual = PeriodoContable::findOrFail($periodoId);
+        $this->periodoActual = PeriodoContable::find($periodoId);
+
+        if(!$this->periodoActual){
+            // $localId = app(LocalContext::class)->id();
+            // $this->periodoActual = PeriodoContable::where('local_id', $localId)->whereMax('fecha_fin')->first();
+            // if(!$this->periodoActual){
+            //     return;
+            // }
+            $this->fechaOperacion = '';
+            return;
+        }
 
         $this->periodoSelectedActivo = $this->periodoActual?->activo ?? false;
 
@@ -98,6 +122,10 @@ class FechaOperacionSelector extends Component
                         ];
             $fecha->addDay();
         }
+
+        // Log::info('FechaOperacionSelector - cargarFechas', [
+        //     '$periodoId' => $periodoId,
+        // ]);
     }
 
     /**
@@ -110,7 +138,7 @@ class FechaOperacionSelector extends Component
         // 1. Volvemos a cargar las fechas porque el periodo y/o local pudo haber cambiado
         $this->cargarFechas();
         
-        // 2. Sincronizamos el fechaOperacion para que la vista HTML marque la correcto
+        // 2. Sincronizamos el fechaOperacion para que la vista HTML marque la correcta
         $this->fechaOperacion = $fechaOperacion;
     }
 
@@ -167,9 +195,11 @@ class FechaOperacionSelector extends Component
 
     public function render()
     {
+        $hoy = now()->format('Y-m-d');
+        $hasta = \Carbon\Carbon::parse($hoy)->addDays(6)->format('Y-m-d');
         return view('navigation.fecha-operacion-selector', [
-            'fecha_inicio' => $this->periodoActual->fecha_inicio,
-            'fecha_fin' => $this->periodoActual->fecha_fin,
+            'fecha_inicio' => $this->periodoActual?->fecha_inicio ?? $hoy,
+            'fecha_fin' => $this->periodoActual?->fecha_fin ?? $hasta,
         ]);
     }
 }

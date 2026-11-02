@@ -2,9 +2,14 @@
 
 namespace App\Http\Livewire\Currency;
 
+use App\Http\Livewire\Currency\Actions\SaveTasasCambioAction;
+use App\Http\Livewire\Currency\DTOs\SaveTasasCambioDTO;
 use Livewire\Component;
 use App\Models\Moneda;
+use App\Modules\Configuracion\SetupConfig\Services\SetupConfigService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
 
 class RatesBar extends Component
 {
@@ -12,22 +17,130 @@ class RatesBar extends Component
     public string $variant;
     public int $decimals;
     public bool $showBoth;
+    public bool $shortView;
+
+    public bool $showModal;
 
     public array $primary = [];
     public Collection $others;
+    public array $originalOthers = [];
 
     protected $listeners = [
         'monedasActualizadas' => 'loadMonedas', // escucha el evento
     ];
 
-
-    public function mount(string $variant = 'stacked', int $decimals = 4, bool $showBoth = false)
-    {
+    public function mount(
+        SetupConfigService $config,
+        string $variant = 'stacked',
+        ?int $decimals = null,
+        bool $showBoth = false,
+        bool $shortView = false
+    ): void {
         $this->variant = $variant;
-        $this->decimals = $decimals;
+        $this->decimals = $decimals
+            ?? (int) ($config->get('decimales_tasa_cambio') ?? 0);
+
         $this->showBoth = $showBoth;
+        $this->shortView = $shortView;
+        $this->showModal = false;
 
         $this->loadMonedas();
+    }
+
+    #[On('actualizar-rates-bar')]
+    public function actualizarRatesBar(
+        SetupConfigService $config
+    ): void {
+        $this->decimals = (int) (
+            $config->get('decimales_tasa_cambio') ?? 0
+        );
+
+        $this->loadMonedas();
+    }
+
+    /**
+
+    * ---
+    * Determinar si existen cambios pendientes
+    * ---
+
+    */
+    public function hayCambios(): bool
+    {
+        foreach ($this->others as $id => $moneda) {
+            if (
+                (string) $moneda['tasa_cambio']
+                !== (string) ($this->originalOthers[$id] ?? '')
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function actualizarTasasCambio(int $otherId): void
+    {
+        if (!isset($this->others[$otherId])) {
+            return;
+        }
+
+        $tasa_cambio = $this->others[$otherId]['tasa_cambio'] ?? 0;
+
+
+        if (
+            filter_var($tasa_cambio, FILTER_VALIDATE_INT) === false
+            || (int) $tasa_cambio < 0
+        ) {
+            $this->addError(
+                "others.{$otherId}.tasa_cambio",
+                'La tasa de cambio debe ser un entero mayor o igual a cero.'
+            );
+
+            return;
+        }
+
+        $this->others[$otherId]['tasa_cambio'] = (int) $tasa_cambio;
+
+        $this->resetValidation(
+            "others.{$otherId}.tasa_cambio"
+        );
+    }
+
+    public function openModal(): void
+    {
+        $this->showModal = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->showModal = false;
+        $this->loadMonedas();
+    }
+
+    public function guardarTasasCambio()
+    {
+        $this->validate([
+            'others' => 'array',
+            'others.*.tasa_cambio' => 'required|integer|min:0',
+        ]);
+
+        if (!$this->hayCambios()) {
+            return;
+        }
+
+        $dto = new SaveTasasCambioDTO(
+            monedas: $this->others->toArray(),
+        );
+
+        app(SaveTasasCambioAction::class)->execute($dto);
+
+        $this->dispatch('livewire:alert', [
+            'message' => 'Tasas de Cambio guardadas correctamente',
+            'type' => 'success',
+        ]);
+
+        $this->closeModal();
     }
 
     public function loadMonedas(): void
@@ -58,7 +171,18 @@ class RatesBar extends Component
 
         $this->items = $items;
         $this->primary = $items->firstWhere('es_principal', true) ?? [];
-        $this->others = $items->filter(fn($i) => !$i['es_principal']);
+        $this->others = $items
+                ->reject(fn ($item) => $item['es_principal'])
+                ->keyBy('id');
+        $this->others->map(function($m){
+            $this->resetValidation(
+                "others.{$m['id']}.tasa_cambio"
+            );
+        });
+
+        $this->originalOthers = $this->others
+            ->map(fn ($item) => $item['tasa_cambio'])
+            ->all();
     }
 
     public function render()

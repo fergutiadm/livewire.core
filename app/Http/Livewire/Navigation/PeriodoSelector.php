@@ -14,6 +14,8 @@ class PeriodoSelector extends Component
 {
     public bool $showModal = false;
 
+    public bool $showModalEdit = false;
+
     public ?int $periodoId = null;
 
     public Collection $periodos;
@@ -25,6 +27,8 @@ class PeriodoSelector extends Component
     public ?int $month_selector = null;
 
     public array $datosPeriodo = [];
+
+    public ?int $periodoEditId = null;
 
     public function mount(PeriodoContext $periodoContext): void
     {
@@ -253,17 +257,19 @@ class PeriodoSelector extends Component
             return;
         }
 
+        app(PeriodoContext::class)->set($periodoId);
+
         $this->periodoId = $periodoId;
         $this->year_selector = (int) $periodo->fecha_inicio->year;
         $this->month_selector = (int) $periodo->fecha_inicio->month;
 
         $this->cargarPeriodos();
 
-        // Log::info('periodo-context-changed', [
-        //     'periodoId' => $periodoId,
-        //     'year_selector' => $this->year_selector,
-        //     'month_selector' => $this->month_selector,
-        // ]);
+        Log::info('periodo-context-changed', [
+            'periodoId' => $periodoId,
+            'year_selector' => $this->year_selector,
+            'month_selector' => $this->month_selector,
+        ]);
 
         $this->dispatch('fecha-operacion-seleccion');
     }
@@ -304,6 +310,37 @@ class PeriodoSelector extends Component
     public function closeModal(): void
     {
         $this->showModal = false;
+    }
+
+    public function nuevoPeriodo(): void
+    {
+        $this->periodoEditId = null;
+        $this->showModal = false;
+        $this->showModalEdit = true;
+    }
+
+    public function editarPeriodo(): void
+    {
+        $periodo = $this->buscarPeriodo($this->periodoId);
+
+        if (!$periodo || $periodo->cerrado) {
+            return;
+        }
+
+        $this->periodoEditId = $periodo->id;
+
+        $this->dispatch('edicion-periodo-contable-cargar-edicion');
+
+        $this->showModal = false;
+        $this->showModalEdit = true;
+
+    }
+
+    #[On('close-modal-edit')]
+    public function closeModalEdit(bool $done = false): void
+    {
+        $this->showModal = !$done;
+        $this->showModalEdit = false;
     }
 
     public function render()

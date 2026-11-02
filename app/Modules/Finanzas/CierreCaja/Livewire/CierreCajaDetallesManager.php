@@ -98,8 +98,6 @@ class CierreCajaDetallesManager extends Component
 
         return $normalizados;
     }
-
-
     
     public function actualizarCantidadBilletes(int $denominacionId): void
     {

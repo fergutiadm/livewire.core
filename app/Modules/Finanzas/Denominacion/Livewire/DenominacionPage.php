@@ -114,7 +114,7 @@ class DenominacionPage extends Component
 
     public function render()
     {
-        return view('modules.admin.denominacion.page')
+        return view('modules.finanzas.denominacion.page')
             ->layout('layouts.app_admin');
     }
 }

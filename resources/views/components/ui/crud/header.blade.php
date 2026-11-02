@@ -9,6 +9,7 @@
     'selectorPeriodo' => false,
     'selectorFechaOperacion' => false,
     'gestionCierre' => false,
+    'mostrarTasaCambio' => false,
 ])
 
 <!-- Contenedor adaptativo: flex-col en móviles, sm:flex-row en pantallas más grandes -->
@@ -25,6 +26,14 @@
             </p>
         @endif
     </div>
+
+    @if($mostrarTasaCambio)
+    <!-- Contenedor de Acciones (Selectores y Botón) -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+        {{-- Barra de monedas --}}
+        <livewire:currency.rates-bar decimals="0" variant="" showBoth="0" shortView="1" />
+    </div>
+    @endif
 
     <!-- Contenedor de Acciones (Selectores y Botón) -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">

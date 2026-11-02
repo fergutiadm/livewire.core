@@ -38,20 +38,8 @@ class CategoriaTable extends TableComponent
 
         $lastPage = max(1, (int) ceil($total / $this->perPage));
 
-        \Log::info('CategoriaTable::categoriaEliminada', [
-            'localId' => $this->localId,
-            'page' => $this->page,
-            'perPage' => $this->perPage,
-            'total' => $total,
-            'lastPage' => $lastPage,
-        ]);
-
         if ($this->page > $lastPage) {
             $this->setPage($lastPage);
-
-            \Log::info('CategoriaTable::categoriaEliminada - pagina corregida', [
-                'page' => $this->page,
-            ]);
         }
 
     }

@@ -42,33 +42,33 @@
             </div>
 
             {{-- NOMBRE --}}
-            <div>
+        <div>
 
-                <label class="block text-sm font-medium text-slate-700 mb-1">
-                    Nombre
-                </label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">
+                Nombre
+            </label>
 
-                <input
-                    type="text"
-                    wire:model="nombre"
-                    class="w-full rounded-xl border-slate-300"
-                    placeholder="Nombre de la variable"
-                >
-                @error('nombre')<p class="panel-form-error">{{ $message }}</p>@enderror
-            </div>
+            <input
+                type="text"
+                wire:model="nombre"
+                class="w-full rounded-xl border-slate-300"
+                placeholder="Nombre de la variable"
+            >
+            @error('nombre')<p class="panel-form-error">{{ $message }}</p>@enderror
+        </div>
 
             {{-- ITEM_ID --}}
             <div>
 
                 <label class="block text-sm font-medium text-slate-700 mb-1">
-                    ItemId
+                    Identificador
                 </label>
 
                 <input
                     type="text"
                     wire:model="item_id"
                     class="w-full rounded-xl border-slate-300"
-                    placeholder="ItemId de la variable"
+                    placeholder="Identificador de la variable"
                 >
                 @error('item_id')<p class="panel-form-error">{{ $message }}</p>@enderror
             </div>

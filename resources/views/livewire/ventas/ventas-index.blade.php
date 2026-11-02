@@ -259,7 +259,7 @@
         }
     @endphp
 
-    <x-ui.crud.page class="pt-6" layout="horizontal">
+    <x-ui.crud.page layout="horizontal">
         <x-slot name="header">
             <x-ui.crud.header
                 title="Ventas"
@@ -269,6 +269,7 @@
                 :selector-periodo="true"
                 :selector-fecha-operacion="true"
                 :gestion-cierre="true"
+                :mostrar-tasa-cambio="$mostrarTasaCambio"
             />
             <div class="flex justify-end">
                 <button
