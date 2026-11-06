@@ -325,6 +325,7 @@
                             font-medium text-slate-600
                             hover:bg-slate-100"
                     >
+                        <i class="bi bi-x-lg"></i>
                         Cerrar
                     </button>
 

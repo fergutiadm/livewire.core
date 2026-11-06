@@ -17,11 +17,11 @@ class UnidadDimension extends Model
         'codigo',
         'nombre',
         'descripcion',
-        'activo',
+        'activa',
     ];
 
     protected $casts = [
-        'activo' => 'boolean',
+        'activa' => 'boolean',
     ];
 
     public function unidades(): HasMany

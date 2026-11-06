@@ -250,7 +250,7 @@ class CierreForm extends Component
 >
     <x-ui.crud.page>
         <x-slot name="header">
-            <x-ui.crud.header title="Cierre Diario de Caja" description="Arqueo físico de billetes y validación de saldo contable" :show-form="$showForm" :show-toggle="false" />
+            <x-ui.crud.header title="Cierre Diario de Caja" description="Arqueo físico de billetes y validación de saldo contable" :show-form="$showForm" :show-toggle-on-mobile-only="true" />
         </x-slot>
         <x-slot name="form">
             <x-ui.crud.form :show="$showForm">

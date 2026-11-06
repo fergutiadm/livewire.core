@@ -12,43 +12,24 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AyudaArticuloTableDefinition extends BaseTable
 {
-    public ?int $categoriaId = null;
-
-    public function __construct(array $params = [])
+    public function __construct(array $parameters = [])
     {
-        $this->categoriaId = $params['categoriaId'] ?? null;
+        parent::__construct($parameters);
     }
 
     public function query(): Builder
     {
-        $query = AyudaArticulo::query()
-
+        return AyudaArticulo::query()
             ->when(
                 filled($this->getParameter('categoriaId')),
-                fn ($q) => $q->where(
+                fn (Builder $query) => $query->where(
                     'categoria_id',
                     $this->getParameter('categoriaId')
                 )
-            );
-
-            // $sql = vsprintf(
-            //     str_replace('?', "'%s'", $query->toSql()),
-            //     $query->getBindings()
-            // );
-            // \Log::info('ProductoTableDefinition->query', [
-            //     'sql' => $sql,
-            //     '$query->toSql()' => $query->toSql(),
-            //     ' $query->getBindings()' => $query->getBindings(),
-            //     '$query->count()' => $query->count()]
-            // );
-            // dd(
-            //     $sql,
-            //     $query->toSql(),
-            //     $query->getBindings(),
-            //     $query->count()
-            // );
-
-        return $query;
+            )
+            ->orderByRaw('orden_visual IS NULL ASC')
+            ->orderBy('orden_visual')
+            ->orderBy('id');
     }
 
     protected function searchable(): array
@@ -64,21 +45,16 @@ class AyudaArticuloTableDefinition extends BaseTable
     public function columns(): array
     {
         $titulo = (new HtmlColumn(
-            label: 'Titulo',
+            label: 'Título',
             field: 'titulo',
-        ))->formatStateUsing(function ($state, $categoria) {
+        ))->formatStateUsing(function ($state, $articulo) {
             return '
                 <div class="space-y-1">
-                    <p class="flex items-start">
-                        <span class="break-words font-semibold">'
-                            . e($categoria->titulo ?? '—') .
-                        '</span>
+                    <p class="font-semibold break-words">
+                        ' . e($articulo->titulo ?? '—') . '
                     </p>
-
-                    <p class="flex items-start gap-1 text-xs">
-                        <span class="shrink-0 font-semibold break-words text-slate-500">'
-                            . e($categoria->slug ?? '—') .
-                        '</span>
+                    <p class="text-xs text-slate-500 break-words">
+                        ' . e($articulo->slug ?? '—') . '
                     </p>
                 </div>
             ';
@@ -88,26 +64,26 @@ class AyudaArticuloTableDefinition extends BaseTable
             label: 'Publicado',
             field: 'publicado',
             extra: true,
-        ))->formatStateUsing(function ($state, $ayudaArticulo) {
-            $texto = $state ? 'Sí' : 'NO';
+        ))->formatStateUsing(function ($state, $articulo) {
 
-            $color_text = $state
+            $texto = $state ? 'Sí' : 'No';
+
+            $colorTexto = $state
                 ? 'text-green-700'
                 : 'text-red-700';
 
-            $color_bg = $state
+            $colorFondo = $state
                 ? 'bg-green-100'
                 : 'bg-red-100';
 
             return '
                 <button
                     type="button"
-                    wire:click="togglePublicado(' . e($ayudaArticulo->id) . ')"
-                    title="Clic para cambiar"
-                    class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
-                    ' . $color_text . '
-                    ' . $color_bg . '">
-                    ' . e($texto) . '
+                    wire:click="togglePublicado(' . (int) $articulo->id . ')"
+                    title="Cambiar estado de publicación"
+                    class="text-xs font-semibold px-2 py-1 rounded-full
+                    ' . $colorTexto . ' ' . $colorFondo . '">
+                    ' . $texto . '
                 </button>
             ';
         });
@@ -126,16 +102,11 @@ class AyudaArticuloTableDefinition extends BaseTable
                 ->color('red')
                 ->event('ayuda-articulo-eliminar')
                 ->loading('Eliminando artículo de ayuda...'),
-        ])
-        ->align('right');
+
+        ])->align('right');
 
         return [
             $titulo,
-
-            new TextColumn(
-                label: 'Contenino',
-                field: 'contenido',
-            ),
 
             new TextColumn(
                 label: 'Resumen',

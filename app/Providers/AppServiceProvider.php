@@ -30,6 +30,20 @@ use App\Modules\Inventario\Categoria\Livewire\CategoriaForm;
 use App\Modules\Inventario\Categoria\Livewire\CategoriaMediaManager;
 use App\Modules\Inventario\Categoria\Livewire\CategoriaAttributesManager;
 
+use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
+use App\Modules\Inventario\Atributo\Livewire\AtributoTable;
+use App\Modules\Inventario\Atributo\Livewire\AtributoForm;
+// use App\Modules\Inventario\Atributo\Livewire\AtributoMediaManager;
+// use App\Modules\Inventario\Atributo\Livewire\AtributoAttributesManager;
+
+use App\Modules\Inventario\UnidadDimension\Livewire\UnidadDimensionPage;
+use App\Modules\Inventario\UnidadDimension\Livewire\UnidadDimensionTable;
+use App\Modules\Inventario\UnidadDimension\Livewire\UnidadDimensionForm;
+
+use App\Modules\Inventario\UnidadMedida\Livewire\UnidadMedidaPage;
+use App\Modules\Inventario\UnidadMedida\Livewire\UnidadMedidaTable;
+use App\Modules\Inventario\UnidadMedida\Livewire\UnidadMedidaForm;
+
 use App\Modules\Inventario\Local\Livewire\LocalPage;
 use App\Modules\Inventario\Local\Livewire\LocalTable;
 use App\Modules\Inventario\Local\Livewire\LocalForm;
@@ -63,12 +77,6 @@ use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaForm;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionPage;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionTable;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionForm;
-
-use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
-use App\Modules\Inventario\Atributo\Livewire\AtributoTable;
-use App\Modules\Inventario\Atributo\Livewire\AtributoForm;
-// use App\Modules\Inventario\Atributo\Livewire\AtributoMediaManager;
-// use App\Modules\Inventario\Atributo\Livewire\AtributoAttributesManager;
 
 use App\Modules\Comercial\Cliente\Livewire\ClientePage;
 use App\Modules\Comercial\Cliente\Livewire\ClienteTable;
@@ -122,6 +130,7 @@ use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloTable;
 use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloForm;
 
 use App\Modules\Ayuda\AyudaVisor\Livewire\AyudaVisorPage;
+use App\Modules\Ayuda\AyudaContextual\Livewire\AyudaContextual;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -203,6 +212,14 @@ class AppServiceProvider extends ServiceProvider
         // $this->registerLivewire('inventario.atributo.media-manager', AtributoMediaManager::class);
         // $this->registerLivewire('inventario.atributo.attributes-manager', AtributoAttributesManager::class);
 
+        $this->registerLivewire('inventario.unidad-dimension.page', UnidadDimensionPage::class);
+        $this->registerLivewire('inventario.unidad-dimension.form', UnidadDimensionForm::class);
+        $this->registerLivewire('inventario.unidad-dimension.table', UnidadDimensionTable::class);
+
+        $this->registerLivewire('inventario.unidad-medida.page', UnidadMedidaPage::class);
+        $this->registerLivewire('inventario.unidad-medida.form', UnidadMedidaForm::class);
+        $this->registerLivewire('inventario.unidad-medida.table', UnidadMedidaTable::class);
+
         $this->registerLivewire('finanzas.moneda.page', MonedaPage::class);
         $this->registerLivewire('finanzas.moneda.form', MonedaForm::class);
         $this->registerLivewire('finanzas.moneda.table', MonedaTable::class);
@@ -281,5 +298,6 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('ayuda.ayuda-articulo.table', AyudaArticuloTable::class);
 
         $this->registerLivewire('ayuda.ayuda-visor.page', AyudaVisorPage::class);
+        $this->registerLivewire('ayuda.ayuda-contextual.panel', AyudaContextual::class);
         }
 }

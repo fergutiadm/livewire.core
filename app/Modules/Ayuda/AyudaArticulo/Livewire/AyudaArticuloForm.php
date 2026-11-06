@@ -5,10 +5,11 @@ namespace App\Modules\Ayuda\AyudaArticulo\Livewire;
 use App\Core\CQRS\HasCommands;
 use App\Models\AyudaArticulo;
 use App\Models\AyudaCategoria;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
+
+use Illuminate\Support\Str;
 
 class AyudaArticuloForm extends Component
 {
@@ -41,7 +42,7 @@ class AyudaArticuloForm extends Component
 
     public string $contexto = '';
 
-    public int $orden_visual = 0;
+    public ?int $orden_visual = null;
 
     // Solo informativo en el formulario.
     // La publicación se gestiona mediante su propio comando CQRS.
@@ -91,10 +92,11 @@ class AyudaArticuloForm extends Component
                 'max:160',
             ],
 
-            'orden_visual' => [
-                'integer',
-                'min:0',
-            ],
+            // 'orden_visual' => [
+            //     'nullable',
+            //     'integer',
+            //     'min:0',
+            // ],
         ];
     }
 
@@ -125,8 +127,8 @@ class AyudaArticuloForm extends Component
             'contexto.max' =>
                 'El contexto no puede superar los 160 caracteres.',
 
-            'orden_visual.min' =>
-                'El orden visual no puede ser negativo.',
+            // 'orden_visual.min' =>
+            //     'El orden visual no puede ser negativo.',
         ];
     }
 
@@ -143,7 +145,7 @@ class AyudaArticuloForm extends Component
             return;
         }
 
-        $this->slug = generate_slug($value);
+        $this->slug = Str::slug($value);
     }
 
     public function categoriaChanged(): void
@@ -223,7 +225,7 @@ class AyudaArticuloForm extends Component
         // La sanitización se realizará en la capa de dominio.
         if ($this->ayudaArticuloId === null) {
 
-            $this->slug = generate_slug($this->titulo);
+            $this->slug = Str::slug($this->titulo);
         }
     }
 

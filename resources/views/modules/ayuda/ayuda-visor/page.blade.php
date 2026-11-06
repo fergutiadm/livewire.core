@@ -73,13 +73,10 @@
                     </h2>
 
                     <div class="mt-4 prose prose-slate max-w-none">
-                        {!! \Illuminate\Support\Str::markdown(
-                            $articulo->contenido,
-                            [
-                                'html_input' => 'strip',
-                                'allow_unsafe_links' => false,
-                            ]
-                        ) !!}
+                        <div class="mt-4 prose prose-slate max-w-none">
+                            {!! app(\App\Modules\Ayuda\Services\AyudaHtmlSanitizer::class)
+                                ->sanitize($articulo->contenido) !!}
+                        </div>
                     </div>
 
                 </article>

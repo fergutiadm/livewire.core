@@ -14,7 +14,7 @@ class Traza extends Model
         'user_id',
         'operacion',
         'data',
-        'ip_var',
+        'ip_str',
     ];
 
     protected $casts = [

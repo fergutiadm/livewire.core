@@ -36,6 +36,8 @@
                 $make('Productos', 'admin.productos', 'tag', 'admin.productos'),
                 $make('Atributos', 'admin.atributos', 'adjustments', 'admin.atributos'),
                 $make('Inventario', 'admin.inventarios', 'inventory', 'admin.inventarios'),
+                $make('Unidad dimensiones', 'admin.unidad_dimension', 'inventory', 'admin.unidad_dimension'),
+                $make('Unidades medidas', 'admin.unidad_medida', 'inventory', 'admin.unidad_medida'),
                 // $make('Inventario operativo', 'inventario.index', 'inventory', 'inventario.*'),
             ],
         ],

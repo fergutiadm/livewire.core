@@ -21,12 +21,16 @@ class AyudaVisorPage extends Component
 
     public function seleccionarArticulo(int $id): void
     {
-        $existe = AyudaArticulo::publicados()
+        $articulo = AyudaArticulo::publicados()
+            ->when(
+                $this->contexto,
+                fn ($query) => $query->porContexto($this->contexto)
+            )
             ->whereKey($id)
-            ->exists();
+            ->first();
 
-        if ($existe) {
-            $this->articuloId = $id;
+        if ($articulo) {
+            $this->articuloId = $articulo->id;
         }
     }
 

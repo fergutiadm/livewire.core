@@ -116,7 +116,7 @@
         </div>
 
         {{-- ACTIONS --}}
-        <div class="flex items-center gap-3">
+        {{-- <div class="flex items-center gap-3">
 
             <button
                 type="submit"
@@ -160,6 +160,50 @@
                 Cancelar
 
             </button>
+
+        </div> --}}
+        {{-- ============================================================
+        PIE DEL FORMULARIO
+        ============================================================ --}}
+        <div class="flex flex-col gap-4 border-t border-slate-200 pt-5 sm:flex-row justify-end">
+
+            {{-- <div class="text-xs text-slate-500">
+                Los datos se guardarán al confirmar.
+            </div> --}}
+
+            <div class="flex flex-wrap justify-end items-center gap-3">
+
+                {{-- CANCELAR --}}
+                <button
+                    type="button"
+                    wire:click="cancel"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                >
+                    <i class="bi bi-x-lg"></i>
+                    Cancelar
+                </button>
+
+                {{-- GUARDAR --}}
+                <button
+                    type="submit"
+                    wire:loading.attr="disabled"
+                    wire:target="save"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+
+                    <span wire:loading.remove wire:target="save">
+                        <i class="bi bi-floppy"></i>
+                        {{ $periodoContableId ? 'Guardar cambios' : 'Crear periodo' }}
+                    </span>
+
+                    <span wire:loading wire:target="save">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Guardando...
+                    </span>
+
+                </button>
+
+            </div>
 
         </div>
 

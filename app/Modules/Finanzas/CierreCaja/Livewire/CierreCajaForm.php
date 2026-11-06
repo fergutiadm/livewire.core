@@ -134,7 +134,7 @@ class CierreCajaForm extends Component
     |--------------------------------------------------------------------------
     */
 
-    #[On('cierre-caja-moneda-agregar')]
+    #[On('cierre-caja-moneda-guardar')]
     public function addCierreCajaMoneda(): void
     {
         $this->validate([
@@ -151,10 +151,13 @@ class CierreCajaForm extends Component
             'monto_contado_edit.numeric' => 'El monto contado debe ser numérico.',
             'monto_contado_edit.gt' => 'El monto contado debe ser mayor que cero.',
         ]);
-
+        
         $monedaId = (int) $this->monedaId;
+        $monedaEditandoId = (int) $this->monedaEditandoId;
 
         if (
+            $monedaId != $monedaEditandoId
+            &&
             collect($this->cierreMonedas)
                 ->contains(fn (array $item) => (int) $item['moneda_id'] === $monedaId)
         ) {
@@ -165,16 +168,35 @@ class CierreCajaForm extends Component
 
             return;
         }
+        
+        if ($monedaId != $monedaEditandoId)
+        {
+            $moneda = Moneda::query()->findOrFail($monedaId);
 
-        $moneda = Moneda::query()->findOrFail($monedaId);
+            $this->cierreMonedas[] = [
+                'moneda_id' => $moneda->id,
+                'moneda' => $moneda->codigo,
+                'monto_esperado' => $this->monto_esperado_edit,
+                'monto_contado' => $this->monto_contado_edit,
+                'estado' => 'pendiente',
+            ];
+        }else{
+            $index = collect($this->cierreMonedas)
+                ->search(
+                    fn (array $item) => (int) $item['moneda_id'] === $monedaEditandoId
+                );
 
-        $this->cierreMonedas[] = [
-            'moneda_id' => $moneda->id,
-            'moneda' => $moneda->codigo,
-            'monto_esperado' => $this->monto_esperado_edit,
-            'monto_contado' => $this->monto_contado_edit,
-            'estado' => 'pendiente',
-        ];
+            // Log::info('cierre-caja-moneda-guardar - addCierreCajaMoneda', [
+            //     'index' => $index
+            // ]);
+
+            if ($index === false) {
+                return;
+            }
+
+            $this->cierreMonedas[$index]['monto_esperado'] = $this->monto_esperado_edit;
+            $this->cierreMonedas[$index]['monto_contado'] = $this->monto_contado_edit;
+        }
 
         $this->reset(
             'monedaId',
@@ -207,6 +229,10 @@ class CierreCajaForm extends Component
             ->search(
                 fn (array $item) => (int) $item['moneda_id'] === $id
             );
+
+        // Log::info('cierre-caja-moneda-cargar-edicion - editCierreCajaMoneda', [
+        //     'index' => $index
+        // ]);
 
         if ($index === false) {
             return;

@@ -4,6 +4,8 @@ namespace App\Modules\Ayuda\AyudaArticulo\Actions;
 
 use App\Models\AyudaArticulo;
 use App\Modules\Ayuda\AyudaArticulo\DTOs\UpdateAyudaArticuloDTO;
+use App\Modules\Ayuda\Services\AyudaContenidoValidator;
+use App\Modules\Ayuda\Services\AyudaHtmlSanitizer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -11,6 +13,11 @@ use Illuminate\Validation\ValidationException;
 
 class UpdateAyudaArticuloAction
 {
+    public function __construct(
+        private AyudaHtmlSanitizer $sanitizer,
+        private AyudaContenidoValidator $contenidoValidator
+    ) {}
+
     public function __invoke(
         UpdateAyudaArticuloDTO $dto
     ): AyudaArticulo {
@@ -25,6 +32,14 @@ class UpdateAyudaArticuloAction
 
             $data['titulo'] = trim($data['titulo']);
             $data['slug'] = trim($data['slug']);
+
+            $data['contenido'] = $this->sanitizer
+                ->sanitize($data['contenido'] ?? '');
+
+            $this->contenidoValidator->validate(
+                $data['contenido'],
+                requerido: $model->publicado
+            );
 
             Validator::make($data, [
                 'categoria_id' => [
@@ -44,7 +59,7 @@ class UpdateAyudaArticuloAction
                 'resumen' => ['nullable', 'string'],
                 'contenido' => ['present', 'string'],
                 'contexto' => ['nullable', 'string', 'max:160'],
-                'orden_visual' => ['required', 'integer', 'min:0'],
+                // 'orden_visual' => ['nullable', 'required', 'integer', 'min:0'],
             ])->validate();
 
             if ($model->publicado) {
@@ -54,10 +69,10 @@ class UpdateAyudaArticuloAction
                     ->where('activa', true)
                     ->exists();
 
-                if (!$categoriaActiva || trim($data['contenido']) === '') {
+                if (!$categoriaActiva) {
                     throw ValidationException::withMessages([
-                        'contenido' =>
-                            'Un artículo publicado requiere contenido y una categoría activa.',
+                        'categoria_id' =>
+                            'Un artículo publicado requiere una categoría activa.',
                     ]);
                 }
             }

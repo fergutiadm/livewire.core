@@ -1,3 +1,4 @@
+{{-- resources/views/modules/gastos/tipo-gasto/page.blade.php --}}
 <div
     x-data="{ loading: false, loadingMessage: '' }"
     x-on:loading-start.window="

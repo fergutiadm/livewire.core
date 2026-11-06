@@ -295,9 +295,11 @@ class CierreCajaDetallesManager extends Component
             $id = (int) $denominacion->id;
 
             $this->cards[$id] = [
-                'denominacion' => (string) $denominacion->valor,
+                'denominacion'       => (string) $denominacion->valor,
+                'color_bg'           => (string) $denominacion->color_bg,
+                'color_text'         => (string) $denominacion->color_text,
                 'valor_denominacion' => (string) $denominacion->valor,
-                'cantidad_billetes' => '', //permitir empty
+                'cantidad_billetes'  => '', //permitir empty
             ];
 
             $this->resetValidation("cards.{$denominacion->id}.cantidad_billetes");

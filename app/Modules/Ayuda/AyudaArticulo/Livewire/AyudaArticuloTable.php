@@ -6,31 +6,19 @@ use App\Core\Tables\TableComponent;
 use App\Models\AyudaArticulo;
 use App\Modules\Ayuda\AyudaArticulo\Actions\ChangePublicationAyudaArticuloAction;
 use App\Modules\Ayuda\AyudaArticulo\DTOs\ChangePublicationAyudaArticuloDTO;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Reactive;
-use Illuminate\Validation\ValidationException;
-
-//use App\Modules\Ayuda\AyudaArticulo\Tables\AyudaArticuloTableDefinition;
 
 class AyudaArticuloTable extends TableComponent
 {
     #[Reactive]
     public ?int $categoriaId = null;
 
-    public ?int $page = 1;
-
-
     public function mount(?int $categoriaId = null): void
     {
         $this->categoriaId = $categoriaId;
-    }
-
-
-    #[On('ayuda-articulo-guardado')]
-    public function refreshTable(): void
-    {
-
-        // $this->resetPage();
+        $this->resetPage();
     }
 
     protected function sortable(): bool
@@ -45,9 +33,7 @@ class AyudaArticuloTable extends TableComponent
 
     protected function sortableOptions(): array
     {
-        return [
-            'animation' => 150,
-        ];
+        return ['animation' => 150];
     }
 
     public function reorderAyudaArticulo(array $orderedIds): void
@@ -76,31 +62,30 @@ class AyudaArticuloTable extends TableComponent
 
     public function togglePublicado(int $ayudaArticuloId): void
     {
-        $ayudaArticulo = AyudaArticulo::findOrFail($ayudaArticuloId);
+        $articulo = AyudaArticulo::findOrFail($ayudaArticuloId);
 
-        try{
+        try {
             app(ChangePublicationAyudaArticuloAction::class)(
                 new ChangePublicationAyudaArticuloDTO(
-                    id: $ayudaArticulo->id,
-                    publicado: !$ayudaArticulo->publicado,
+                    id: $articulo->id,
+                    publicado: !$articulo->publicado,
                 )
             );
-        }catch(ValidationException $e){
-            $this->dispatch('livewire:alert',
-                [
-                    'message' =>
-                        $e->getMessage(),
-                    'type' =>
-                        'error',
-                ]
-            );
+
+            $this->dispatch('ayuda-articulo-guardado');
+
+        } catch (ValidationException $e) {
+            $this->dispatch('livewire:alert', [
+                'message' => $e->getMessage(),
+                'type' => 'error',
+            ]);
         }
     }
 
     public function placeholder()
     {
         return view('components.loading-placeholder', [
-            'message' => 'Cargando articulos de ayuda...',
+            'message' => 'Cargando artículos de ayuda...',
         ]);
     }
 }

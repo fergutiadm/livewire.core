@@ -256,7 +256,7 @@ class CajaForm extends Component
     {
         $this->reset([
             'cajaId',
-            'localId',
+            // 'localId',
             'codigo',
             'nombre',
             'activa',

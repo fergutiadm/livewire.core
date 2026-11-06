@@ -7,6 +7,7 @@ use App\Http\Livewire\Currency\DTOs\SaveTasasCambioDTO;
 use Livewire\Component;
 use App\Models\Moneda;
 use App\Modules\Configuracion\SetupConfig\Services\SetupConfigService;
+use App\Services\MonedaService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
@@ -134,6 +135,10 @@ class RatesBar extends Component
         );
 
         app(SaveTasasCambioAction::class)->execute($dto);
+                        
+        app(MonedaService::class)->forgetCache();
+
+        $this->loadMonedas();
 
         $this->dispatch('livewire:alert', [
             'message' => 'Tasas de Cambio guardadas correctamente',

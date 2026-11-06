@@ -26,7 +26,7 @@ class CreateAyudaArticuloDTO
             'resumen' => ['nullable', 'string'],
             'contenido' => ['present', 'string'],
             'contexto' => ['nullable', 'string', 'max:160'],
-            'orden_visual' => ['sometimes', 'integer', 'min:0'],
+            // 'orden_visual' => ['sometimes', 'integer', 'min:0'],
         ])->validate();
 
         return new self(

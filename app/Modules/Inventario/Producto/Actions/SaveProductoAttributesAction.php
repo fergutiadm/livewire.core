@@ -38,7 +38,9 @@ class SaveProductoAttributesAction
                     ->find($atributoId);
 
                 if (!$atributo) {
-                    continue;
+                    throw ValidationException::withMessages([
+                        'cards' => "El atributo {$atributoId} no existe.",
+                    ]);
                 }
 
                 $valores = [];
@@ -52,7 +54,9 @@ class SaveProductoAttributesAction
                         ->exists();
 
                     if (!$valorExiste) {
-                        continue;
+                        throw ValidationException::withMessages([
+                            'cards' => "El valor {$valorId} no existe o no pertenece al atributo {$atributoId}.",
+                        ]);
                     }
 
                     $valores[$valorId] = [
@@ -207,11 +211,9 @@ class SaveProductoAttributesAction
             }
 
             /*
-             * 10. Persistir valores y orden.
-             */
+            * 10. Persistir valores y orden.
+            */
             foreach ($cardsNormalizadas as $card) {
-                $ordenValor = 1;
-
                 foreach ($card['valores'] as $valorId => $valorData) {
                     AtributableValor::updateOrCreate(
                         [
@@ -220,11 +222,9 @@ class SaveProductoAttributesAction
                             'atributable_id' => $producto->id,
                         ],
                         [
-                            'orden_visual' => $ordenValor,
+                            'orden_visual' => $valorData['orden_visual'],
                         ]
                     );
-
-                    $ordenValor++;
                 }
             }
         });

@@ -1,5 +1,4 @@
-
-{{-- resources/views/modules/ayuda/articulo/form.blade.php --}}
+{{-- resources/views/modules/ayuda/ayuda-articulo/form.blade.php --}}
 
 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
 
@@ -116,7 +115,7 @@
                         id="ayuda-titulo"
                         type="text"
                         wire:model="titulo"
-                        maxlength="255"
+                        maxlength="200"
                         class="w-full rounded-xl border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
                         placeholder="Ej.: Cómo registrar un producto"
                     >
@@ -143,7 +142,7 @@
                         id="ayuda-contexto"
                         type="text"
                         wire:model="contexto"
-                        maxlength="255"
+                        maxlength="160"
                         class="w-full rounded-xl border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
                         placeholder="Ej.: inventario.producto-variante"
                     >
@@ -231,8 +230,8 @@
         </div>
 
         {{-- ============================================================
-             PIE DEL FORMULARIO
-             ============================================================ --}}
+        PIE DEL FORMULARIO
+        ============================================================ --}}
         <div class="flex flex-col gap-4 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
 
             <div class="text-xs text-slate-500">

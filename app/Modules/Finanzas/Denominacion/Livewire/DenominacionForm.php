@@ -52,6 +52,8 @@ class DenominacionForm extends Component
         'monedaId.required' => 'La Moneda es obligatoria',
 
         'valor.required' => 'El Valor es obligatorio',
+
+        'valor.numeric' => 'El Valor tiene que ser un número mayor que 1',
         ];
 
     }

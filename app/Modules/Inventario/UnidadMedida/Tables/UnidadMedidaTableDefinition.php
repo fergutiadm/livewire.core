@@ -9,6 +9,7 @@ use App\Core\Tables\Columns\ActionsColumn;
 use App\Core\Tables\Columns\HtmlColumn;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\UnidadMedida;
+use Illuminate\Support\Facades\Log;
 
 class UnidadMedidaTableDefinition extends BaseTable
 {
@@ -22,6 +23,10 @@ class UnidadMedidaTableDefinition extends BaseTable
     public function query(): Builder
     {
         $query = UnidadMedida::query()
+
+            ->whereHas('dimension', function ($query) {
+                $query->where('activa', true);
+            })
 
             ->when(
                 filled($this->getParameter('unidadDimensionId')),
@@ -47,7 +52,11 @@ class UnidadMedidaTableDefinition extends BaseTable
             //     $query->getBindings(),
             //     $query->count()
             // );
-
+            // Log::info('UnidadMedidaTableDefinition', [
+            //     'unidadDimensionId' => $this->getParameter('unidadDimensionId'),
+            //     'sql' => $query->toSql(),
+            //     'bindings' => $query->getBindings(),
+            // ]);
         return $query;
     }
 
@@ -63,9 +72,34 @@ class UnidadMedidaTableDefinition extends BaseTable
 
     public function columns(): array
     {
+        $unidadDimension = (new HtmlColumn(
+            label: 'Dimensión',
+            field: 'unidad_dimension',
+        ))->formatStateUsing(function ($state, $unidad_medida) {
+            $unidad_dimension = $unidad_medida->dimension;
+            return $unidad_dimension ? '
+                <div class="space-y-1">
+                    <p class="flex items-start">
+                        <span class="break-words font-semibold">'
+                            . e($unidad_dimension->nombre ?? '—') .
+                        '</span>
+                    </p>
+
+                    <p class="flex items-start gap-1 text-xs">
+                        <span class="shrink-0 font-semibold text-slate-800">
+                            Código:
+                        </span>
+                        <span class="break-words text-slate-500">'
+                            . e($unidad_dimension->codigo ?? '—') .
+                        '</span>
+                    </p>
+                </div>
+            ' : '---';
+        });
+
         $activo = (new HtmlColumn(
-            label: 'Activo',
-            field: 'activo',
+            label: 'Activa',
+            field: 'activa',
             extra: true,
         ))->formatStateUsing(function ($state, $producto_unidad) {
             $texto = $state ? 'Sí' : 'NO';
@@ -99,21 +133,18 @@ class UnidadMedidaTableDefinition extends BaseTable
             (new TableAction('Editar'))
                 ->color('yellow')
                 ->event('unidad-medida-editar')
-                ->loading('Cargando unidad-medida...'),
+                ->loading('Cargando unidad de medida...'),
 
             (new TableAction('Eliminar'))
                 ->color('red')
                 ->event('unidad-medida-eliminar')
-                ->loading('Eliminando unidad-medida...'),
+                ->loading('Eliminando unidad de medida...'),
 
         ])
         ->align('right');
 
         return [
-            new TextColumn(
-                label: 'UnidadDimension',
-                field: 'unidad_dimension_id',
-            ),
+             $unidadDimension,
 
             new TextColumn(
                 label: 'Codigo',

@@ -96,17 +96,18 @@ class AyudaArticuloPage extends Component
             return;
         }
 
-        $this->command(
-            'ayudaArticulo.delete',
-            [
-                'id' => $this->ayudaArticuloDeleteId,
-            ]
-        );
-
-        $this->dispatch('livewire:alert', [
-            'message' => 'Articulo de Ayuda Eliminado...',
-            'type'    => 'success',
+        $resultado = $this->command('ayudaArticulo.delete', [
+            'id' => $this->ayudaArticuloDeleteId,
         ]);
+
+        if ($resultado === false) {
+            $this->dispatch('livewire:alert', [
+                'message' => 'No se pudo eliminar el artículo de ayuda.',
+                'type' => 'error',
+            ]);
+
+            return;
+        }
 
         $this->showDeleteModal = false;
         $this->ayudaArticuloDeleteId = null;
@@ -114,6 +115,11 @@ class AyudaArticuloPage extends Component
         $this->tableVersion++;
 
         $this->dispatch('reset-form');
+
+        $this->dispatch('livewire:alert', [
+            'message' => 'Artículo de ayuda eliminado.',
+            'type' => 'success',
+        ]);
     }
 
     #[On('ayuda-articulo-eliminado')]

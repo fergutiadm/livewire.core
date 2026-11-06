@@ -35,7 +35,7 @@ class AyudaArticulo extends Model
             // Orden visual automático
             if ($ayudaArticulo->orden_visual === null) {
                 $ayudaArticulo->orden_visual =
-                    self::max('orden_visual') + 1;
+                    (self::max('orden_visual') ?? -1) + 1;
             }
         });
     }
@@ -53,7 +53,7 @@ class AyudaArticulo extends Model
         return $query
             ->where('publicado', true)
             ->whereHas('categoria', function ($query) {
-                $query->where('activo', true);
+                $query->where('activa', true);
             });
     }
 

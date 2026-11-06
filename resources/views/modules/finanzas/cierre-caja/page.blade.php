@@ -42,7 +42,7 @@
                 title="Cierres de caja"
                 description="Gestión de cierres de caja"
                 :show-form="$showForm"
-                :show-toggle=false
+                :show-toggle-on-mobile-only=true
                 :selector-periodo=true
                 :selector-fecha-operacion=true
             />

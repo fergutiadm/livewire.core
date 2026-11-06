@@ -2,7 +2,7 @@
     'title',
     'description' => null,
     'showForm' => true,
-    'showToggle' => true,
+    'showToggleOnMobileOnly' => false,
     'toggleMethod' => 'toggleForm',
     'showText' => 'Mostrar formulario',
     'hideText' => 'Ocultar formulario',
@@ -37,7 +37,7 @@
 
     <!-- Contenedor de Acciones (Selectores y Botón) -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-        
+
         @if($selectorPeriodo)
             <div class="w-full sm:w-auto">
                 <livewire:navigation.periodo-selector />
@@ -64,11 +64,17 @@
             </div>
         @endif
 
-        @if($showToggle)
+        {{-- @if($showToggle) --}}
             <button
                 type="button"
                 wire:click="{{ $toggleMethod }}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-xs md:text-sm font-medium text-white hover:bg-slate-700 transition w-full sm:w-auto shadow-sm"
+                @class([
+                    'inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-2
+                     text-xs md:text-sm font-medium text-white hover:bg-slate-700 transition w-full sm:w-auto shadow-sm',
+                    'opacity-50 cursor-not-allowed',
+                    'md:hidden' => $showToggleOnMobileOnly,
+                ])
+                {{-- class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-xs md:text-sm font-medium text-white hover:bg-slate-700 transition w-full sm:w-auto shadow-sm" --}}
             >
                 <!-- Icono dinámico sugerido para mejorar la interfaz en móviles -->
                 @if($showForm)
@@ -78,7 +84,7 @@
                 @endif
                 <span>{{ $showForm ? $hideText : $showText }}</span>
             </button>
-        @endif
+        {{-- @endif --}}
 
     </div>
 </div>

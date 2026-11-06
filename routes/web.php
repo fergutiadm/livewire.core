@@ -21,6 +21,8 @@
     use App\Modules\Inventario\Categoria\Livewire\CategoriaPage;
     use App\Modules\Inventario\Producto\Livewire\ProductoPage;
     use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
+    use App\Modules\Inventario\UnidadDimension\Livewire\UnidadDimensionPage;
+    use App\Modules\Inventario\UnidadMedida\Livewire\UnidadMedidaPage;
     
     use App\Modules\Finanzas\Moneda\Livewire\MonedaPage;
     use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaPage;
@@ -93,21 +95,20 @@
             LocalPage::class
         )->name('locales');
         Route::get('/categorias', CategoriaPage::class)->name('categorias');
-        Route::get(
-            '/productos',
-            ProductoPage::class
-            )->name('productos');
-            Route::get('/atributos', AtributoPage::class)->name('atributos');
+        Route::get('/productos', ProductoPage::class)->name('productos');
+        Route::get('/atributos', AtributoPage::class)->name('atributos');
         Route::get('/inventarios', function () {
             return view('admin.en-contruccion', ['seccion', 'Inventario']);
         })->name('inventarios');
+        Route::get('/unidad-dimension', UnidadDimensionPage::class)->name('unidad_dimension');
+        Route::get('/unidad-medida', UnidadMedidaPage::class)->name('unidad_medida');
 
         Route::get('/clientes', ClientePage::class)->name('clientes');
         Route::get('/gestores', GestorPage::class)->name('gestores');
 
 
         Route::get('/monedas', MonedaPage::class)->name('monedas');
-        Route::get('/tarjetas_magneticas', TarjetaMagneticaPage::class)->name('tarjetas_magneticas');
+        Route::get('/tarjetas-magneticas', TarjetaMagneticaPage::class)->name('tarjetas_magneticas');
         Route::get('/cajas-cash', CajaPage::class)->name('cajas');
                 
         Route::get('/denominaciones', DenominacionPage::class)->name('denominaciones');

@@ -1,23 +1,69 @@
-<x-ui.crud.page>
+<div
+    x-data="{ loading: false, loadingMessage: '' }"
+    x-on:loading-start.window="
+        loading = true;
+        loadingMessage = $event.detail.message ?? 'Cargando...';
+    "
+    x-on:loading-stop.window="
+        loading = false;
+        loadingMessage = '';
+    "
+    x-on:media-procesada.window="
+        loading = false;
+        loadingMessage = '';
+    "
 
-    <x-slot name="header">
-        <x-ui.crud.header
-            title="__ENTITY__"
-            description="Gestión de __ENTITY_LOWER__"
-            :show-form="$showForm"
-        />
-    </x-slot>
+    x-init="
+        Livewire.hook('request', ({ fail }) => {
+            fail(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
 
-    <x-slot name="form">
-        <livewire:__MODULE_LOWER__.__ENTITY_LOWER__.form />
-    </x-slot>
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+    "
+    class="relative"
+>
+    <x-ui.crud.page>
 
-    <livewire:__MODULE_LOWER__.__ENTITY_LOWER__.table />
+        <x-slot name="header">
+            <x-ui.crud.header
+                title="Unidad Dimensiones"
+                description="Gestión de unidad dimensiones"
+                :show-form="$showForm"
+            />
+        </x-slot>
 
-    <x-slot name="deleteModal">
-        <x-ui.crud.delete-modal
-            :show="$showDeleteModal"
-        />
-    </x-slot>
+        <x-slot name="form">
+            <x-ui.crud.form :show="$showForm">
 
-</x-ui.crud.page>
+                <livewire:inventario.unidad-dimension.form />
+
+            </x-ui.crud.form>
+        </x-slot>
+
+        <x-slot:table>
+
+            <livewire:inventario.unidad-dimension.table
+                {{--  lazy  --}}
+                wire:key="unidad-dimension-table-{{ $tableVersion }}"
+            />
+
+        </x-slot:table>
+
+        <x-slot name="deleteModal">
+            <x-ui.crud.delete-modal
+                :show="$showDeleteModal"
+            />
+        </x-slot>
+
+    </x-ui.crud.page>
+
+    <x-ui.loading-overlay />
+</div>

@@ -14,6 +14,9 @@ class UnidadMedida extends Model
 
     protected $table = 'unidades_medida';
 
+    public const TIPO_ESTANDAR     = 'estandar';
+    public const TIPO_OPERACIONAL  = 'operacional';
+
     protected $fillable = [
         'unidad_dimension_id',
         'codigo',
@@ -22,13 +25,13 @@ class UnidadMedida extends Model
         'tipo',
         'factor_base',
         'es_base_dimension',
-        'activo',
+        'activa',
     ];
 
     protected $casts = [
         'factor_base' => 'decimal:10',
         'es_base_dimension' => 'boolean',
-        'activo' => 'boolean',
+        'activa' => 'boolean',
     ];
 
     public function dimension(): BelongsTo

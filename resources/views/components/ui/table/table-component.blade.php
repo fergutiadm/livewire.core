@@ -1,4 +1,4 @@
-{{-- resources/views/components/ui/table --}}
+{{-- resources/views/components/ui/table/table-component.blade.php --}}
 @php
 $alignmentClasses = [
     'left' => [ 'th' => 'text-left', 'flex' => 'justify-start', ],

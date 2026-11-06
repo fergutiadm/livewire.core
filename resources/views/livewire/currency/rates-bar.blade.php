@@ -103,7 +103,6 @@
         </div>
 
         @if($showModal)
-        @stack('modals')
             <div
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4"
                 wire:click.self="closeModal"
@@ -209,10 +208,35 @@
                             <div class="flex items-center justify-center gap-3 pb-3">
 
                                 <button
+                                    type="button"
+                                    wire:click="closeModal"
+                                    class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        gap-2
+                                        rounded-xl
+                                        border
+                                        border-slate-300
+                                        bg-white
+                                        px-5
+                                        py-2
+                                        text-sm
+                                        font-medium
+                                        text-slate-700
+                                        hover:bg-slate-50
+                                    "
+                                >
+                                    <i class="bi bi-x-lg"></i>
+                                    Cancelar
+
+                                </button>
+
+                                <button
                                     type="submit"
                                     @disabled(!$this->hayCambios())
                                     @class([
-                                        'btn-primary',
+                                        'btn-primary justify-center gap-2',
                                         'opacity-50 cursor-not-allowed' => !$this->hayCambios(),
                                     ])
                                     class="
@@ -228,31 +252,8 @@
                                         hover:bg-indigo-700
                                     "
                                 >
-
+                                    <i class="bi bi-floppy"></i>
                                     Guardar
-
-                                </button>
-
-                                <button
-                                    type="button"
-                                    wire:click="closeModal"
-                                    class="
-                                        inline-flex
-                                        items-center
-                                        rounded-xl
-                                        border
-                                        border-slate-300
-                                        bg-white
-                                        px-5
-                                        py-2
-                                        text-sm
-                                        font-medium
-                                        text-slate-700
-                                        hover:bg-slate-50
-                                    "
-                                >
-
-                                    Cancelar
 
                                 </button>
 
@@ -261,7 +262,6 @@
                     </div>
                 </section>
             </div>
-        @endstack
         @endif
     @endif
 </div>

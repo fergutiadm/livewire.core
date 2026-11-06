@@ -265,7 +265,7 @@
                 title="Ventas"
                 description="Consulta y organiza las ventas por fecha"
                 :show-form="$showForm"
-                :show-toggle="false"
+                :show-toggle-on-mobile-only="true"
                 :selector-periodo="true"
                 :selector-fecha-operacion="true"
                 :gestion-cierre="true"
@@ -380,6 +380,10 @@
                         </div>
                     </div>
 
+                    <div class="mt-4 border-t border-slate-100 pt-3">
+                        <livewire:resumenes.tarjetas />
+                    </div>
+
                     <p class="mt-4 border-t border-slate-100 pt-3 text-[10px] text-slate-400">
                         Importes separados; no se suman monedas distintas.
                     </p>
@@ -471,6 +475,10 @@
                             <p class="mt-1 text-xs leading-5 text-slate-500">
                                 El formulario se implementará cuando definamos el flujo de ventas.
                             </p>
+                        </div>
+
+                        <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
+                            <livewire:ventas.desglose />
                         </div>
                     </div>
                 </x-ui.crud.form>

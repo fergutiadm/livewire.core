@@ -56,8 +56,8 @@ class UnidadDimensionTableDefinition extends BaseTable
     public function columns(): array
     {
         $activo = (new HtmlColumn(
-            label: 'Activo',
-            field: 'activo',
+            label: 'Activa',
+            field: 'activa',
             extra: true,
         ))->formatStateUsing(function ($state, $unidad_dimension) {
             $texto = $state ? 'Sí' : 'NO';

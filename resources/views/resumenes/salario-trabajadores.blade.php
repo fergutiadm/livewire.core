@@ -486,6 +486,7 @@
                                focus:ring-2 focus:ring-slate-500/40
                                focus:ring-offset-2 sm:w-auto"
                     >
+                        <i class="bi bi-x-lg"></i>
                         Cerrar resumen
                     </button>
                 </footer>

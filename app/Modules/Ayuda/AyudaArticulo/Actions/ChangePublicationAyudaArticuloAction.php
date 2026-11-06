@@ -4,11 +4,19 @@ namespace App\Modules\Ayuda\AyudaArticulo\Actions;
 
 use App\Models\AyudaArticulo;
 use App\Modules\Ayuda\AyudaArticulo\DTOs\ChangePublicationAyudaArticuloDTO;
+use App\Modules\Ayuda\Services\AyudaContenidoValidator;
+use App\Modules\Ayuda\Services\AyudaHtmlSanitizer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ChangePublicationAyudaArticuloAction
 {
+
+    public function __construct(
+        private AyudaHtmlSanitizer $sanitizer,
+        private AyudaContenidoValidator $contenidoValidator
+    ) {}
+
     public function __invoke(
         ChangePublicationAyudaArticuloDTO $dto
     ): AyudaArticulo {
@@ -19,6 +27,19 @@ class ChangePublicationAyudaArticuloAction
                 ->lockForUpdate()
                 ->findOrFail($dto->id);
 
+            if ($dto->publicado) {
+                $contenido = $this->sanitizer->sanitize(
+                    $articulo->contenido
+                );
+
+                $this->contenidoValidator->validate(
+                    $contenido,
+                    requerido: true
+                );
+
+                $articulo->contenido = $contenido;
+            }
+
             /*
             |--------------------------------------------------------------------------
             | Validaciones para publicar
@@ -26,19 +47,15 @@ class ChangePublicationAyudaArticuloAction
             */
             if ($dto->publicado) {
 
-                if (
-                    trim($articulo->titulo) === ''
-                    || trim($articulo->contenido) === ''
-                ) {
+                if (trim($articulo->titulo) === '') {
                     throw ValidationException::withMessages([
-                        'publicado' =>
-                            'El artículo necesita título y contenido para publicarse.',
+                        'titulo' => 'El artículo necesita un título para publicarse.',
                     ]);
                 }
 
                 $categoriaActiva = DB::table('ayuda_categorias')
                     ->where('id', $articulo->categoria_id)
-                    ->where('activo', true)
+                    ->where('activa', true)
                     ->exists();
 
                 if (!$categoriaActiva) {

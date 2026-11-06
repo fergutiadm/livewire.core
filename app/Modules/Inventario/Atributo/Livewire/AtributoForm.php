@@ -253,7 +253,7 @@ class AtributoForm extends Component
                 $this->valores[$index]['nombre'] =
                     $this->valorNombre;
 
-                $this->valores[$index]['nombre'] =
+                $this->valores[$index]['activo'] =
                     $this->valorActivo;
 
                 $this->normalizarValores();
@@ -299,6 +299,10 @@ class AtributoForm extends Component
 
         $this->valorNombre = (string) (
             $valor['nombre'] ?? ''
+        );
+
+        $this->valorActivo = (bool) (
+            $valor['activo'] ?? true
         );
 
         $this->resetValidation([

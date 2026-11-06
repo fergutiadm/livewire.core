@@ -25,6 +25,7 @@ class MonedaService
                 ->orderByDesc('es_principal')
                 ->get()
                 ->map(fn ($m) => [
+                    'id'            => $m->id,
                     'codigo'        => strtoupper($m->codigo),
                     'tasa_cambio'   => (float) $m->tasa_cambio,
                     'es_principal'  => (bool) $m->es_principal,

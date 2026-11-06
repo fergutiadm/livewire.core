@@ -39,7 +39,7 @@
                 title="Gastos"
                 description="Gestión de gastos"
                 :show-form="$showForm"
-                :show-toggle=false
+                :show-toggle-on-mobile-only=true
                 :selector-periodo=true
                 :selector-fecha-operacion=true
                 :mostrar-tasa-cambio="$mostrarTasaCambio"
@@ -75,6 +75,11 @@
 
         <x-slot name="foot_container">
             </div>
+
+            <livewire:ayuda.ayuda-contextual.panel
+                contexto="gastos.gasto"
+                wire:key="ayuda-contextual-gasto"
+            />
         </x-slot>
 
         <x-slot name="deleteModal">

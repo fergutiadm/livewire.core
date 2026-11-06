@@ -124,12 +124,18 @@
                                             class="flex items-center justify-between gap-3"
                                             > --}}
                                                 <div
-                                                    class="grid grid-cols-1 md:grid-cols-3 items-center gap-2"
+                                                    class="grid grid-cols-3 items-center gap-2"
                                                 >
 
                                                     <div class="flex items-center justify-end px-2">
+                                                        @php
+                                                            $color_bg = $card['color_bg'] ?? 'text-slate-300';
+                                                            $color_text = $card['color_text'] ?? 'text-slate-500';
+                                                        @endphp
                                                         <span
-                                                            class="font-semibold text-gray-800"
+                                                            class="font-semibold text-gray-800 px-2 py-0.5 text-sm
+                                                                   rounded-lg border border-dashed border-gray-500 
+                                                                   {{ $color_text }} {{ $color_bg }}"
                                                         >
                                                             {{ $card['denominacion'] }}
                                                         </span>
@@ -147,7 +153,7 @@
                                                     </div>
 
                                                     <div class="text-right px-2">
-                                                        <span class="font-semibold tabular-nums text-gray-800">
+                                                        <span class="font-semibold tabular-nums text-gray-800 text-sm">
                                                             {{ number_format(
                                                                 (float) $this->importeDenominacion($denominacionId),
                                                                 2,
@@ -220,8 +226,9 @@
                         <button
                             type="button"
                             wire:click="cerrar"
-                            class="btn-secondary"
+                            class="btn-secondary justify-center gap-2"
                         >
+                            <i class="bi bi-x-lg"></i>
                             Cerrar
                         </button>
 
@@ -230,10 +237,11 @@
                             wire:click="guardar"
                             @disabled(!$this->hayCambios())
                             @class([
-                                'btn-primary',
+                                'btn-primary justify-center gap-2',
                                 'opacity-50 cursor-not-allowed' => !$this->hayCambios(),
                             ])
                         >
+                            <i class="bi bi-floppy"></i>
                             Guardar
                         </button>
 

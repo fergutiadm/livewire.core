@@ -46,12 +46,12 @@ return new class extends Migration
             $table->decimal('factor_base', 20, 10)->nullable();
 
             $table->boolean('es_base_dimension')->default(false);
-            $table->boolean('activo')->default(true);
+            $table->boolean('activa')->default(true);
 
             $table->timestamps();
 
             $table->index(['unidad_dimension_id', 'tipo']);
-            $table->index(['activo']);
+            $table->index(['activa']);
         });
     }
 

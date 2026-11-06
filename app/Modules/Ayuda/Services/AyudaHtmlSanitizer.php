@@ -34,10 +34,17 @@ class AyudaHtmlSanitizer
 
         $config->set('Attr.EnableID', false);
 
-        $config->set(
-            'Cache.SerializerPath',
-            storage_path('framework/cache/htmlpurifier')
-        );
+        $cachePath = storage_path('framework/cache/htmlpurifier');
+
+        if (! is_dir($cachePath)) {
+            if (! mkdir($cachePath, 0755, true) && ! is_dir($cachePath)) {
+                throw new \RuntimeException(
+                    "No se pudo crear el directorio de caché HTMLPurifier: {$cachePath}"
+                );
+            }
+        }
+
+        $config->set('Cache.SerializerPath', $cachePath);
 
         return (new HTMLPurifier($config))->purify($html);
     }
