@@ -17,6 +17,8 @@ class CierreCajaTableDefinition extends BaseTable
     {
         $query = CierreCaja::query()
 
+            ->with(['operador', 'cierres_caja_moneda'])
+
             ->when(
                 filled($this->getParameter('localId')),
                 fn ($q) => $q->where(
@@ -131,27 +133,27 @@ class CierreCajaTableDefinition extends BaseTable
             $cierreCajaMonedas = $cierreCaja->cierres_caja_moneda ?? null;
             $filas_moneda = '<div class="
                                             w-full items-center justify-center
-                                            rounded-lg border px-2 text-center
+                                            rounded-lg border border-dashed px-2 py-3 text-center
                                             transition
                                             border-slate-400 bg-slate-50
                                         ">';
-            
+
             foreach($cierreCajaMonedas as $item){
-                $boton_detalles = '<button 
+                $boton_detalles = '<button
                             type="button"
-                            wire:click="$dispatch(\'cierre-caja-moneda-detalles-editar\', { id: ' . $item->id . ' })" 
+                            wire:click="$dispatch(\'cierre-caja-moneda-detalles-editar\', { id: ' . $item->id . ' })"
                             x-on:click="$dispatch(\'loading-start\', { message: \'Cargando denominaciones...\' })"
                             class="
-                                inline-flex 
-                                items-center gap-1 
-                                rounded-lg 
-                                px-3 
-                                py-1.5 
-                                text-xs 
-                                font-medium 
-                                text-white 
-                                transition 
-                                bg-slate-500 
+                                inline-flex
+                                items-center gap-1
+                                rounded-lg
+                                px-3
+                                py-1.5
+                                text-xs
+                                font-medium
+                                text-white
+                                transition
+                                bg-slate-500
                                 hover:bg-slate-800
                             "
                         >
@@ -161,7 +163,7 @@ class CierreCajaTableDefinition extends BaseTable
                 $moneda = $item->moneda?->codigo ?? '';
                 $color_bg = $item->moneda?->color_bg ?? '';
                 $color_text = $item->moneda?->color_text ?? '';
-                $filas_moneda .= '<div class="grid grid-cols-1 md:grid-cols-4 gap-2 py-2">';
+                $filas_moneda .= '<div class="grid grid-cols-1 md:grid-cols-4 gap-2">';
                 $filas_moneda .= '<div>
                                     <span
                                         class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
@@ -206,7 +208,7 @@ class CierreCajaTableDefinition extends BaseTable
 
         return [
             $caja,
-            
+
             $operador,
 
             $fecha,

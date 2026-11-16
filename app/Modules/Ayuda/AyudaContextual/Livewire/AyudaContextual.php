@@ -3,18 +3,24 @@
 namespace App\Modules\Ayuda\AyudaContextual\Livewire;
 
 use App\Models\AyudaArticulo;
-use App\Modules\Ayuda\Services\AyudaHtmlSanitizer;
 use Livewire\Component;
 
 class AyudaContextual extends Component
 {
     public string $contexto;
+    public string $contextoOriginal;
 
     public bool $abierto = false;
 
     public ?int $articuloId = null;
 
     public function mount(string $contexto): void
+    {
+        $this->contextoOriginal = $contexto;
+        $this->definirContexto($contexto);
+    }
+
+    public function definirContexto(string $contexto): void
     {
         $this->contexto = $contexto;
     }

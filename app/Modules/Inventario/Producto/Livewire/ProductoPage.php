@@ -25,7 +25,7 @@ class ProductoPage extends Component
     public function mount(): void
     {
         // valores iniciales GLOBALS (NO del form)
-        $this->localId = Local::orderBy('nombre')->value('id');
+        $this->localId = Local::operativos()->orderBy('nombre')->value('id');
     }
 
     public function syncFilters(?int $localId = null, ?int $categoriaId = null): void

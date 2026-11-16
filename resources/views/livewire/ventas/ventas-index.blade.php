@@ -480,6 +480,10 @@
                         <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
                             <livewire:ventas.desglose />
                         </div>
+
+                        <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
+                            <livewire:finanzas.denominacion.calculadora />
+                        </div>
                     </div>
                 </x-ui.crud.form>
             </div>
@@ -760,6 +764,11 @@
 
         <x-slot name="foot_container">
             </div>
+
+            <livewire:ayuda.ayuda-contextual.panel
+                contexto="ventas.venta"
+                wire:key="ayuda-contextual-venta"
+            />
         </x-slot>
 
         <x-slot name="deleteModal">

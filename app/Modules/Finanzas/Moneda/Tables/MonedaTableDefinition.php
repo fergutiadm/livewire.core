@@ -44,10 +44,10 @@ class MonedaTableDefinition extends BaseTable
 
             $es_principal = $moneda->es_principal
                 ? '<i class="bi bi-check-circle-fill text-green-600"
-                     title="Local activo"></i>'
+                     title="Moneda Base"></i>'
                 : '';
 
-            
+
             return '
                 <p class="block text-sm text-slate-800 flex items-center flex-wrap-0">
                 ' . $es_principal . '

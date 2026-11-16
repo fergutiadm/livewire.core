@@ -20,7 +20,7 @@
         <div>
             <div class="flex flex-row items-center">
 
-                <label class="block text-sm font-medium text-slate-700 my-1 px-2">
+                <label class="block text-sm font-medium text-slate-700 my-1 px-2 text-nowrap">
                     Filtrar Resultado
                 </label>
 
@@ -64,7 +64,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
+
             {{-- ESPECIALISTA --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -90,7 +90,7 @@
                     </p>
                 @enderror
             </div>
-            
+
             {{-- RESPONSABLE --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -116,7 +116,7 @@
                     </p>
                 @enderror
             </div>
-            
+
             {{-- CANTIDAD --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -135,7 +135,7 @@
                     </p>
                 @enderror
             </div>
-            
+
             {{-- VALOR --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -154,7 +154,7 @@
                     </p>
                 @enderror
             </div>
-            
+
             {{-- MONEDA --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -173,7 +173,7 @@
                             @if(!$moneda->es_principal)
                                 - {{ $moneda->tasa_cambio }}
                             @endif
-                        </option>   
+                        </option>
                     @endforeach
                 </select>
 
@@ -185,11 +185,10 @@
             </div>
 
             {{-- FECHA --}}
-            <div>
+            <div wire:key="fecha-{{ format_fecha($fecha, 'Y-m-d') ?? 'new' }}">
                 <x-input-flatpickr-range
-                    wire:key="fecha-{{ $gastoId ?? 'new' }}"
                     label="Fecha"
-                    wire:model.defer="fecha"
+                    wire:model.defer.change="fecha"
                     :min-date="$fechaMinima"
                     :max-date="$fechaMaxima"
                     placeholder="dd-mm-aaaa"

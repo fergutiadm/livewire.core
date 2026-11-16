@@ -165,7 +165,9 @@ class UpdateAtributoAction
                     (string) $valor['nombre']
                 ),
                 'orden_visual' => $ordenVisual,
-                'activo' => true,
+                'activo' => array_key_exists('activo', $valor)
+                    ? (bool) $valor['activo']
+                    : true,
             ]);
 
             $idsActivos[] = $atributoValor->id;

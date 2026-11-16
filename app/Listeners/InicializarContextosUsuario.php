@@ -31,7 +31,7 @@ class InicializarContextosUsuario
     public function handle(Login $event): void
     {
         // 1. Intentar obtener el primer local ordenado por nombre
-        $primerLocal = Local::where('es_principal', true)->first();
+        $primerLocal = Local::operativos()->where('es_principal', true)->first();
 
         if (!$primerLocal) {
             return; // Detener si no existen locales registrados

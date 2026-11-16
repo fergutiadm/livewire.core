@@ -63,6 +63,14 @@ final class ValidarValoresProductoVarianteService
             throw $error('Uno o más valores no tienen un atributo válido.');
         }
 
+        if ($valores->contains(fn ($valor) => ! $valor->activo)) {
+            throw $error('No se pueden seleccionar valores de atributo inactivos.');
+        }
+
+        if ($valores->contains(fn ($valor) => ! $valor->atributo->activo)) {
+            throw $error('No se pueden seleccionar valores de atributos inactivos.');
+        }
+
         $atributosIds = $valores->pluck('atributo_id')->all();
 
         if (count(array_unique($atributosIds)) !== count($atributosIds)) {

@@ -4,7 +4,9 @@
     <button
         type="button"
         wire:click="openModal"
-        class="flex w-full items-center justify-between gap-2 rounded-xl border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-emerald-50 md:text-sm"
+        class="flex w-full items-center justify-between gap-2 rounded-xl border
+             border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs font-medium
+             text-slate-700 shadow-sm transition-colors hover:bg-emerald-100 md:text-sm"
     >
         <span class="flex min-w-0 items-center gap-1.5">
             <span class="shrink-0 text-emerald-600/80">Período:</span>

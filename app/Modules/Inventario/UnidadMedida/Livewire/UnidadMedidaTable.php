@@ -5,6 +5,7 @@ namespace App\Modules\Inventario\UnidadMedida\Livewire;
 use App\Core\Tables\TableComponent;
 use App\Models\UnidadMedida;
 use App\Modules\Inventario\UnidadMedida\Actions\ToggleUnidadMedidaActivaAction;
+use App\Modules\Inventario\UnidadMedida\Actions\ToggleUnidadMedidaEsBaseDimensionAction;
 use Livewire\Attributes\On;
 
 //use App\Modules\Inventario\UnidadMedida\Tables\UnidadMedidaTableDefinition;
@@ -24,6 +25,13 @@ class UnidadMedidaTable extends TableComponent
         $unidadMedida = UnidadMedida::findOrFail($unidadMedidaId);
 
         app(ToggleUnidadMedidaActivaAction::class)->execute($unidadMedida);
+    }
+
+    public function toggleEsBaseDimension(int $unidadMedidaId): void
+    {
+        $unidadMedida = UnidadMedida::findOrFail($unidadMedidaId);
+
+        app(ToggleUnidadMedidaEsBaseDimensionAction::class)->execute($unidadMedida);
     }
 
     #[On('unidad-medida-tabla-refrescar')]

@@ -236,4 +236,49 @@ class SaveProductoAttributesActionTest extends TestCase
             'atributable_type' => Producto::class,
         ]);
     }
+
+    public function test_permite_quitar_un_valor_no_utilizado_manteniendo_la_combinacion_de_la_variante(): void
+    {
+        $producto = $this->crearProducto();
+        $atributo = $this->crearAtributo('COLOR');
+
+        $valorRojo = $this->crearValor($atributo, 'ROJO');
+        $valorAzul = $this->crearValor($atributo, 'AZUL');
+
+        $this->asignarAtributo($producto, $atributo);
+        $this->asignarValor($producto, $valorRojo);
+        $this->asignarValor($producto, $valorAzul);
+
+        $variante = $this->crearVariante($producto, $valorRojo);
+
+        $this->guardar($producto, [
+            $atributo->id => [
+                'atributo' => 'COLOR',
+                'orden_visual' => 1,
+                'valores' => [
+                    $valorRojo->id => [
+                        'valor' => 'ROJO',
+                        'orden_visual' => 1,
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseHas('atributables_valores', [
+            'atributo_valor_id' => $valorRojo->id,
+            'atributable_id' => $producto->id,
+            'atributable_type' => Producto::class,
+        ]);
+
+        $this->assertDatabaseMissing('atributables_valores', [
+            'atributo_valor_id' => $valorAzul->id,
+            'atributable_id' => $producto->id,
+            'atributable_type' => Producto::class,
+        ]);
+
+        $this->assertDatabaseHas('producto_variantes_atributos_valores', [
+            'producto_variante_id' => $variante->id,
+            'atributo_valor_id' => $valorRojo->id,
+        ]);
+    }
 }

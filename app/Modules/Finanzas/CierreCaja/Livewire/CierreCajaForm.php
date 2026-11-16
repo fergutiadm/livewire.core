@@ -20,17 +20,17 @@ class CierreCajaForm extends Component
     use HasCommands;
 
     public ?int $cierreCajaId = null;
-    
+
     public ?int $localId = null;
-    
+
     public ?int $cajaId = null;
-    
+
     public ?int $periodoContableId = null;
-    
+
     public ?int $operadorId = null;
-    
+
     public string $fecha = '';
-    
+
     public ?int $monedaId = null;
     public string $monto_esperado_edit = '';
     public string $monto_contado_edit = '';
@@ -72,19 +72,19 @@ class CierreCajaForm extends Component
         $this->operadorId = Auth::id();
 
         $this->loadMonedas();
-        
-        $this->fecha = app(FechaOperacionContext::class)->fecha();
+
+        $this->fecha = app(FechaOperacionContext::class)->fecha()??'';
     }
 
     #[On('fecha-operacion-context-changed')]
     public function actualizarFechaOperacionActual(): void
     {
         $fechaOperacion = app(FechaOperacionContext::class)->fecha();
-        
+
         $this->fecha = $fechaOperacion;
 
     }
-    
+
     public function cancelarEdicionMoneda(): void
     {
         $this->reset([
@@ -97,8 +97,8 @@ class CierreCajaForm extends Component
         $this->resetValidation();
 
         $this->loadMonedas();
-    }   
-        
+    }
+
     private function loadMonedas(): void
     {
         /*$idMonedasSeleccionadas = collect($this->cierreMonedas)
@@ -151,7 +151,7 @@ class CierreCajaForm extends Component
             'monto_contado_edit.numeric' => 'El monto contado debe ser numérico.',
             'monto_contado_edit.gt' => 'El monto contado debe ser mayor que cero.',
         ]);
-        
+
         $monedaId = (int) $this->monedaId;
         $monedaEditandoId = (int) $this->monedaEditandoId;
 
@@ -168,7 +168,7 @@ class CierreCajaForm extends Component
 
             return;
         }
-        
+
         if ($monedaId != $monedaEditandoId)
         {
             $moneda = Moneda::query()->findOrFail($monedaId);
@@ -221,7 +221,7 @@ class CierreCajaForm extends Component
     |--------------------------------------------------------------------------
     */
 
-    
+
     #[On('cierre-caja-moneda-cargar-edicion')]
     public function editCierreCajaMoneda(int $id): void
     {
@@ -313,7 +313,7 @@ class CierreCajaForm extends Component
     #[On('cierre-caja-cargar-edicion')]
     public function edit(int $id): void
     {
-        
+
         try {
             $cierreCaja = CierreCaja::query()
                 ->with('cierres_caja_moneda.moneda')
@@ -382,7 +382,7 @@ class CierreCajaForm extends Component
     {
         $this->notificarFiltros();
     }
-    
+
     public function aplicarFiltrosResultado()
     {
         $this->notificarFiltros();
@@ -393,7 +393,7 @@ class CierreCajaForm extends Component
         // if(!$this->usar_filtros){
         //     $this->dispatch('gasto-limpiar-filtros');
         // }
-        
+
         $this->dispatch('cierre-caja-filtros-actualizados',
             localId: $this->localId,
             periodoContableId: $this->periodoContableId,
@@ -587,7 +587,7 @@ class CierreCajaForm extends Component
             : null;
 
         $fechaMaxima = $periodoActual
-            ? ($periodoActual->fecha_fin ?? $periodoActual->fecha_final ?? null)
+            ? ($periodoActual->fecha_fin ?? $periodoActual->fecha_fin ?? null)
             : null;
 
         return view('modules.finanzas.cierre-caja.form', [

@@ -111,7 +111,7 @@ class PeriodoContablePage extends Component
     public function render()
     {
         if (!$this->localId) {
-            $this->localId = Local::orderBy('nombre')->value('id');
+            $this->localId = Local::operativos()->orderBy('nombre')->value('id');
         }
 
         return view('modules.contabilidad.periodo-contable.page', [

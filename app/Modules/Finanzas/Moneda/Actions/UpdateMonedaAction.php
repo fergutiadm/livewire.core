@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Moneda;
 
 use App\Modules\Finanzas\Moneda\DTOs\UpdateMonedaDTO;
+use App\Services\MonedaService;
 
 class UpdateMonedaAction
 {
@@ -41,6 +42,7 @@ class UpdateMonedaAction
                 }
 
                 $model->update($data);
+                app(MonedaService::class)->forgetCache();
 
                 $model->refresh();
 

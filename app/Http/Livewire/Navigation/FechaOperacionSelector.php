@@ -6,6 +6,7 @@ use App\Core\Context\LocalContext;
 use App\Core\Context\PeriodoContext;
 use App\Core\Context\FechaOperacionContext;
 use App\Models\PeriodoContable;
+use App\Services\FechaPeriodoService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -29,17 +30,19 @@ class FechaOperacionSelector extends Component
         $this->periodoId = $periodoContext->id();
 
         $this->actualizarFechaOperacion($this->periodoId);
-        
+
         $this->cargarFechas();
     }
 
     /**
-     * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage 
+     * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage
      * o el listener de Login modifican el periodo en el servidor.
      */
         #[On('periodo-context-changed')]
         public function actualizarFechaOperacion(int $periodoId): void
         {
+            /**
+             * Este bloque comentado lo reemplazamos por el uso de FechaPeriodoService (20261110)
             // 1. Buscamos el periodo contable actual en la base de datos
             $periodoActual = PeriodoContable::find($periodoId);
 
@@ -66,6 +69,9 @@ class FechaOperacionSelector extends Component
             if($fechaPeriodo < $fechaMinima || $fechaPeriodo > $fechaMaxima){
                 $fechaPeriodo = ($hoy < $fechaMinima) ? $fechaMinima : (($hoy > $fechaMaxima) ? $fechaMaxima : $hoy);
             }
+            */
+
+            $fechaPeriodo = app(FechaPeriodoService::class)->fecha($periodoId);
 
             app(FechaOperacionContext::class)->set($fechaPeriodo);
 
@@ -75,9 +81,9 @@ class FechaOperacionSelector extends Component
                 'fecha-operacion-context-changed',
                 fechaOperacion: $fechaPeriodo,
             );
-            Log::info('periodo-context-changed - actualizarFechaOperacion - 3', [
-                'fechaPeriodo' => $fechaPeriodo
-            ]);
+            // Log::info('periodo-context-changed - actualizarFechaOperacion - 3', [
+            //     'fechaPeriodo' => $fechaPeriodo
+            // ]);
 
         }
 
@@ -94,7 +100,7 @@ class FechaOperacionSelector extends Component
             $this->fechaOperacion = '';
             return;
         }
-        
+
         $this->periodoActual = PeriodoContable::find($periodoId);
 
         if(!$this->periodoActual){
@@ -110,7 +116,7 @@ class FechaOperacionSelector extends Component
         $this->periodoSelectedActivo = $this->periodoActual?->activo ?? false;
 
         $fecha = $this->periodoActual->fecha_inicio;
-        // $fecha = $this->periodoActual->fecha_inicio 
+        // $fecha = $this->periodoActual->fecha_inicio
         //     ? \Carbon\Carbon::parse($this->periodoActual->fecha_inicio)->format('Y-m-d')
         //     : '';
         $item_rango_fecha = 1;
@@ -129,7 +135,7 @@ class FechaOperacionSelector extends Component
     }
 
     /**
-     * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage 
+     * ESCUCHA EL CAMBIO GLOBAL: Este listener reacciona cuando GastoPage
      * o el listener de Login modifican el periodo en el servidor.
      */
     #[On('fecha-operacion-context-changed')]
@@ -137,7 +143,7 @@ class FechaOperacionSelector extends Component
     {
         // 1. Volvemos a cargar las fechas porque el periodo y/o local pudo haber cambiado
         $this->cargarFechas();
-        
+
         // 2. Sincronizamos el fechaOperacion para que la vista HTML marque la correcta
         $this->fechaOperacion = $fechaOperacion;
     }
@@ -174,18 +180,18 @@ class FechaOperacionSelector extends Component
             return;
         }
 
-        
+
         if($fechaOperacion < $this->fechas_periodo[1]['en'])
             $fechaOperacion = $this->fechas_periodo[1]['en'];
-        
+
         $last_item = count($this->fechas_periodo);
         if($fechaOperacion > $this->fechas_periodo[$last_item]['en'])
             $fechaOperacion = $this->fechas_periodo[$last_item]['en'];
-        
+
         app(FechaOperacionContext::class)->set($fechaOperacion);
         $this->fechaOperacion = $fechaOperacion;
         $this->showModal = false;
-        
+
         // Notificamos al resto de la aplicación (como a GastoPage)
         $this->dispatch(
             'fecha-operacion-context-changed',

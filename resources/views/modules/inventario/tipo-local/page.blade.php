@@ -1,0 +1,69 @@
+<div
+    x-data="{ loading: false, loadingMessage: '' }"
+    x-on:loading-start.window="
+        loading = true;
+        loadingMessage = $event.detail.message ?? 'Cargando...';
+    "
+    x-on:loading-stop.window="
+        loading = false;
+        loadingMessage = '';
+    "
+    x-on:media-procesada.window="
+        loading = false;
+        loadingMessage = '';
+    "
+
+    x-init="
+        Livewire.hook('request', ({ fail }) => {
+            fail(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                loading = false;
+                loadingMessage = '';
+            });
+        });
+    "
+    class="relative"
+>
+    <x-ui.crud.page>
+
+        <x-slot name="header">
+            <x-ui.crud.header
+                title="Tipos de Local"
+                description="Gestión de tipos de local"
+                :show-form="$showForm"
+            />
+        </x-slot>
+
+        <x-slot name="form">
+            <x-ui.crud.form :show="$showForm">
+
+                <livewire:inventario.tipos-local.form />
+
+            </x-ui.crud.form>
+        </x-slot>
+
+        <x-slot:table>
+
+            <livewire:inventario.tipos-local.table
+                {{--  lazy  --}}
+                wire:key="tipo-local-table-{{ $tableVersion }}"
+            />
+
+        </x-slot:table>
+
+        <x-slot name="deleteModal">
+            <x-ui.crud.delete-modal
+                :show="$showDeleteModal"
+            />
+        </x-slot>
+
+    </x-ui.crud.page>
+
+    <x-ui.loading-overlay />
+</div>

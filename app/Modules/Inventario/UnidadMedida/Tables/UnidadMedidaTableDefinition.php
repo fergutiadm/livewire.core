@@ -24,6 +24,8 @@ class UnidadMedidaTableDefinition extends BaseTable
     {
         $query = UnidadMedida::query()
 
+            ->with('dimension')
+
             ->whereHas('dimension', function ($query) {
                 $query->where('activa', true);
             })
@@ -74,7 +76,7 @@ class UnidadMedidaTableDefinition extends BaseTable
     {
         $unidadDimension = (new HtmlColumn(
             label: 'Dimensión',
-            field: 'unidad_dimension',
+            field: 'dimension',
         ))->formatStateUsing(function ($state, $unidad_medida) {
             $unidad_dimension = $unidad_medida->dimension;
             return $unidad_dimension ? '
@@ -116,6 +118,34 @@ class UnidadMedidaTableDefinition extends BaseTable
                 <button
                     type="button"
                     wire:click="toggleActiva(' . e($producto_unidad->id) . ')"
+                    title="Clic para cambiar"
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
+                    ' . $color_text . '
+                    ' . $color_bg . '">
+                    ' . e($texto) . '
+                </button>
+            ';
+        });
+
+        $es_base_dimension = (new HtmlColumn(
+            label: 'Base-Dimension',
+            field: 'es_base_dimension',
+            extra: true,
+        ))->formatStateUsing(function ($state, $producto_unidad) {
+            $texto = $state ? 'Sí' : 'NO';
+
+            $color_text = $state
+                ? 'text-green-700'
+                : 'text-red-700';
+
+            $color_bg = $state
+                ? 'bg-green-100'
+                : 'bg-red-100';
+
+            return '
+                <button
+                    type="button"
+                    wire:click="toggleEsBaseDimension(' . e($producto_unidad->id) . ')"
                     title="Clic para cambiar"
                     class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
                     ' . $color_text . '
@@ -168,18 +198,10 @@ class UnidadMedidaTableDefinition extends BaseTable
 
             new TextColumn(
                 label: 'Factor-Base',
-                field: 'factor_a_base',
+                field: 'factor_base',
             ),
 
-            new TextColumn(
-                label: 'EsBaseDimension',
-                field: 'es_base_dimension',
-            ),
-
-            new TextColumn(
-                label: 'PermiteFraccion',
-                field: 'permite_fraccion',
-            ),
+            $es_base_dimension,
 
             $activo,
 

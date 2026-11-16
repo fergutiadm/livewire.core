@@ -27,8 +27,8 @@ class TipoGastoPage extends Component
     {
         // Valor inicial GLOBAL de la página.
         // No corresponde al estado interno del formulario.
-        $this->localId = Local::orderBy('nombre')->value('id');
-    }   
+        $this->localId = Local::operativos()->orderBy('nombre')->value('id');
+    }
 
     #[On('tipo-gasto-filtros-actualizados')]
     public function actualizarFiltros(
@@ -116,7 +116,7 @@ class TipoGastoPage extends Component
 
     public function render()
     {
-        return view('modules.gastos.tipo-gasto.page', 
+        return view('modules.gastos.tipo-gasto.page',
         [
             'localId' => $this->localId,
             'tableVersion' => $this->tableVersion,

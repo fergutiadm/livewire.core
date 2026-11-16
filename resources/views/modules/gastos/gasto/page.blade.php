@@ -46,7 +46,6 @@
             />
         </x-slot>
 
-        
         <x-slot name="head_container">
             <div class="grid w-full grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(320px,1fr)] gap-6">
         </x-slot>
@@ -55,7 +54,7 @@
             <div class="min-w-0 md:order-2">
                 <x-ui.crud.form :show="$showForm">
 
-                    <livewire:gastos.gasto.form 
+                    <livewire:gastos.gasto.form
                         wire:key="gasto-form"
                     />
 

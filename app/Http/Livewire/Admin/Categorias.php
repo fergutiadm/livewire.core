@@ -220,7 +220,7 @@ class Categorias extends Component
 
     public function loadLocales($localId = null)
     {
-        $this->locales = Local::orderBy('nombre')->get();
+        $this->locales = Local::operativos()->orderBy('nombre')->get();
         $this->localId = $localId && $this->locales->contains('id', $localId)
             ? $localId
             : ($this->locales->first()?->id ?? null);

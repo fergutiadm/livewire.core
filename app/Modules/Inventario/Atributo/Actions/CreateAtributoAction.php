@@ -31,7 +31,7 @@ class CreateAtributoAction
 
             foreach ($dto->valores as $index => $valor) {
                 $atributo->valores()->create([
-                    'codigo' => $valor['codigo'],
+                    'codigo' => mb_strtoupper(trim((string) $valor['codigo'])),
                     'nombre' => $valor['nombre'],
                     'orden_visual' =>
                         $valor['orden_visual'] ?? ($index + 1),

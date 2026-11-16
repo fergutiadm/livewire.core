@@ -34,7 +34,7 @@
         </div> --}}
 
         <div>
-    
+
             {{-- CAJA --}}
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -64,9 +64,9 @@
             </div>
 
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {{-- FECHA --}}
             <div>
                 <x-input-flatpickr-range
@@ -86,8 +86,8 @@
             </div>
 
         </div>
-        
-        <div class="border border-slate-100 p-3 bg-slate-50 rounded-lg">
+
+        <div class="border-2 border-dashed border-slate-400 p-3 bg-slate-50 rounded-lg">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 {{-- MONEDA --}}
@@ -109,11 +109,11 @@
                                 @if(!$moneda['es_principal'])
                                     - {{ $moneda['tasa_cambio'] }}
                                 @endif
-                            </option>   
+                            </option>
                         @endforeach
                     </select>
                 </div>
-                
+
                 {{-- ACCION-AGREGAR --}}
                 <div>
 
@@ -145,7 +145,7 @@
 
             </div>
 
-            <div 
+            <div
                 class="grid grid-cols-1 md:grid-cols-2 gap-4 py-2"
                 wire:key="cierre-caja-moneda-form-{{ $formCierreMonedaVersion }}"
             >
@@ -198,21 +198,21 @@
                 <div>{{ $item['monto_contado'] }}</div>
                 <div>
                     <div class="flex items-center justify-center gap-2">
-                        <button 
+                        <button
                             type="button"
-                            wire:click="$dispatch('cierre-caja-moneda-eliminar', { index: {{ $index}} })" 
+                            wire:click="$dispatch('cierre-caja-moneda-eliminar', { index: {{ $index}} })"
                             x-on:click="$dispatch('loading-start', { message: 'Eliminando moneda...' })"
                             class="
-                                inline-flex 
-                                items-center gap-1 
-                                rounded-lg 
-                                px-3 
-                                py-1.5 
-                                text-xs 
-                                font-medium 
-                                text-white 
-                                transition 
-                                bg-red-500 
+                                inline-flex
+                                items-center gap-1
+                                rounded-lg
+                                px-3
+                                py-1.5
+                                text-xs
+                                font-medium
+                                text-white
+                                transition
+                                bg-red-500
                                 hover:bg-red-600
                             "
                         >
@@ -229,7 +229,7 @@
                         >
                             Editar
                         </button>
-                        
+
                     </div>
                 </div>
             </div>

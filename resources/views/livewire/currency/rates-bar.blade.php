@@ -3,8 +3,9 @@
     @if($items->isNotEmpty())
         <div
             class="w-full rounded-2xl border shadow-lg
-            shadow-black bg-white bg-opacity-10 px-3
-            py-2 text-xs sm:text-sm text-slate-700"
+            shadow-black bg-white bg-opacity-10
+            p-1.5 mt-0.5
+            text-xs sm:text-sm text-slate-700"
         >
 
             {{-- Variante stacked --}}

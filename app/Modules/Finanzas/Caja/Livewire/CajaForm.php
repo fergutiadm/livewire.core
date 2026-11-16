@@ -36,7 +36,7 @@ class CajaForm extends Component
             'codigo.required' => 'El Código es obligatorio',
             'codigo.min' => 'El Código debe tener al menos 3 caracteres',
             'codigo.max' => 'El Código no puede tener más de 10 caracteres',
-            
+
             'nombre.required' => 'El Nombre es obligatorio',
 
             'localId.required' =>
@@ -49,7 +49,7 @@ class CajaForm extends Component
 
     public function mount(): void
     {
-        $this->localId = Local::orderBy('nombre')->value('id');
+        $this->localId = Local::operativos()->orderBy('nombre')->value('id');
     }
 
     #[On('caja-cargar-edicion')]
@@ -87,13 +87,13 @@ class CajaForm extends Component
     */
 
     public function localChanged(): void
-    { 
+    {
 
         $this->dispatch(
             'loading-start',
             message: 'Cargando cajas...'
         );
-        
+
         $this->resetForm();
 
         // Actualizar la tabla.
@@ -210,7 +210,7 @@ class CajaForm extends Component
             'id' => $this->cajaId,
 
             'local_id' => $this->localId,
-            
+
             'codigo' => $this->codigo,
 
             'nombre' => $this->nombre,
@@ -267,7 +267,7 @@ class CajaForm extends Component
 
     public function render()
     {
-        $locales = Local::orderBy('nombre')->get();
+        $locales = Local::operativos()->orderBy('nombre')->get();
 
         if (!$this->localId) {
             $this->localId = $locales->first()?->id;

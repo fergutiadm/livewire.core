@@ -25,7 +25,7 @@ class CategoriaPage extends Component
     {
         // Valor inicial GLOBAL de la página.
         // No corresponde al estado interno del formulario.
-        $this->localId = Local::orderBy('nombre')->value('id');
+        $this->localId = Local::operativos()->orderBy('nombre')->value('id');
     }
 
     public function syncFilters(

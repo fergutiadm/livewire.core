@@ -12,7 +12,9 @@ use App\Models\Moneda;
 use Livewire\Attributes\On;
 use App\Core\Context\LocalContext;
 use App\Core\Context\PeriodoContext;
+use App\Models\PeriodoContable;
 use App\Services\MonedaService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -80,33 +82,79 @@ class GastoForm extends Component
     public function mount(): void
     {
         $this->loadData();
-        
+
         // Asignamos por defecto al operador como el usuario actual al crear
         $this->operadorId = Auth::id();
 
-        $this->dispatch(
-            'gasto-filtros-actualizados',
-            localId: $this->localId,
-            periodoContableId: $this->periodoContableId,
-        );
+        // $this->notificarFiltros();
     }
 
     public function loadData(): void
     {
         $this->localId = app(LocalContext::class)->id();
         $this->periodoContableId = app(PeriodoContext::class)->id();
-
-        $this->fecha = app(FechaOperacionContext::class)->fecha();
+        $this->fecha = app(FechaOperacionContext::class)->fecha()??'';
 
         $this->tiposGastos = TipoGasto::orderBy('nombre')->Activos()->get();
         $this->usuarios = User::orderBy('name')->get();
         $this->monedas = Moneda::paraSelect()->get();
+
+        $this->definirRango();
+    }
+
+    #[On('local-context-changed')]
+    public function actualizarLocal(int $localId): void
+    {
+        $this->localId = $localId;
+    }
+
+    #[On('periodo-context-changed')]
+    public function periodoContextChanged(int $periodoId): void
+    {
+        $this->periodoContableId = $periodoId;
+
+        $this->definirRango();
+        // $this->notificarFiltros();
     }
 
     #[On('fecha-operacion-context-changed')]
     public function actualizarFecha(string $fechaOperacion): void
     {
-        $this->fecha = $fechaOperacion;
+        $this->fecha = \Carbon\Carbon::parse($fechaOperacion)->format('Y-m-d');
+
+        if($this->usar_filtros){
+            $this->notificarFiltros();
+        }
+    }
+
+    public function definirRango(): void
+    {
+        if (!$this->periodoContableId) {
+            $this->fechaMinima = now()->startOfWeek()->format('Y-m-d');
+            $this->fechaMaxima = now()->endOfWeek()->format('Y-m-d');
+
+            return;
+        }
+
+        try{
+            $periodo = PeriodoContable::findOrFail($this->periodoContableId);
+        }catch(ModelNotFoundException $e){
+            $this->dispatch('livewire:alert',[
+                'message' => 'Periodo no registrado',
+                'type' => 'error',
+            ]);
+            return;
+        }
+
+        if (!$periodo) {
+            $this->fechaMinima = '';
+            $this->fechaMaxima = '';
+
+            return;
+        }
+
+        $this->fechaMinima = $periodo->fecha_inicio->format('Y-m-d');
+        $this->fechaMaxima = $periodo->fecha_fin->format('Y-m-d');
     }
 
     /**
@@ -132,7 +180,12 @@ class GastoForm extends Component
     {
         $this->notificarFiltros();
     }
-    
+
+    public function updatedFecha(): void
+    {
+        $this->notificarFiltros();
+    }
+
     public function aplicarFiltrosResultado()
     {
         $this->notificarFiltros();
@@ -140,9 +193,9 @@ class GastoForm extends Component
 
     private function notificarFiltros(): void
     {
-        if(!$this->usar_filtros){
-            $this->dispatch('gasto-limpiar-filtros');
-        }
+        // if(!$this->usar_filtros){
+        //     $this->dispatch('gasto-limpiar-filtros');
+        // }
 
         $this->dispatch('gasto-filtros-actualizados',
             localId: $this->localId,
@@ -152,7 +205,8 @@ class GastoForm extends Component
             responsableId: $this->usar_filtros ? $this->responsableId : null,
             operadorId: $this->usar_filtros ? $this->operadorId : null,
             monedaId: $this->usar_filtros ? $this->monedaId : null,
-            fecha: $this->usar_filtros ? $this->fecha : null,
+            fecha: $this->fecha,
+            // fecha: $this->usar_filtros ? $this->fecha : null,
         );
     }
 
@@ -161,7 +215,7 @@ class GastoForm extends Component
         $this->cantidad = (string)$cantidad;
         $this->valor = (string)$valor;
         $this->monedaId = $monedaId;
-        
+
         // Ejecuta la lógica existente que creamos para buscar la tasa de cambio de la moneda elegida
         $this->updatedMonedaId($monedaId);
     }
@@ -261,7 +315,7 @@ class GastoForm extends Component
                     return;
                 }
             }
-        
+
 
             $payload = $this->payload();
 
@@ -375,13 +429,13 @@ class GastoForm extends Component
             'moneda_id' => $this->monedaId,
 
             'cantidad' => $this->cantidad,
-            
+
             'valor' => $this->valor,
-            
+
             'fecha' => $this->fecha,
-            
+
             'tasa_cambio' => $this->tasa_cambio,
-            
+
             'tasa_cambio_usd' => $this->tasa_cambio_usd,
 
             'descripcion' => $this->descripcion,

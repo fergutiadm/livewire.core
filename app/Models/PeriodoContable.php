@@ -94,7 +94,7 @@ class PeriodoContable extends Model
 
     public function cierresCaja(): HasMany
     {
-        return $this->hasMany(Local::class);
+        return $this->hasMany(CierreCaja::class);
     }
 
     /* =====================================================
@@ -105,7 +105,7 @@ class PeriodoContable extends Model
     {
         return $q->where('local_id', $localId);
     }
-    
+
     public function scopeVigente(Builder $q): Builder
     {
         return $q->where('activo', true)

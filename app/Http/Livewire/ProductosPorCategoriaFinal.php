@@ -31,9 +31,9 @@ class ProductosPorCategoriaFinal extends Component
         $this->localId = $id;
         $this->categoriaId = null;
         $this->setPage(1);
-    
+
         // 🔥 Avisa a JS que redibuje los Swipers
-        $this->dispatch('post-render'); 
+        $this->dispatch('post-render');
     }
 
     // Seleccionar categoria desde botones
@@ -68,7 +68,7 @@ class ProductosPorCategoriaFinal extends Component
 
     public function render()
     {
-        $locales = Local::orderByDesc('es_principal')->orderBy('nombre')->get();
+        $locales = Local::operativos()->orderByDesc('es_principal')->orderBy('nombre')->get();
         $searchTerm = trim($this->search);
 
         // Traemos productos filtrados por local y búsqueda

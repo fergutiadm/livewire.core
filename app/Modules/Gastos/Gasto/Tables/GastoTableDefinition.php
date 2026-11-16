@@ -36,8 +36,10 @@ class GastoTableDefinition extends BaseTable
         //         'fecha' => $this->getParameter('fecha'),
         //     ]
         // );
-        
+
         $query = Gasto::query()
+
+            ->with(['moneda', 'tipoGasto'])
 
             ->when(
                 filled($this->getParameter('localId')),
@@ -96,7 +98,7 @@ class GastoTableDefinition extends BaseTable
             //     str_replace('?', "'%s'", $query->toSql()),
             //     $query->getBindings()
             // );
-            // \Log::info('GastoTableDefinition->query', [
+            // Log::info('GastoTableDefinition->query', [
             //     'sql' => $sql,
             //     '$query->toSql()' => $query->toSql(),
             //     ' $query->getBindings()' => $query->getBindings(),
@@ -111,10 +113,12 @@ class GastoTableDefinition extends BaseTable
 
         return $query;
     }
-    
+
     public function queryLocalPeriodo(): Builder
     {
         $query = Gasto::query()
+
+            ->with(['moneda', 'tipoGasto'])
 
             ->when(
                 filled($this->getParameter('localId')),
@@ -341,11 +345,11 @@ class GastoTableDefinition extends BaseTable
             field: 'chequeado',
             extra: true,
         ))->formatStateUsing(function ($state, $gasto) {
-            
+
             $fecha_chequeado = $gasto->fecha_chequeado ? format_fecha($gasto->fecha_chequeado) : '';
-            
+
             $texto = $state ? $fecha_chequeado : 'NO';
-            
+
             $span_quitar = $state && $fecha_chequeado != '' ? '<span class="text-xs font-semibold px-2 py-0.5 text-red-700">X</span>' : '';
 
             $color_text = $state
@@ -365,7 +369,7 @@ class GastoTableDefinition extends BaseTable
                     ' . $color_text . '
                     ' . $color_bg . '">
                     ' . e($texto) . '
-                    ' . $span_quitar . '                    
+                    ' . $span_quitar . '
                 </button>
             ';
         });
@@ -374,12 +378,12 @@ class GastoTableDefinition extends BaseTable
             label: 'Moneda',
             field: 'moneda',
         ))->formatStateUsing(function ($state, $gasto) {
-            
+
             $moneda = $gasto->moneda;
             $codigo = $moneda->codigo ?? '';
             $simbolo = $moneda->simbolo ?? '';
-            
-            
+
+
             $color_text = $moneda->color_text ?? '';
             $color_bg = $moneda->color_bg ?? '';
 
@@ -390,7 +394,7 @@ class GastoTableDefinition extends BaseTable
                     class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
                     ' . $color_text . '
                     ' . $color_bg . '">
-                    ' . e($simbolo) . '             
+                    ' . e($simbolo) . '
                 </span>
             ';
         });

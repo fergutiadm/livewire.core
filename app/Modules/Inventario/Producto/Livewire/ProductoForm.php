@@ -51,7 +51,8 @@ class ProductoForm extends Component
     public function mount(): void
     {
         $this->localId =
-            Local::orderBy('nombre')
+            Local::operativos()
+                ->orderBy('nombre')
                 ->value('id');
 
         $this->monedaId =
@@ -188,7 +189,7 @@ class ProductoForm extends Component
 
     public function localChanged(): void
     {
-        $this->categoriaId = null;   
+        $this->categoriaId = null;
 
         $this->dispatch(
             'loading-start',
@@ -679,7 +680,8 @@ class ProductoForm extends Component
     public function render()
     {
         $locales =
-            Local::orderBy('nombre')
+            Local::operativos()
+                ->orderBy('nombre')
                 ->get();
 
         $categorias =

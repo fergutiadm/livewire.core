@@ -21,10 +21,10 @@ class LocalSelector extends Component
     {
         $this->localId = $localContext->id();
 
-        $this->locales = Local::orderByDesc('es_principal')->orderBy('nombre')->get();
+        $this->locales = Local::operativos()->orderByDesc('es_principal')->orderBy('nombre')->get();
 
         if (!$this->localId && $this->locales->isNotEmpty()) {
-            $this->localId = $this->locales->firstWhere('es_principal', true)->id;
+            $this->localId = $this->locales->firstWhere('es_principal', true)->id??$this->locales->first()->id;
 
             $localContext->set($this->localId);
             // Log::info('LocalSelector - es_principal',
@@ -72,7 +72,7 @@ class LocalSelector extends Component
         //         '$periodoContableVigenteId'=>$periodoContableVigenteId
         //     ]
         // );
-        
+
         $this->dispatch(
             'periodo-context-changed',
             periodoId: $periodoContableVigenteId

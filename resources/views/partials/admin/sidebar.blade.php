@@ -26,18 +26,20 @@
             'name' => 'General',
             'items' => [
                 $make('Panel', 'admin.index', 'home', 'admin.index'),
+                $make('Centro de ayuda', 'admin.ayuda', 'book-open', 'admin.ayuda'),
             ],
         ],
         [
             'name' => 'Inventario',
             'items' => [
+                $make('Tipos de Local', 'admin.tipos_local', 'folder', 'admin.tipos_local'),
                 $make('Locales', 'admin.locales', 'store', 'admin.locales'),
                 $make('Categorías', 'admin.categorias', 'folder', 'admin.categorias'),
-                $make('Productos', 'admin.productos', 'tag', 'admin.productos'),
+                $make('Productos', 'admin.productos', 'package', 'admin.productos'),
                 $make('Atributos', 'admin.atributos', 'adjustments', 'admin.atributos'),
                 $make('Inventario', 'admin.inventarios', 'inventory', 'admin.inventarios'),
-                $make('Unidad dimensiones', 'admin.unidad_dimension', 'inventory', 'admin.unidad_dimension'),
-                $make('Unidades medidas', 'admin.unidad_medida', 'inventory', 'admin.unidad_medida'),
+                $make('Unidad dimensiones', 'admin.unidad_dimension', 'unidad_dimension', 'admin.unidad_dimension'),
+                $make('Unidades medidas', 'admin.unidad_medida', 'unidad_medida', 'admin.unidad_medida'),
                 // $make('Inventario operativo', 'inventario.index', 'inventory', 'inventario.*'),
             ],
         ],
@@ -46,8 +48,13 @@
             'items' => [
                 $make('Monedas', 'admin.monedas', 'currency', 'admin.monedas'),
                 $make('Tarjetas magnéticas', 'admin.tarjetas_magneticas', 'card', 'admin.tarjetas_magneticas'),
-                $make('Cajas-Cash', 'admin.cajas', 'boths_cash', 'admin.cajas'),
-                $make('Denominaciones', 'admin.denominaciones', 'denominacion', 'admin.denominaciones'),
+                $make('Bancos', 'admin.bancos', 'bank', 'admin.bancos'),
+                $make('Sucursales', 'admin.sucursales', 'bank_branch', 'admin.sucursales'),
+                $make('Cuentas Bancarias', 'admin.cuentas_bancarias', 'bank_account', 'admin.cuentas_bancarias'),
+                $make('Cajas-Cash', 'admin.cajas', 'wallet', 'admin.cajas'),
+                $make('Denominaciones', 'admin.denominaciones', 'coins', 'admin.denominaciones'),
+                $make('Conceptos Fondo por Moneda', 'admin.conceptos_fondo_por_moneda', 'tag', 'admin.conceptos_fondo_por_moneda'),
+                // $make('Fondo por Moneda', 'admin.fondo_por_moneda', 'wallet_currency', 'admin.fondo_por_moneda'),
                 // $make('Cierres de caja', 'cierres_caja', 'accounting_period', 'cierres_caja'),
             ],
         ],
@@ -108,11 +115,29 @@
             );
         }
 
+        if (Route::has('admin.provincias')) {
+            $adminItems[] = $make(
+                'Provincias',
+                'admin.provincias',
+                'map',
+                'admin.provincias'
+            );
+        }
+
+        if (Route::has('admin.municipios')) {
+            $adminItems[] = $make(
+                'Municipios',
+                'admin.municipios',
+                'map_pin',
+                'admin.municipios'
+            );
+        }
+
         if (Route::has('admin.ayuda_categoria')) {
             $adminItems[] = $make(
                 'Categorías de Ayuda',
                 'admin.ayuda_categoria',
-                'folder',
+                'folder-open',
                 'admin.ayuda_categoria'
             );
         }
@@ -121,7 +146,7 @@
             $adminItems[] = $make(
                 'Artículos de Ayuda',
                 'admin.ayuda_articulo',
-                'tag',
+                'file-text',
                 'admin.ayuda_articulo'
             );
         }
@@ -301,6 +326,203 @@
                                     <circle cx="12" cy="12" r="3" stroke-width="1.6"/>
                                 </svg>
                                 @break
+                            @case('book-open')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M12 7v14m0-14C10.5 5.8 8.5 5 5 5H3v14h3c2.5 0 4 .8 6 2m0-14c1.5-1.2 3.5-2 7-2h2v14h-3c-2.5 0-4 .8-6 2"/>
+                                </svg>
+                            @break
+                            @case('folder-open')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M3 7.5A2.5 2.5 0 015.5 5h4l2 2H19a2 2 0 012 2v1M3 9h18l-2 9H5L3 9z"/>
+                                </svg>
+                            @break
+                            @case('file-text')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M6 3h8l5 5v13H6a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M14 3v5h5M8 13h8M8 17h8"/>
+                                </svg>
+                            @break
+                            @case('ruler-square')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"
+                                        stroke-width="1.6"/>
+                                    <path stroke-linecap="round" stroke-width="1.6"
+                                        d="M8 3v4m4-4v2m4-2v4M3 8h4m-4 4h2m-2 4h4"/>
+                                </svg>
+                            @break
+                            @case('ruler')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M3 7h18v10H3zM7 7v4m4-4v2m4-2v4m4-4v2"/>
+                                </svg>
+                            @break
+                            @case('package')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M3 7l9-4 9 4v10l-9 4-9-4V7z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M3 7l9 4 9-4M12 11v10M8 5l9 4"/>
+                                </svg>
+                            @break
+                            @case('wallet')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M4 6h15a2 2 0 012 2v11H4a2 2 0 01-2-2V5a2 2 0 012-2h13"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.6"
+                                        d="M16 11h5v4h-5a2 2 0 010-4z"/>
+                                    <circle cx="16" cy="13" r=".5" fill="currentColor"/>
+                                </svg>
+                            @break
+                            @case('coins')
+                                <svg class="{{ $svgClass }}" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <ellipse cx="9" cy="6" rx="6" ry="3"
+                                            stroke-width="1.6"/>
+                                    <path stroke-linecap="round" stroke-width="1.6"
+                                        d="M3 6v5c0 1.7 2.7 3 6 3m-6-3c0 1.7 2.7 3 6 3m6-5c3.3 0 6 1.3 6 3s-2.7 3-6 3"/>
+                                    <path stroke-linecap="round" stroke-width="1.6"
+                                        d="M15 12v5c0 1.7-2.7 3-6 3s-6-1.3-6-3v-3"/>
+                                    <path stroke-linecap="round" stroke-width="1.6"
+                                        d="M15 12c3.3 0 6 1.3 6 3s-2.7 3-6 3"/>
+                                </svg>
+                            @break
+
+                            @case('bank')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3 10.5 12 4l9 6.5M5 10.5h14M5 19.5h14M7 10.5v9M12 10.5v9M17 10.5v9M3 19.5h18"
+                                    />
+                                </svg>
+                                @break
+
+                            @case('bank_branch')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3 21h18M5 21V9l7-5 7 5v12M8 21v-6h8v6M9 10h.01M12 10h.01M15 10h.01"
+                                    />
+                                </svg>
+                                @break
+
+                            @case('bank_account')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5v-9Z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3 9h18M7 14h4"
+                                    />
+                                </svg>
+                                @break
+
+                            @case('wallet_currency')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5v-9Z"
+                                />
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M16 13h5M17.5 11.5v3"
+                                />
+                            </svg>
+                            @break
+
+                            @case('map')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M9 3v15M15 6v15"
+                                    />
+                                </svg>
+                                @break
+
+                            @case('map_pin')
+                                <svg
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+                                    />
+                                </svg>
+                                @break
+
                         @endswitch
 
                         <span class="text-sm">{{ $i['name'] }}</span>

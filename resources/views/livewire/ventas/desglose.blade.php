@@ -1,4 +1,3 @@
-
 {{-- resources/views/livewire/ventas/desglose.blade.php --}}
 
 <div class="relative">
@@ -260,7 +259,7 @@
                     <button
                         type="button"
                         wire:click="closeModal"
-                        class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-5 py-2 
+                        class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-5 py-2
                                justify-end gap-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                     >
                         <i class="bi bi-x-lg"></i>

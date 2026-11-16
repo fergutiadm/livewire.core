@@ -15,6 +15,7 @@ class LocalTableDefinition extends BaseTable
     public function query(): Builder
     {
         $query = Local::query()
+            ->with('tipoLocal')
             ->orderByDesc('es_principal');
 
         return $query;
@@ -30,6 +31,26 @@ class LocalTableDefinition extends BaseTable
 
     public function columns(): array
     {
+        $tipo = (new HtmlColumn(
+            label: 'Tipo',
+            field: 'tipo_local',
+        ))->formatStateUsing(function ($state, $local) {
+
+            $tipoLocal = $local->tipoLocal;
+
+            $nombre = $tipoLocal
+                ? e($tipoLocal->nombre)
+                : '<span class="text-md text-red-700 italic">Sin Asignar</span>';
+
+            return '
+                <p class="text-sm text-slate-800 flex items-center flex-nowrap gap-1">
+                    <span class="text-sm text-slate-800 font-medium truncate">
+                        ' . $nombre . '
+                    </span>
+                </p>
+            ';
+        });
+
         $nombre = (new HtmlColumn(
             label: 'Nombre',
             field: 'nombre',
@@ -52,7 +73,7 @@ class LocalTableDefinition extends BaseTable
             ';
 
         });
-        
+
         $acciones = (new ActionsColumn(
             label: 'Acciones',
             field: 'acciones',
@@ -72,6 +93,8 @@ class LocalTableDefinition extends BaseTable
         ->align('right');
 
         return [
+            $tipo,
+
             $nombre,
 
             new TextColumn(

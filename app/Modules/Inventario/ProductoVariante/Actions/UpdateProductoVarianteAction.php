@@ -53,10 +53,50 @@ final class UpdateProductoVarianteAction
             |--------------------------------------------------------------------------
             */
 
-            $valores = $this->validadorValores->validar(
-                $producto,
-                $dto->atributosValores,
-            );
+            $valoresActuales = $variante->atributosValores()
+                ->with('atributo')
+                ->get();
+
+            $idsSolicitados = [];
+            $seleccionValida = ! empty($dto->atributosValores);
+
+            foreach ($dto->atributosValores as $seleccion) {
+                $id = is_array($seleccion)
+                    ? ($seleccion['atributo_valor_id'] ?? null)
+                    : null;
+
+                if (
+                    (! is_int($id) && ! (
+                        is_string($id) && ctype_digit($id)
+                    ))
+                    || (int) $id < 1
+                ) {
+                    $seleccionValida = false;
+                    break;
+                }
+
+                $idsSolicitados[] = (int) $id;
+            }
+
+            if (count(array_unique($idsSolicitados)) !== count($idsSolicitados)) {
+                $seleccionValida = false;
+            }
+
+            $idsActuales = $valoresActuales
+                ->modelKeys();
+
+            sort($idsActuales, SORT_NUMERIC);
+            sort($idsSolicitados, SORT_NUMERIC);
+
+            $mismaCombinacion = $seleccionValida
+                && $idsActuales === $idsSolicitados;
+
+            $valores = $mismaCombinacion
+                ? $valoresActuales
+                : $this->validadorValores->validar(
+                    $producto,
+                    $dto->atributosValores,
+                );
 
             /*
             |--------------------------------------------------------------------------

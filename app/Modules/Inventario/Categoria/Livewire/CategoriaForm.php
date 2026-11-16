@@ -243,7 +243,7 @@ class CategoriaForm extends Component
 
     public function loadData(): void
     {
-        $this->locales = Local::orderBy('nombre')->get();
+        $this->locales = Local::operativos()->orderBy('nombre')->get();
 
         if (!$this->localId) {
             $this->localId = $this->locales->first()?->id;
@@ -383,7 +383,7 @@ class CategoriaForm extends Component
     */
 
     public function localChanged(): void
-    {   
+    {
         $this->dispatch(
             'loading-start',
             message: 'Cargando categorias...'

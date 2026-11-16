@@ -50,6 +50,12 @@ use App\Modules\Inventario\Local\Livewire\LocalForm;
 // use App\Modules\Inventario\Local\Livewire\LocalMediaManager;
 // use App\Modules\Inventario\Local\Livewire\LocalAttributesManager;
 
+use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalPage;
+use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalTable;
+use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalForm;
+// use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalMediaManager;
+// use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalAttributesManager;
+
 use App\Modules\Finanzas\Moneda\Livewire\MonedaPage;
 use App\Modules\Finanzas\Moneda\Livewire\MonedaTable;
 use App\Modules\Finanzas\Moneda\Livewire\MonedaForm;
@@ -77,6 +83,27 @@ use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaForm;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionPage;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionTable;
 use App\Modules\Finanzas\Denominacion\Livewire\DenominacionForm;
+use App\Modules\Finanzas\Denominacion\Livewire\DenominacionCalculadora;
+
+use App\Modules\Finanzas\MonedaFondo\Livewire\MonedaFondoPage;
+use App\Modules\Finanzas\MonedaFondo\Livewire\MonedaFondoTable;
+use App\Modules\Finanzas\MonedaFondo\Livewire\MonedaFondoForm;
+
+use App\Modules\Finanzas\ConceptoMonedaFondo\Livewire\ConceptoMonedaFondoPage;
+use App\Modules\Finanzas\ConceptoMonedaFondo\Livewire\ConceptoMonedaFondoTable;
+use App\Modules\Finanzas\ConceptoMonedaFondo\Livewire\ConceptoMonedaFondoForm;
+
+use App\Modules\Finanzas\Banco\Livewire\BancoPage;
+use App\Modules\Finanzas\Banco\Livewire\BancoTable;
+use App\Modules\Finanzas\Banco\Livewire\BancoForm;
+
+use App\Modules\Finanzas\BancoSucursal\Livewire\BancoSucursalPage;
+use App\Modules\Finanzas\BancoSucursal\Livewire\BancoSucursalTable;
+use App\Modules\Finanzas\BancoSucursal\Livewire\BancoSucursalForm;
+
+use App\Modules\Finanzas\CuentaBancaria\Livewire\CuentaBancariaPage;
+use App\Modules\Finanzas\CuentaBancaria\Livewire\CuentaBancariaTable;
+use App\Modules\Finanzas\CuentaBancaria\Livewire\CuentaBancariaForm;
 
 use App\Modules\Comercial\Cliente\Livewire\ClientePage;
 use App\Modules\Comercial\Cliente\Livewire\ClienteTable;
@@ -120,6 +147,14 @@ use App\Modules\Gastos\GastoPago\Livewire\GastoPagoForm;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigTable;
 use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigForm;
+
+use App\Modules\Configuracion\Provincia\Livewire\ProvinciaPage;
+use App\Modules\Configuracion\Provincia\Livewire\ProvinciaTable;
+use App\Modules\Configuracion\Provincia\Livewire\ProvinciaForm;
+
+use App\Modules\Configuracion\Municipio\Livewire\MunicipioPage;
+use App\Modules\Configuracion\Municipio\Livewire\MunicipioTable;
+use App\Modules\Configuracion\Municipio\Livewire\MunicipioForm;
 
 use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaPage;
 use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaTable;
@@ -188,6 +223,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerLivewire('admin.trazas.tabla', TablaTrazasViewer::class);
 
+        $this->registerLivewire('inventario.tipos-local.page', TipoLocalPage::class);
+        $this->registerLivewire('inventario.tipos-local.form', TipoLocalForm::class);
+        $this->registerLivewire('inventario.tipos-local.table', TipoLocalTable::class);
+        // $this->registerLivewire('inventario.tipos-local.media-manager', TipoLocalMediaManager::class);
+        // $this->registerLivewire('inventario.tipos-local.attributes-manager', TipoLocalAttributesManager::class);
+
         $this->registerLivewire('inventario.local.page', LocalPage::class);
         $this->registerLivewire('inventario.local.form', LocalForm::class);
         $this->registerLivewire('inventario.local.table', LocalTable::class);
@@ -243,10 +284,31 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('finanzas.tarjeta-magnetica.table', TarjetaMagneticaTable::class);
         // $this->registerLivewire('finanzas.tarjeta-magnetica.media-manager', TarjetaMagneticaMediaManager::class);
         // $this->registerLivewire('finanzas.tarjeta-magnetica.attributes-manager', TarjetaMagneticaAttributesManager::class);
-        
+
         $this->registerLivewire('finanzas.denominacion.page', DenominacionPage::class);
         $this->registerLivewire('finanzas.denominacion.form', DenominacionForm::class);
         $this->registerLivewire('finanzas.denominacion.table', DenominacionTable::class);
+        $this->registerLivewire('finanzas.denominacion.calculadora', DenominacionCalculadora::class);
+
+        $this->registerLivewire('finanzas.concepto-moneda-fondo.page', ConceptoMonedaFondoPage::class);
+        $this->registerLivewire('finanzas.concepto-moneda-fondo.form', ConceptoMonedaFondoForm::class);
+        $this->registerLivewire('finanzas.concepto-moneda-fondo.table', ConceptoMonedaFondoTable::class);
+
+        $this->registerLivewire('finanzas.moneda-fondo.page', MonedaFondoPage::class);
+        $this->registerLivewire('finanzas.moneda-fondo.form', MonedaFondoForm::class);
+        $this->registerLivewire('finanzas.moneda-fondo.table', MonedaFondoTable::class);
+
+        $this->registerLivewire('finanzas.banco.page', BancoPage::class);
+        $this->registerLivewire('finanzas.banco.form', BancoForm::class);
+        $this->registerLivewire('finanzas.banco.table', BancoTable::class);
+
+        $this->registerLivewire('finanzas.banco-sucursal.page', BancoSucursalPage::class);
+        $this->registerLivewire('finanzas.banco-sucursal.form', BancoSucursalForm::class);
+        $this->registerLivewire('finanzas.banco-sucursal.table', BancoSucursalTable::class);
+
+        $this->registerLivewire('finanzas.cuenta-bancaria.page', CuentaBancariaPage::class);
+        $this->registerLivewire('finanzas.cuenta-bancaria.form', CuentaBancariaForm::class);
+        $this->registerLivewire('finanzas.cuenta-bancaria.table', CuentaBancariaTable::class);
 
         $this->registerLivewire('comercial.cliente.page', ClientePage::class);
         $this->registerLivewire('comercial.cliente.form', ClienteForm::class);
@@ -272,22 +334,30 @@ class AppServiceProvider extends ServiceProvider
         $this->registerLivewire('contabilidad.periodo-contable.modal-edit', PeriodoContableModalEdit::class);
         // $this->registerLivewire('contabilidad.periodo-contable.media-manager', PeriodoContableMediaManager::class);
         // $this->registerLivewire('contabilidad.periodo-contable.attributes-manager', PeriodoContableAttributesManager::class);
-        
+
         $this->registerLivewire('gastos.gasto.page', GastoPage::class);
         $this->registerLivewire('gastos.gasto.form', GastoForm::class);
         $this->registerLivewire('gastos.gasto.table', GastoTable::class);
-        
+
         $this->registerLivewire('gastos.tipo-gasto.page', TipoGastoPage::class);
         $this->registerLivewire('gastos.tipo-gasto.form', TipoGastoForm::class);
         $this->registerLivewire('gastos.tipo-gasto.table', TipoGastoTable::class);
-        
+
         $this->registerLivewire('gastos.gasto-pago.page', GastoPagoPage::class);
         $this->registerLivewire('gastos.gasto-pago.form', GastoPagoForm::class);
         $this->registerLivewire('gastos.gasto-pago.table', GastoPagoTable::class);
-        
+
         $this->registerLivewire('configuracion.setup-config.page', SetupConfigPage::class);
         $this->registerLivewire('configuracion.setup-config.form', SetupConfigForm::class);
         $this->registerLivewire('configuracion.setup-config.table', SetupConfigTable::class);
+
+        $this->registerLivewire('configuracion.provincia.page', ProvinciaPage::class);
+        $this->registerLivewire('configuracion.provincia.form', ProvinciaForm::class);
+        $this->registerLivewire('configuracion.provincia.table', ProvinciaTable::class);
+
+        $this->registerLivewire('configuracion.municipio.page', MunicipioPage::class);
+        $this->registerLivewire('configuracion.municipio.form', MunicipioForm::class);
+        $this->registerLivewire('configuracion.municipio.table', MunicipioTable::class);
 
         $this->registerLivewire('ayuda.ayuda-categoria.page', AyudaCategoriaPage::class);
         $this->registerLivewire('ayuda.ayuda-categoria.form', AyudaCategoriaForm::class);

@@ -6,6 +6,7 @@ use App\Models\Traits\HasTrazas;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Local extends Model
@@ -24,12 +25,22 @@ class Local extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
-        'es_principal'
+        'es_principal',
+        'tipo_local_id'
     ];
 
     /* =====================
      |  RELACIONES
      ===================== */
+    public function tipoLocal(): BelongsTo
+    {
+        return $this->belongsTo(TipoLocal::class);
+    }
+
+    public function monedaFondos(): HasMany
+    {
+        return $this->hasMany(MonedaFondo::class, 'local_id');
+    }
 
     public function productos(): HasMany
     {
@@ -79,9 +90,23 @@ class Local extends Model
     /* =====================
      |  SCOPES
      ===================== */
-     
+
     public function scopeEsPrincipal($query): Builder
     {
         return $query->where('es_principal', true);
+    }
+
+    public function scopeOperativos(Builder $query): Builder
+    {
+        return $query->whereHas('tipoLocal', function (Builder $q) {
+            $q->where('codigo', 'operativo');
+        });
+    }
+
+    public function scopeAlmacenes(Builder $query): Builder
+    {
+        return $query->whereHas('tipoLocal', function (Builder $q) {
+            $q->where('codigo', 'almacen');
+        });
     }
 }

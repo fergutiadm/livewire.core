@@ -24,12 +24,13 @@
             @can('ver promociones') <a href="/promociones" class="text-sky-600 hover:text-sky-800">Promociones</a> @endcan
             {{-- @can('ver periodos contables') <a href="/periodos" class="text-purple-600 hover:text-purple-800">Periodos</a> @endcan --}}
             @can('ver inventario') <a href="/inventario" class="text-yellow-600 hover:text-yellow-800">Inventario</a> @endcan
-            @can('ver gastos') <a href="/gastos" class="text-emerald-700 hover:text-emerald-800">Gastos</a> @endcan
+            @can('ver gastos') <a href="/gastos" class="text-emerald-600 hover:text-emerald-800">Gastos</a> @endcan
+            @can('ver fondos') <a href="/fondo-por-moneda" class="px-4 py-3 text-indigo-600 hover:text-indigo-800">Fondo</a> @endcan
         </nav>
 
         {{-- Bloque Derecho Superior --}}
         <div class="flex items-center gap-3">
-            
+
             {{-- Selectores de Contexto (Solo visibles en PC/Tablets a partir de md) --}}
             {{-- @auth --}}
                 <div class="hidden md:flex items-center gap-2">
@@ -82,6 +83,7 @@
             @can('ver periodos contables') <a href="/periodos" class="px-4 py-3 text-purple-600 hover:bg-slate-50">Periodos</a> @endcan
             @can('ver inventario') <a href="/inventario" class="px-4 py-3 text-yellow-600 hover:bg-slate-50">Inventario</a> @endcan
             @can('ver gastos') <a href="/gastos" class="px-4 py-3 text-amber-800 hover:bg-slate-50">Gastos</a> @endcan
+            @can('ver fondos') <a href="/fondo-por-moneda" class="px-4 py-3 text-indigo-800 hover:bg-slate-50">Fondo</a> @endcan
 
             <!-- Selectores de contexto apilados en móvil -->
             <div class="px-4 py-3 bg-slate-50 flex flex-col gap-2">
@@ -126,7 +128,7 @@
                         <span class="text-sm">Cerrar sesión</span>
                     </button>
                 </form>
-                
+
                 @if ($isAdmin)
                     <a href="/admin" class="px-4 py-3 flex items-center gap-2 hover:bg-slate-50 bg-white text-slate-900 font-semibold border-b">
                         <i class="bi bi-person-circle text-base text-slate-500"></i>

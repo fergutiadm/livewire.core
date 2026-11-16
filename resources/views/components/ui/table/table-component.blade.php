@@ -66,12 +66,12 @@ $alignmentClasses = [
                             @if($column->extra)
                                 <span
                                     class="ui-tooltip group relative text-orange-500 text-sm"
-                                > 
+                                >
                                 {{--
                                 <span
                                     class="ui-tooltip group relative text-orange-500 text-sm"
                                     wire:click.stop
-                                > 
+                                >
                                 --}}
                                     <i class="bi bi-info-circle"></i>
 
@@ -153,6 +153,7 @@ $alignmentClasses = [
             $mostrar_total_local_periodo = $totals != $totals_local_periodo;
         @endphp
             <tfoot class="bg-slate-50 border-t border-slate-300 font-bold text-slate-800">
+                @if(isset($totals) && !empty($totals) && array_sum($totals) > 0)
                 <tr>
                     @php
                         $colspan_sin_filtrar = 0;
@@ -189,7 +190,7 @@ $alignmentClasses = [
 
                                     <div>
                                         <span class="text-xs text-slate-400 font-normal">
-                                            Total CUP 
+                                            Total CUP
                                             @if(isset($data_decorate) && !empty($data_decorate))
                                             <span
                                                 class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
@@ -209,7 +210,7 @@ $alignmentClasses = [
 
                                     <div>
                                         <span class="text-xs text-slate-400 font-normal">
-                                            Total USD 
+                                            Total USD
                                             @if(isset($data_decorate) && !empty($data_decorate))
                                             <span
                                                 class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
@@ -241,6 +242,7 @@ $alignmentClasses = [
                         </td>
                     @endforeach
                 </tr>
+                @endif
                 @if($mostrar_total_local_periodo)
                 <tr>
                     @php
@@ -254,19 +256,19 @@ $alignmentClasses = [
                                 ? ($column->field ?? null)
                                 : ($column['field'] ?? null);
                         @endphp
-                        
+
                         @php
                             if($fieldName === 'importe')
                                 $proccess_importe = true;
                         @endphp
-                        
+
                         @if(!$proccess_cantidad || $proccess_importe)
                         <td>&nbsp;</td>
                         @elseif($proccess_cantidad && !$proccess_importe)
                         <td colspan="{{ $colspan_sin_filtrar }}" class="pt-3">
                             <div class="flex items-center justify-center">
                                 <span class="text-xs text-slate-600 font-semibold block">
-                                    SIN FILTRAR
+                                    RESUMEN DEL PERIODO
                                 </span>
                             </div>
                         </td>
@@ -303,7 +305,7 @@ $alignmentClasses = [
 
                                     <div>
                                         <span class="text-xs text-slate-400 font-normal">
-                                            Total CUP 
+                                            Total CUP
                                             @if(isset($data_decorate) && !empty($data_decorate))
                                             <span
                                                 class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0
@@ -323,7 +325,7 @@ $alignmentClasses = [
 
                                     <div>
                                         <span class="text-xs text-slate-400 font-normal">
-                                            Total USD 
+                                            Total USD
                                             @if(isset($data_decorate) && !empty($data_decorate))
                                             <span
                                                 class="text-xs font-semibold px-2 py-0.5 rounded-full ml-2 flex-shrink-0

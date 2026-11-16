@@ -2,6 +2,7 @@
 
 namespace App\Modules\Gastos\Gasto\Livewire;
 
+use App\Core\Context\FechaOperacionContext;
 use App\Core\Context\LocalContext;
 use App\Core\Context\PeriodoContext;
 use App\Core\CQRS\HasCommands;
@@ -25,7 +26,7 @@ class GastoPage extends Component
     public ?int $responsableId = null;
     public ?int $operadorId = null;
     public ?int $monedaId = null;
-    public ?int $fecha = null;
+    public ?string $fecha = '';
     public int $tableVersion = 0;
     public bool $showDeleteModal = false;
     public ?int $gastoDeleteId = null;
@@ -36,8 +37,9 @@ class GastoPage extends Component
         $this->mostrarTasaCambio = $config->get('mostrar_tasa_cambio');
         $this->localId = app(LocalContext::class)->id();
         $this->periodoContableId  = app(PeriodoContext::class)->id();
+        $this->fecha  = app(FechaOperacionContext::class)->fecha();
         $this->evaluarVisibilidadFormulario($this->periodoContableId);
-    }   
+    }
 
     private function evaluarVisibilidadFormulario(?int $periodoActualId): void
     {
@@ -53,6 +55,20 @@ class GastoPage extends Component
     #[On('local-context-changed')]
     public function localContextChanged(int $localId): void
     {
+        Log::info(
+            'GastoPage <local-context-changed> localContextChanged',
+            [
+                'localId' => $localId,
+                '$this->localId' => $this->localId,
+                'periodoContableId' => $this->periodoContableId,
+                'fecha' => $this->fecha,
+            ]
+        );
+        if($this->localId === $localId)
+        {
+            return;
+        }
+
         $this->localId = $localId;
 
         $periodoContableVigenteId = PeriodoContable::query()
@@ -64,6 +80,10 @@ class GastoPage extends Component
         if ($periodoContableVigenteId) {
             app(PeriodoContext::class)->set($periodoContableVigenteId);
 
+            Log::info('GastoPage <-> local-context-changed', [
+                '$this->localId' => $this->localId
+            ]);
+
             // Emitimos un solo evento global que actualizará tanto al PeriodoSelector como a esta misma página
             $this->dispatch('periodo-context-changed', periodoId: $periodoContableVigenteId);
         }
@@ -72,8 +92,57 @@ class GastoPage extends Component
     #[On('periodo-context-changed')]
     public function periodoContextChanged(int $periodoId): void
     {
+        Log::info(
+            'GastoPage <periodo-context-changed> periodoContextChanged',
+            [
+                'localId' => $this->localId,
+                'periodoContableId' => $this->periodoContableId,
+                'fecha' => $this->fecha,
+            ]
+        );
+        if($this->periodoContableId === $periodoId)
+        {
+            return;
+        }
+
         $this->periodoContableId = $periodoId;
+
+        Log::info('GastoPage <-> periodo-context-changed', [
+            '$this->periodoContableId' => $this->periodoContableId
+        ]);
+
         $this->evaluarVisibilidadFormulario($periodoId);
+    }
+
+    #[On('fecha-operacion-context-changed')]
+    public function actualizarFecha(string $fechaOperacion): void
+    {
+        Log::info(
+            'GastoPage <fecha-operacion-context-changed> actualizarFecha',
+            [
+                'localId' => $this->localId,
+                'periodoContableId' => $this->periodoContableId,
+                'fecha' => $this->fecha,
+            ]
+        );
+
+        $fechaOpFormateada = \Carbon\Carbon::parse($fechaOperacion)->format('Y-m-d');
+
+        if($this->fecha != $fechaOpFormateada)
+        {
+            $this->fecha = $fechaOpFormateada;
+            $this->dispatch('gasto-filtros-actualizados',
+                localId: $this->localId,
+                periodoContableId: $this->periodoContableId,
+                fecha: $this->fecha,
+                // fecha: $this->usar_filtros ? $this->fecha : null,
+            );
+        }
+
+        Log::info('GastoPage <-> fecha-operacion-context-changed', [
+            '$this->fecha' => $this->fecha
+        ]);
+
     }
 
     #[On('gasto-filtros-actualizados')]
@@ -85,7 +154,7 @@ class GastoPage extends Component
         ?int $responsableId = null,
         ?int $operadorId = null,
         ?int $monedaId = null,
-        ?int $fecha = null,
+        ?string $fecha = '',
     ): void {
         $this->localId = $localId;
         $this->periodoContableId = $periodoContableId;
@@ -95,23 +164,9 @@ class GastoPage extends Component
         $this->operadorId = $operadorId;
         $this->monedaId = $monedaId;
         $this->fecha = $fecha;
-        
+
         #$this->tableVersion++;
 
-        // Log::info(
-        //     'GastoPage <-> gasto-filtros-actualizados',
-        //     [
-        //         'localId' => $localId,
-        //         'periodoContableId' => $periodoContableId,
-        //         'tipoGastoId' => $tipoGastoId,
-        //         'especialistaId' => $especialistaId,
-        //         'responsableId' => $responsableId,
-        //         'operadorId' => $operadorId,
-        //         'monedaId' => $monedaId,
-        //         'fecha' => $fecha,
-        //     ]
-        // );
-        
         // Notificamos directamente a GastoTable pasándole los nuevos filtros de golpe
         $this->dispatch('gasto-tabla-refrescar', filtros: [
             'localId' => $localId,
@@ -160,7 +215,7 @@ class GastoPage extends Component
         $this->command('gasto.delete', ['id' => $this->gastoDeleteId]);
 
         $this->dispatch('livewire:alert', ['message' => 'Gasto Eliminado...', 'type' => 'success']);
-        
+
         $this->showDeleteModal = false;
         $this->gastoDeleteId = null;
         $this->tableVersion++;

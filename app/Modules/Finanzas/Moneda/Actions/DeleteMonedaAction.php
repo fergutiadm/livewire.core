@@ -5,6 +5,7 @@ namespace App\Modules\Finanzas\Moneda\Actions;
 use Illuminate\Support\Facades\DB;
 use App\Models\Moneda;
 use App\Modules\Finanzas\Moneda\DTOs\DeleteMonedaDTO;
+use App\Services\MonedaService;
 
 class DeleteMonedaAction
 {
@@ -34,7 +35,9 @@ class DeleteMonedaAction
                 // app(MonedaService::class)
                 //     ->beforeDelete($model);
 
-                return (bool) $model->delete();
+                $result = (bool) $model->delete();
+                app(MonedaService::class)->forgetCache();
+                return $result;
             }
         );
     }

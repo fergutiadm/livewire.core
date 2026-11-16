@@ -18,7 +18,7 @@ class ProductosPorCategoria extends Component
 
     public function render()
     {
-        $locales = Local::orderBy('nombre')->get();
+        $locales = Local::operativos()->orderBy('nombre')->get();
         $categorias = Categoria::with(['productos' => function($q) {
             if ($this->local_id) {
                 $q->where('local_id', $this->local_id);

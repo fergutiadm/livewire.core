@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Moneda;
 
 use App\Modules\Finanzas\Moneda\DTOs\CreateMonedaDTO;
+use App\Services\MonedaService;
 
 class CreateMonedaAction
 {
@@ -38,6 +39,8 @@ class CreateMonedaAction
                 }
 
                 $model = Moneda::create($data);
+
+                app(MonedaService::class)->forgetCache();
 
                 /*
                 |--------------------------------------------------------------------------

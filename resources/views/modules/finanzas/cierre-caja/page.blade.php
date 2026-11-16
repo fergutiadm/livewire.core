@@ -69,6 +69,11 @@
 
         <x-slot name="foot_container">
             </div>
+
+            <livewire:ayuda.ayuda-contextual.panel
+                contexto="ventas.cierre_dia"
+                wire:key="ayuda-contextual-cierre-dia"
+            />
         </x-slot>
 
         <x-slot name="deleteModal">

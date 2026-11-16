@@ -16,12 +16,16 @@ class LocalPage extends Component
 
     public int $tableVersion = 0;
 
+    public ?int $tipo_local_id = null;
+
     public bool $showDeleteModal = false;
 
     public ?int $localDeleteId = null;
 
     #[On('local-filtros-actualizados')]
-    public function actualizarFiltros(): void {
+    public function actualizarFiltros(?int $tipo_local_id = null): void {
+
+        $this->tipo_local_id = $tipo_local_id;
 
         $this->tableVersion++;
 

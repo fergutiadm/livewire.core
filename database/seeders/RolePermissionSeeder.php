@@ -35,6 +35,11 @@ class RolePermissionSeeder extends Seeder
             'ver promociones',
             'crear promociones',
             'ver metricas promocion',
+
+            // Finanzas
+
+            'ver fondos',
+            'gestionar fondos',
         ];
 
         foreach ($permissions as $perm) {
@@ -89,6 +94,8 @@ class RolePermissionSeeder extends Seeder
             'ver inventario',
             'ver periodos contables',
             'ver gastos',
+            'ver fondos',
+            'gestionar fondos',
         ]);
 
         $this->command->info('Roles y permisos creados correctamente.');

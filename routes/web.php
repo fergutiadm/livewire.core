@@ -17,22 +17,28 @@
     use App\Http\Controllers\BarcodeController;
     use App\Http\Controllers\PlaceholderController;
 
+    use App\Modules\Inventario\TipoLocal\Livewire\TipoLocalPage;
     use App\Modules\Inventario\Local\Livewire\LocalPage;
     use App\Modules\Inventario\Categoria\Livewire\CategoriaPage;
     use App\Modules\Inventario\Producto\Livewire\ProductoPage;
     use App\Modules\Inventario\Atributo\Livewire\AtributoPage;
     use App\Modules\Inventario\UnidadDimension\Livewire\UnidadDimensionPage;
     use App\Modules\Inventario\UnidadMedida\Livewire\UnidadMedidaPage;
-    
+
     use App\Modules\Finanzas\Moneda\Livewire\MonedaPage;
     use App\Modules\Finanzas\TarjetaMagnetica\Livewire\TarjetaMagneticaPage;
     use App\Modules\Finanzas\Caja\Livewire\CajaPage;
     use App\Modules\Finanzas\CierreCaja\Livewire\CierreCajaPage;
     use App\Modules\Finanzas\Denominacion\Livewire\DenominacionPage;
-    
+    use App\Modules\Finanzas\ConceptoMonedaFondo\Livewire\ConceptoMonedaFondoPage;
+    use App\Modules\Finanzas\MonedaFondo\Livewire\MonedaFondoPage;
+    use App\Modules\Finanzas\Banco\Livewire\BancoPage;
+    use App\Modules\Finanzas\BancoSucursal\Livewire\BancoSucursalPage;
+    use App\Modules\Finanzas\CuentaBancaria\Livewire\CuentaBancariaPage;
+
     use App\Modules\Comercial\Cliente\Livewire\ClientePage;
     use App\Modules\Comercial\Gestor\Livewire\GestorPage;
-    
+
     use App\Modules\Contabilidad\PeriodoContable\Livewire\PeriodoContablePage;
 
     use App\Modules\Gastos\TipoGasto\Livewire\TipoGastoPage;
@@ -42,9 +48,13 @@
     use App\Modules\Seguridad\User\Livewire\UserPage;
 
     use App\Modules\Configuracion\SetupConfig\Livewire\SetupConfigPage;
+    use App\Modules\Configuracion\Provincia\Livewire\ProvinciaPage;
+    use App\Modules\Configuracion\Municipio\Livewire\MunicipioPage;
 
     use App\Modules\Ayuda\AyudaCategoria\Livewire\AyudaCategoriaPage;
     use App\Modules\Ayuda\AyudaArticulo\Livewire\AyudaArticuloPage;
+
+    use App\Modules\Ayuda\AyudaVisor\Livewire\AyudaVisorPage;
 
     /*
     |--------------------------------------------------------------------------
@@ -90,10 +100,8 @@
 
         Route::get('/trazas', TrazasViewer::class)->name('trazas');
 
-        Route::get(
-            '/locales',
-            LocalPage::class
-        )->name('locales');
+        Route::get('/tipos-local', TipoLocalPage::class)->name('tipos_local');
+        Route::get('/locales', LocalPage::class)->name('locales');
         Route::get('/categorias', CategoriaPage::class)->name('categorias');
         Route::get('/productos', ProductoPage::class)->name('productos');
         Route::get('/atributos', AtributoPage::class)->name('atributos');
@@ -110,14 +118,24 @@
         Route::get('/monedas', MonedaPage::class)->name('monedas');
         Route::get('/tarjetas-magneticas', TarjetaMagneticaPage::class)->name('tarjetas_magneticas');
         Route::get('/cajas-cash', CajaPage::class)->name('cajas');
-                
+
         Route::get('/denominaciones', DenominacionPage::class)->name('denominaciones');
+
+        Route::get('/conceptos-fondo-por-moneda', ConceptoMonedaFondoPage::class)->name('conceptos_fondo_por_moneda');
+        // Route::get('/fondo-por-moneda', MonedaFondoPage::class)->name('fondo_por_moneda');
+
+        Route::get('/bancos', BancoPage::class)->name('bancos');
+        Route::get('/sucursales', BancoSucursalPage::class)->name('sucursales');
+        Route::get('/cuentas-bancarias', CuentaBancariaPage::class)->name('cuentas_bancarias');
 
         Route::get('/periodos_contables', PeriodoContablePage::class)->name('periodos_contables');
 
         Route::get('/usuarios', UserPage::class)->name('usuarios');
-        
-        Route::get('/configuracion-setup', SetupConfigPage::class)->name('setup_config');
+
+        Route::get('/setup', SetupConfigPage::class)->name('setup_config');
+
+        Route::get('/provincias', ProvinciaPage::class)->name('provincias');
+        Route::get('/municipios', MunicipioPage::class)->name('municipios');
 
         Route::get('/ayuda-categoria', AyudaCategoriaPage::class)->name('ayuda_categoria');
         Route::get('/ayuda-articulo', AyudaArticuloPage::class)->name('ayuda_articulo');
@@ -130,6 +148,18 @@
         // Gastos
         // -------------------
         Route::get('/tipos-gastos', TipoGastoPage::class)->name('tipos_gastos');
+
+        // -------------------
+        // Ayuda
+        // -------------------
+        Route::get('/ayuda', AyudaVisorPage::class)
+            ->name('ayuda');
+
+        Route::get('/ayuda-categoria', AyudaCategoriaPage::class)
+            ->name('ayuda_categoria');
+
+        Route::get('/ayuda-articulo', AyudaArticuloPage::class)
+            ->name('ayuda_articulo');
     });
 
     // Middleware para proteger rutas internas (solo usuarios con permiso)
@@ -153,6 +183,11 @@
         // -------------------
         Route::get('/inventario', InventarioIndex::class)
             ->name('inventario.index');
+
+        // -------------------
+        // Fondos por moneda
+        // -------------------
+        Route::get('/fondo-por-moneda', MonedaFondoPage::class)->name('fondo_por_moneda');
 
         // -------------------
         // Periodos contables (solo manager/admin)

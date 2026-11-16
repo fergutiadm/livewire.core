@@ -52,12 +52,12 @@
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                 </svg> --}}
             </span>
-                
+
             <span class="min-w-0">
                 <span class="block text-xs font-medium text-slate-500">
-                    Tarjetas Magneticas
+                    Tarjetas <span class="inline-flex sm:flex-wrap:hidden"> Magnéticas</span>
                 </span>
-                
+
                 <span class="block truncate text-sm font-semibold text-slate-800">
                     {{ count($grupoTarjetas) }} · Demo
                 </span>
@@ -167,7 +167,7 @@
                                 Monto diario y acumulado por tarjeta.
                             </p>
 
-                            
+
                             <div class="mt-3 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
                                 @if ($periodoSeleccionado)
                                     <span class="inline-flex min-w-0 items-center gap-1.5">

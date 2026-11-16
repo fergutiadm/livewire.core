@@ -3,6 +3,7 @@
 namespace App\Modules\Finanzas\Moneda\Actions;
 
 use App\Models\Moneda;
+use App\Services\MonedaService;
 
 class ToggleMonedaActivaAction
 {
@@ -10,6 +11,8 @@ class ToggleMonedaActivaAction
     {
         $moneda->activa = ! $moneda->activa;
         $moneda->save();
+
+        app(MonedaService::class)->forgetCache();
 
         return $moneda->fresh();
     }

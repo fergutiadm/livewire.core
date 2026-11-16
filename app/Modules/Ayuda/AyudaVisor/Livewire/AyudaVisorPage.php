@@ -21,17 +21,22 @@ class AyudaVisorPage extends Component
 
     public function seleccionarArticulo(int $id): void
     {
-        $articulo = AyudaArticulo::publicados()
+        $existe = AyudaArticulo::publicados()
             ->when(
                 $this->contexto,
                 fn ($query) => $query->porContexto($this->contexto)
             )
             ->whereKey($id)
-            ->first();
+            ->exists();
 
-        if ($articulo) {
-            $this->articuloId = $articulo->id;
+        if ($existe) {
+            $this->articuloId = $id;
         }
+    }
+
+    public function volverAArticulos(): void
+    {
+        $this->articuloId = null;
     }
 
     public function updatedBuscar(): void
@@ -45,12 +50,16 @@ class AyudaVisorPage extends Component
             ->ordenadas()
             ->withCount([
                 'articulos as articulos_publicados_count' =>
-                    fn ($query) => $query->publicados(),
+                    fn ($query) => $query
+                        ->publicados()
+                        ->when(
+                            $this->contexto,
+                            fn ($query) => $query->porContexto($this->contexto)
+                        ),
             ])
             ->get();
 
-        $articulos = AyudaArticulo::query()
-            ->publicados()
+        $articulos = AyudaArticulo::publicados()
             ->with('categoria')
             ->when(
                 $this->contexto,
@@ -63,7 +72,7 @@ class AyudaVisorPage extends Component
 
                     $query->where(function ($q) use ($buscar) {
                         $q->where('titulo', 'like', "%{$buscar}%")
-                          ->orWhere('resumen', 'like', "%{$buscar}%");
+                            ->orWhere('resumen', 'like', "%{$buscar}%");
                     });
                 }
             )
@@ -72,6 +81,11 @@ class AyudaVisorPage extends Component
 
         $articulo = $this->articuloId
             ? AyudaArticulo::publicados()
+                ->with('categoria')
+                ->when(
+                    $this->contexto,
+                    fn ($query) => $query->porContexto($this->contexto)
+                )
                 ->whereKey($this->articuloId)
                 ->first()
             : null;
@@ -80,6 +94,6 @@ class AyudaVisorPage extends Component
             'categorias' => $categorias,
             'articulos' => $articulos,
             'articulo' => $articulo,
-        ]);
+        ])->layout('layouts.app_admin');
     }
 }

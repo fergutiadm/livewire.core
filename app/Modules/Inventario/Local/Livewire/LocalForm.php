@@ -4,6 +4,7 @@ namespace App\Modules\Inventario\Local\Livewire;
 
 use App\Core\CQRS\HasCommands;
 use App\Models\Local;
+use App\Models\TipoLocal;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -13,12 +14,15 @@ class LocalForm extends Component
     use HasCommands;
 
     public ?int $localId = null;
+    public ?int $tipo_local_id = null;
 
     public string $nombre = '';
     public string $descripcion = '';
     public bool $es_principal = false;
 
     protected $rules = [
+        'tipo_local_id' => 'required|exists:tipos_locales,id',
+
         'nombre' => 'required|string|max:255',
 
         'descripcion' => 'nullable|string|min:3|max:255',
@@ -27,6 +31,9 @@ class LocalForm extends Component
     protected function messages(): array
     {
         return [
+            'tipo_local_id.required' =>
+                'El Tipo de local es obligatorio',
+
             'nombre.required' =>
                 'El Nombre es obligatorio',
 
@@ -44,6 +51,8 @@ class LocalForm extends Component
         $local = Local::findOrFail($id);
 
         $this->localId = $local->id;
+
+        $this->tipo_local_id = $local->tipo_local_id;
 
         $this->nombre = $local->nombre;
 
@@ -81,6 +90,27 @@ class LocalForm extends Component
     public function localEdicionCargada(): void
     {
         $this->dispatch('loading-stop');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cambio de Tipo de Local
+    |--------------------------------------------------------------------------
+    */
+
+    public function tipoLocalChanged(): void
+    {
+        $this->dispatch(
+            'loading-start',
+            message: 'Cargando tipos de local...'
+        );
+
+        $this->dispatch(
+            'local-filtros-actualizados',
+            tipo_local_id: $this->tipo_local_id,
+        );
+
+        $this->resetForm();
     }
 
     /*
@@ -191,6 +221,8 @@ class LocalForm extends Component
 
             'local_id' => $this->localId,
 
+            'tipo_local_id' => $this->tipo_local_id,
+
             'nombre' => $this->nombre,
 
             'descripcion' => $this->descripcion,
@@ -255,6 +287,7 @@ class LocalForm extends Component
     {
         $this->reset([
             'localId',
+            // 'tipo_local_id',
             'nombre',
             'descripcion',
             'es_principal',
@@ -295,6 +328,9 @@ class LocalForm extends Component
 
     public function render()
     {
-        return view('modules.inventario.local.form');
+        $tiposLocal = TipoLocal::activos()->ordenados()->get();
+        return view('modules.inventario.local.form', [
+            'tiposLocal' => $tiposLocal,
+        ]);
     }
 }

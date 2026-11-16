@@ -17,6 +17,40 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
+            {{-- TIPO DE LOCAL --}}
+            <div>
+
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Tipo de Local
+                </label>
+
+                <select
+                    wire:model="tipo_local_id"
+                    {{-- wire:change="tipoLocalChanged"
+                    wire:loading.attr="disabled"
+                    wire:target="tipoLocalChanged" --}}
+                    class="w-full rounded-xl border-slate-300"
+                >
+
+                    @foreach($tiposLocal as $tipoLocal)
+
+                        <option value="{{ $tipoLocal->id }}">
+                            {{ $tipoLocal->nombre }}
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+                @error('tipo_local_id')
+                    <p class="panel-form-error">{{ $message }}</p>
+                @enderror
+
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
             {{-- NOMBRE --}}
             <div>
 

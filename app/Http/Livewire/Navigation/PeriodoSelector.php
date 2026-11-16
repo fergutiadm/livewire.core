@@ -265,11 +265,11 @@ class PeriodoSelector extends Component
 
         $this->cargarPeriodos();
 
-        Log::info('periodo-context-changed', [
-            'periodoId' => $periodoId,
-            'year_selector' => $this->year_selector,
-            'month_selector' => $this->month_selector,
-        ]);
+        // Log::info('periodo-context-changed', [
+        //     'periodoId' => $periodoId,
+        //     'year_selector' => $this->year_selector,
+        //     'month_selector' => $this->month_selector,
+        // ]);
 
         $this->dispatch('fecha-operacion-seleccion');
     }

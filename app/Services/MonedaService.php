@@ -45,6 +45,12 @@ class MonedaService
         });
     }
 
+    public function principal(): array
+    {
+        return collect($this->listForDisplay())
+            ->firstWhere('es_principal', true) ?? [];
+    }
+
     public function codigoPrincipal(): string
     {
         return collect($this->listForDisplay())

@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         $this->call(RolePermissionSeeder::class);
         $this->call(UnidadMedidaSeeder::class);
 
+        $this->call(ProvinciaMunicipio::class);
+        $this->call(BancoSeeder::class);
+        $this->call(BancoSucursalSeeder::class);
+
         // 2️⃣ Locales
         $locales = Local::factory(3)->create();
 

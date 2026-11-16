@@ -18,10 +18,12 @@ class AtributableValor extends Model
         'atributo_valor_id',
         'atributable_id',
         'atributable_type',
+        'activo',
     ];
 
     protected $casts = [
         'orden_visual' => 'integer',
+        'activo' => 'boolean',
     ];
 
     public function atributoValor(): BelongsTo
